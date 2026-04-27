@@ -335,16 +335,22 @@ export function SettingsPage() {
 
   useEffect(() => {
     api.getRemnaSquadsInternal(token).then((raw: unknown) => {
-      const res = raw as { response?: { internalSquads?: { uuid: string; name?: string }[] } };
-      const items = res?.response?.internalSquads ?? (Array.isArray(res) ? res : []);
+      const res = raw as { response?: { internalSquads?: { uuid: string; name?: string }[] } | { uuid: string; name?: string }[] };
+      const items =
+        (res?.response && !Array.isArray(res.response) ? res.response.internalSquads : undefined)
+        ?? (Array.isArray(res?.response) ? res.response : undefined)
+        ?? (Array.isArray(res) ? res : []);
       setSquads(Array.isArray(items) ? items : []);
     }).catch(() => setSquads([]));
   }, [token]);
 
   useEffect(() => {
     api.getRemnaSquadsExternal(token).then((raw: unknown) => {
-      const res = raw as { response?: { externalSquads?: { uuid: string; name?: string }[] } };
-      const items = res?.response?.externalSquads ?? (Array.isArray(res) ? res : []);
+      const res = raw as { response?: { externalSquads?: { uuid: string; name?: string }[] } | { uuid: string; name?: string }[] };
+      const items =
+        (res?.response && !Array.isArray(res.response) ? res.response.externalSquads : undefined)
+        ?? (Array.isArray(res?.response) ? res.response : undefined)
+        ?? (Array.isArray(res) ? res : []);
       setExternalSquads(Array.isArray(items) ? items : []);
     }).catch(() => setExternalSquads([]));
   }, [token]);
