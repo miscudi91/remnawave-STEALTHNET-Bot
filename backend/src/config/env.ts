@@ -14,6 +14,10 @@ const envSchema = z.object({
   ),
   REMNA_ADMIN_TOKEN: z.string().optional(),
   REMNA_SECRET_KEY: z.string().optional(),
+  REMNA_DEFAULT_EXTERNAL_SQUAD_UUID: z.preprocess(
+    (s) => (typeof s === "string" && s.trim() === "" ? undefined : s),
+    z.string().uuid().optional()
+  ),
   CORS_ORIGIN: z.string().default("*"),
   /** Cron для авто-рассылки (например "0 9 * * *" = 9:00 каждый день). Пусто = по умолчанию 9:00. */
   AUTO_BROADCAST_CRON: z.string().optional(),

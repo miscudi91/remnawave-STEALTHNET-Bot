@@ -8,6 +8,7 @@ const DEFAULTS: Array<[string, string]> = [
   ["active_currencies", "usd,rub"],
   ["default_referral_percent", "10"],
   ["trial_days", "3"],
+  ["default_external_squad_uuid", ""],
   ["service_name", "STEALTHNET"],
   [
     "bot_inner_button_styles",

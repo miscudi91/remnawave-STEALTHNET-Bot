@@ -161,6 +161,7 @@ configure_env() {
   ask "URL панели Remnawave (например https://panel.example.com)" "" REMNA_API_URL
   if [ -n "$REMNA_API_URL" ]; then
     ask_secret "Токен Remnawave API (Из панели Remnawave)" "" REMNA_ADMIN_TOKEN
+    ask "UUID external squad по умолчанию (Enter = не использовать)" "" REMNA_DEFAULT_EXTERNAL_SQUAD_UUID
     echo ""
     echo -e "  ${YELLOW}Если Remnawave установлена через eGames reverse-proxy, укажите cookie-ключ.${NC}"
     echo -e "  ${YELLOW}Формат: имя:значение (из nginx-конфигурации панели). Пусто — если не используете eGames.${NC}"
@@ -168,6 +169,7 @@ configure_env() {
   else
     REMNA_ADMIN_TOKEN=""
     REMNA_SECRET_KEY=""
+    REMNA_DEFAULT_EXTERNAL_SQUAD_UUID=""
   fi
 
   echo ""
@@ -222,6 +224,7 @@ REMNA_API_URL=$REMNA_API_URL
 REMNA_ADMIN_TOKEN=$REMNA_ADMIN_TOKEN
 # eGames reverse-proxy cookie (format: name:value). Leave empty if not using eGames.
 REMNA_SECRET_KEY=$REMNA_SECRET_KEY
+REMNA_DEFAULT_EXTERNAL_SQUAD_UUID=$REMNA_DEFAULT_EXTERNAL_SQUAD_UUID
 
 # Telegram Bot
 BOT_TOKEN=$BOT_TOKEN

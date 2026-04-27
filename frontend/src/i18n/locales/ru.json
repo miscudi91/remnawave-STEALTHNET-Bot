@@ -1045,6 +1045,8 @@
       "trial_subtitle": "Параметры пробного периода для новых пользователей",
       "trial_days": "Дней триала",
       "trial_squad": "Сквад для триала (Remna)",
+      "default_external_squad": "External squad по умолчанию",
+      "default_external_squad_none": "— не выбран",
       "trial_device_limit": "Лимит устройств триала (HWID)",
       "trial_traffic_limit": "Лимит трафика триала (ГБ)",
       "referral_title": "Рефералы",

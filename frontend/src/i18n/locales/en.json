@@ -1045,6 +1045,8 @@
       "trial_subtitle": "Trial period parameters for new users",
       "trial_days": "Trial days",
       "trial_squad": "Trial squad (Remna)",
+      "default_external_squad": "Default external squad",
+      "default_external_squad_none": "— not selected",
       "trial_device_limit": "Trial device limit (HWID)",
       "trial_traffic_limit": "Trial traffic limit (GB)",
       "referral_title": "Referrals",

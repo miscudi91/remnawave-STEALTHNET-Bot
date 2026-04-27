@@ -4,10 +4,15 @@
  */
 
 import { env } from "../../config/index.js";
+import { prisma } from "../../db.js";
 
 const REMNA_API_URL = env.REMNA_API_URL?.replace(/\/$/, "") ?? "";
 const REMNA_ADMIN_TOKEN = env.REMNA_ADMIN_TOKEN ?? "";
 const REMNA_SECRET_KEY = env.REMNA_SECRET_KEY?.trim() ?? "";
+const REMNA_DEFAULT_EXTERNAL_SQUAD_UUID = env.REMNA_DEFAULT_EXTERNAL_SQUAD_UUID?.trim() ?? "";
+
+let defaultExternalSquadCache: { value: string | null; ts: number } = { value: null, ts: 0 };
+const DEFAULT_EXTERNAL_SQUAD_TTL_MS = 60_000;
 
 export function isRemnaConfigured(): boolean {
   return Boolean(REMNA_API_URL && REMNA_ADMIN_TOKEN);
@@ -152,9 +157,36 @@ export function remnaUsernameFromClient(opts: {
   return out.length >= 3 ? out : "u_" + out.slice(0, 34);
 }
 
+async function getDefaultExternalSquadUuid(): Promise<string | null> {
+  if (REMNA_DEFAULT_EXTERNAL_SQUAD_UUID) return REMNA_DEFAULT_EXTERNAL_SQUAD_UUID;
+  const now = Date.now();
+  if (now - defaultExternalSquadCache.ts < DEFAULT_EXTERNAL_SQUAD_TTL_MS) {
+    return defaultExternalSquadCache.value;
+  }
+  try {
+    const row = await prisma.systemSetting.findUnique({
+      where: { key: "default_external_squad_uuid" },
+      select: { value: true },
+    });
+    const value = (row?.value ?? "").trim() || null;
+    defaultExternalSquadCache = { value, ts: now };
+    return value;
+  } catch {
+    defaultExternalSquadCache = { value: null, ts: now };
+    return null;
+  }
+}
+
 /** POST /api/users */
-export function remnaCreateUser(body: Record<string, unknown>) {
-  return remnaFetch<unknown>("/api/users", { method: "POST", body: JSON.stringify(body) });
+export async function remnaCreateUser(body: Record<string, unknown>) {
+  const defaultExternalSquadUuid = await getDefaultExternalSquadUuid();
+  let requestBody: Record<string, unknown> = body;
+  if (defaultExternalSquadUuid) {
+    const fromBody = Array.isArray(body.activeExternalSquads) ? body.activeExternalSquads : [];
+    const squads = [...new Set(fromBody.filter((x): x is string => typeof x === "string" && x.trim().length > 0).map((x) => x.trim()).concat(defaultExternalSquadUuid))];
+    requestBody = { ...body, activeExternalSquads: squads };
+  }
+  return remnaFetch<unknown>("/api/users", { method: "POST", body: JSON.stringify(requestBody) });
 }
 
 /** PATCH /api/users */

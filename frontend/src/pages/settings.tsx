@@ -170,6 +170,7 @@ export function SettingsPage() {
   const [syncLoading, setSyncLoading] = useState<"from" | "to" | "missing" | null>(null);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
   const [squads, setSquads] = useState<{ uuid: string; name?: string }[]>([]);
+  const [externalSquads, setExternalSquads] = useState<{ uuid: string; name?: string }[]>([]);
   const [activeTab, setActiveTab] = useState("general");
   const [plategaCallbackCopied, setPlategaCallbackCopied] = useState(false);
   const [yoomoneyWebhookCopied, setYoomoneyWebhookCopied] = useState(false);
@@ -340,6 +341,14 @@ export function SettingsPage() {
     }).catch(() => setSquads([]));
   }, [token]);
 
+  useEffect(() => {
+    api.getRemnaSquadsExternal(token).then((raw: unknown) => {
+      const res = raw as { response?: { externalSquads?: { uuid: string; name?: string }[] } };
+      const items = res?.response?.externalSquads ?? (Array.isArray(res) ? res : []);
+      setExternalSquads(Array.isArray(items) ? items : []);
+    }).catch(() => setExternalSquads([]));
+  }, [token]);
+
   async function handleSyncFromRemna() {
     setSyncLoading("from");
     setSyncMessage(null);
@@ -503,6 +512,7 @@ export function SettingsPage() {
         referralPercentLevel3: settings.referralPercentLevel3 ?? 10,
         trialDays: settings.trialDays,
         trialSquadUuid: settings.trialSquadUuid ?? null,
+        defaultExternalSquadUuid: settings.defaultExternalSquadUuid ?? null,
         trialDeviceLimit: settings.trialDeviceLimit ?? null,
         trialTrafficLimitBytes: settings.trialTrafficLimitBytes ?? null,
         serviceName: settings.serviceName,
@@ -1802,6 +1812,19 @@ export function SettingsPage() {
                   >
                     <option value="">{t("admin.settings.trial_squad_none")}</option>
                     {squads.map((s) => (
+                      <option key={s.uuid} value={s.uuid}>{s.name || s.uuid}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <Label>{t("admin.settings.default_external_squad")}</Label>
+                  <select
+                    className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+                    value={settings.defaultExternalSquadUuid ?? ""}
+                    onChange={(e) => setSettings((s) => s ? { ...s, defaultExternalSquadUuid: e.target.value || null } : s)}
+                  >
+                    <option value="">{t("admin.settings.default_external_squad_none")}</option>
+                    {externalSquads.map((s) => (
                       <option key={s.uuid} value={s.uuid}>{s.name || s.uuid}</option>
                     ))}
                   </select>

@@ -541,6 +541,9 @@ export const api = {
   async getRemnaSquadsInternal(token: string): Promise<unknown> {
     return request("/admin/remna/squads/internal", { token });
   },
+  async getRemnaSquadsExternal(token: string): Promise<unknown> {
+    return request("/admin/remna/squads/external", { token });
+  },
 
   async getSettings(token: string): Promise<AdminSettings> {
     return request("/admin/settings", { token });
@@ -1686,6 +1689,7 @@ export type UpdateSettingsPayload = {
   referralPercentLevel3?: number;
   trialDays?: number;
   trialSquadUuid?: string | null;
+  defaultExternalSquadUuid?: string | null;
   trialDeviceLimit?: number | null;
   trialTrafficLimitBytes?: number | null;
   serviceName?: string;
@@ -2018,6 +2022,7 @@ export interface AdminSettings {
   referralPercentLevel3: number;
   trialDays: number;
   trialSquadUuid?: string | null;
+  defaultExternalSquadUuid?: string | null;
   trialDeviceLimit?: number | null;
   trialTrafficLimitBytes?: number | null;
   serviceName: string;

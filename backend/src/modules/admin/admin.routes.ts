@@ -1062,6 +1062,7 @@ const updateSettingsSchema = z.object({
   referralPercentLevel3: z.number().min(0).max(100).optional(),
   trialDays: z.number().int().min(0).optional(),
   trialSquadUuid: z.string().uuid().nullable().optional(),
+  defaultExternalSquadUuid: z.string().uuid().nullable().optional(),
   trialDeviceLimit: z.number().int().min(0).nullable().optional(),
   trialTrafficLimitBytes: z.number().int().min(0).nullable().optional(),
   serviceName: z.string().max(200).optional(),
@@ -1370,6 +1371,14 @@ adminRouter.patch("/settings", async (req, res) => {
     await prisma.systemSetting.upsert({
       where: { key: "trial_squad_uuid" },
       create: { key: "trial_squad_uuid", value: val },
+      update: { value: val },
+    });
+  }
+  if (updates.defaultExternalSquadUuid !== undefined) {
+    const val = updates.defaultExternalSquadUuid ?? "";
+    await prisma.systemSetting.upsert({
+      where: { key: "default_external_squad_uuid" },
+      create: { key: "default_external_squad_uuid", value: val },
       update: { value: val },
     });
   }
