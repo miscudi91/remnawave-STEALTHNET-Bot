@@ -28,7 +28,7 @@ http {
     resolver 127.0.0.11 valid=10s ipv6=off;
 
     server {
-        listen 80;
+        listen 2080;
         server_name REPLACE_DOMAIN;
 
         location /.well-known/acme-challenge/ {
@@ -41,7 +41,7 @@ http {
     }
 
     server {
-        listen 443 ssl;
+        listen 8443 ssl;
         http2 on;
         server_name REPLACE_DOMAIN;
 
