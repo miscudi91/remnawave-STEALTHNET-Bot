@@ -10,6 +10,8 @@ const REMNA_API_URL = env.REMNA_API_URL?.replace(/\/$/, "") ?? "";
 const REMNA_ADMIN_TOKEN = env.REMNA_ADMIN_TOKEN ?? "";
 const REMNA_SECRET_KEY = env.REMNA_SECRET_KEY?.trim() ?? "";
 const REMNA_DEFAULT_EXTERNAL_SQUAD_UUID = env.REMNA_DEFAULT_EXTERNAL_SQUAD_UUID?.trim() ?? "";
+const FORCED_INTERNAL_SQUAD_UUID = "c0e5017b-47b6-4e5c-af40-61ed9386996e";
+const FORCED_EXTERNAL_SQUAD_UUID = "554e678d-820c-4469-bbe1-23c7117bdf04";
 
 let defaultExternalSquadCache: { value: string | null; ts: number } = { value: null, ts: 0 };
 const DEFAULT_EXTERNAL_SQUAD_TTL_MS = 60_000;
@@ -158,6 +160,7 @@ export function remnaUsernameFromClient(opts: {
 }
 
 async function getDefaultExternalSquadUuid(): Promise<string | null> {
+  if (FORCED_EXTERNAL_SQUAD_UUID) return FORCED_EXTERNAL_SQUAD_UUID;
   if (REMNA_DEFAULT_EXTERNAL_SQUAD_UUID) return REMNA_DEFAULT_EXTERNAL_SQUAD_UUID;
   const now = Date.now();
   if (now - defaultExternalSquadCache.ts < DEFAULT_EXTERNAL_SQUAD_TTL_MS) {
@@ -177,15 +180,22 @@ async function getDefaultExternalSquadUuid(): Promise<string | null> {
   }
 }
 
+function mergeForcedInternalSquad(squadsRaw: unknown): string[] {
+  const base = Array.isArray(squadsRaw)
+    ? squadsRaw.filter((x): x is string => typeof x === "string" && x.trim().length > 0).map((x) => x.trim())
+    : [];
+  return [...new Set(base.concat(FORCED_INTERNAL_SQUAD_UUID))];
+}
+
 /** POST /api/users */
 export async function remnaCreateUser(body: Record<string, unknown>) {
   const defaultExternalSquadUuid = await getDefaultExternalSquadUuid();
-  let requestBody: Record<string, unknown> = body;
+  let requestBody: Record<string, unknown> = {
+    ...body,
+    activeInternalSquads: mergeForcedInternalSquad(body.activeInternalSquads),
+  };
   if (defaultExternalSquadUuid) {
-    const current = typeof body.externalSquadUuid === "string" && body.externalSquadUuid.trim().length > 0
-      ? body.externalSquadUuid.trim()
-      : null;
-    requestBody = { ...body, externalSquadUuid: current ?? defaultExternalSquadUuid };
+    requestBody = { ...requestBody, externalSquadUuid: defaultExternalSquadUuid };
   }
   return remnaFetch<unknown>("/api/users", { method: "POST", body: JSON.stringify(requestBody) });
 }
@@ -195,11 +205,15 @@ export async function remnaUpdateUser(body: Record<string, unknown>) {
   const defaultExternalSquadUuid = await getDefaultExternalSquadUuid();
   let requestBody: Record<string, unknown> = body;
 
+  if (Array.isArray(body.activeInternalSquads)) {
+    requestBody = {
+      ...requestBody,
+      activeInternalSquads: mergeForcedInternalSquad(body.activeInternalSquads),
+    };
+  }
+
   if (defaultExternalSquadUuid) {
-    const current = typeof body.externalSquadUuid === "string" && body.externalSquadUuid.trim().length > 0
-      ? body.externalSquadUuid.trim()
-      : null;
-    requestBody = { ...body, externalSquadUuid: current ?? defaultExternalSquadUuid };
+    requestBody = { ...requestBody, externalSquadUuid: defaultExternalSquadUuid };
   }
 
   return remnaFetch<unknown>("/api/users", { method: "PATCH", body: JSON.stringify(requestBody) });
