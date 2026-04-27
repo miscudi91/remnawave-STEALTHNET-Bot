@@ -177,31 +177,15 @@ async function getDefaultExternalSquadUuid(): Promise<string | null> {
   }
 }
 
-function extractExternalSquads(data: unknown): string[] {
-  if (!data || typeof data !== "object") return [];
-  const o = data as Record<string, unknown>;
-  const resp = (o.response ?? o.data ?? o) as Record<string, unknown>;
-  const raw = resp?.activeExternalSquads;
-  if (!Array.isArray(raw)) return [];
-  const out: string[] = [];
-  for (const item of raw) {
-    const uuid =
-      item != null && typeof item === "object" && "uuid" in item
-        ? (item as Record<string, unknown>).uuid
-        : item;
-    if (typeof uuid === "string" && uuid.trim().length > 0) out.push(uuid.trim());
-  }
-  return out;
-}
-
 /** POST /api/users */
 export async function remnaCreateUser(body: Record<string, unknown>) {
   const defaultExternalSquadUuid = await getDefaultExternalSquadUuid();
   let requestBody: Record<string, unknown> = body;
   if (defaultExternalSquadUuid) {
-    const fromBody = Array.isArray(body.activeExternalSquads) ? body.activeExternalSquads : [];
-    const squads = [...new Set(fromBody.filter((x): x is string => typeof x === "string" && x.trim().length > 0).map((x) => x.trim()).concat(defaultExternalSquadUuid))];
-    requestBody = { ...body, activeExternalSquads: squads };
+    const current = typeof body.externalSquadUuid === "string" && body.externalSquadUuid.trim().length > 0
+      ? body.externalSquadUuid.trim()
+      : null;
+    requestBody = { ...body, externalSquadUuid: current ?? defaultExternalSquadUuid };
   }
   return remnaFetch<unknown>("/api/users", { method: "POST", body: JSON.stringify(requestBody) });
 }
@@ -212,18 +196,10 @@ export async function remnaUpdateUser(body: Record<string, unknown>) {
   let requestBody: Record<string, unknown> = body;
 
   if (defaultExternalSquadUuid) {
-    const fromBody = Array.isArray(body.activeExternalSquads) ? body.activeExternalSquads : [];
-    let sourceSquads = fromBody
-      .filter((x): x is string => typeof x === "string" && x.trim().length > 0)
-      .map((x) => x.trim());
-
-    if (sourceSquads.length === 0 && typeof body.uuid === "string" && body.uuid.trim().length > 0) {
-      const currentRes = await remnaGetUser(body.uuid.trim());
-      sourceSquads = extractExternalSquads(currentRes.data);
-    }
-
-    const squads = [...new Set(sourceSquads.concat(defaultExternalSquadUuid))];
-    requestBody = { ...body, activeExternalSquads: squads };
+    const current = typeof body.externalSquadUuid === "string" && body.externalSquadUuid.trim().length > 0
+      ? body.externalSquadUuid.trim()
+      : null;
+    requestBody = { ...body, externalSquadUuid: current ?? defaultExternalSquadUuid };
   }
 
   return remnaFetch<unknown>("/api/users", { method: "PATCH", body: JSON.stringify(requestBody) });
