@@ -36,6 +36,7 @@ import { getAuthUrl, exchangeCodeForToken, requestPayment, processPayment } from
 import { createYookassaPayment } from "../yookassa/yookassa.service.js";
 import { createCryptopayInvoice, isCryptopayConfigured } from "../cryptopay/cryptopay.service.js";
 import { createHeleketInvoice, isHeleketConfigured } from "../heleket/heleket.service.js";
+import { obfuscateSubscriptionUrl } from "./subscription-link-encrypt.service.js";
 
 /** Извлекает текущий expireAt из ответа Remna. Возвращает Date если в будущем, иначе null. */
 function extractCurrentExpireAt(data: unknown): Date | null {
@@ -1749,6 +1750,7 @@ clientRouter.get("/subscription", async (req, res) => {
   if (result.error) {
     return res.json({ subscription: null, tariffDisplayName: null, message: result.error });
   }
+  await obfuscateSubscriptionUrl(result.data);
   let tariffDisplayName = await resolveTariffDisplayName(result.data ?? null);
   // Если по Remna показывается «Триал» или «Тариф не выбран», но клиент оплачивал тариф — берём название из последней оплаты
   if (tariffDisplayName === "Тест" || tariffDisplayName === "Тариф не выбран") {
@@ -1790,6 +1792,7 @@ clientRouter.get("/subscription/by-uuid/:uuid", async (req, res) => {
   if (result.error) {
     return res.json({ subscription: null, tariffDisplayName: null, message: result.error });
   }
+  await obfuscateSubscriptionUrl(result.data);
   const tariffDisplayName = await resolveTariffDisplayName(result.data ?? null);
   return res.json({ subscription: result.data ?? null, tariffDisplayName });
 });
@@ -1816,6 +1819,7 @@ clientRouter.get("/subscription/all", async (req, res) => {
   // 1. Root подписка
   if (client.remnawaveUuid) {
     const rootResult = await remnaGetUser(client.remnawaveUuid);
+    await obfuscateSubscriptionUrl(rootResult.data);
     let rootTariff = await resolveTariffDisplayName(rootResult.data ?? null);
     if (rootTariff === "Тест" || rootTariff === "Тариф не выбран") {
       const lastPaidTariff = await prisma.payment.findFirst({
@@ -1856,6 +1860,7 @@ clientRouter.get("/subscription/all", async (req, res) => {
   for (const sec of secondaries) {
     if (!sec.remnawaveUuid) continue;
     const secResult = await remnaGetUser(sec.remnawaveUuid);
+    await obfuscateSubscriptionUrl(secResult.data);
     const secTariff = await resolveTariffDisplayName(secResult.data ?? null);
     items.push({
       type: "secondary",

@@ -22,6 +22,7 @@ import {
   isRemnaConfigured,
   remnaGetUser,
 } from "../remna/remna.client.js";
+import { obfuscateSubscriptionUrl } from "../client/subscription-link-encrypt.service.js";
 
 export const externalApiRouter = Router();
 externalApiRouter.use(requireApiKey);
@@ -328,6 +329,7 @@ externalApiRouter.get("/client/subscription", async (req: Request, res: Response
   if (result.error || !result.data) {
     return res.status(502).json({ error: "Failed to fetch subscription data" });
   }
+  await obfuscateSubscriptionUrl(result.data);
 
   const userData = result.data as { response?: Record<string, unknown> };
   const user = userData.response ?? userData;
