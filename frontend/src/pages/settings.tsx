@@ -205,6 +205,24 @@ export function SettingsPage() {
   const [landingQuickStartList, setLandingQuickStartList] = useState<string[]>(defaultQuickStartList);
   const token = state.accessToken!;
 
+  const pickSquadList = (raw: unknown, kind: "internal" | "external"): { uuid: string; name?: string }[] => {
+    if (Array.isArray(raw)) return raw as { uuid: string; name?: string }[];
+    if (!raw || typeof raw !== "object") return [];
+    const obj = raw as Record<string, unknown>;
+    const response = obj.response;
+    if (Array.isArray(response)) return response as { uuid: string; name?: string }[];
+    if (response && typeof response === "object") {
+      const ro = response as Record<string, unknown>;
+      const byKind = kind === "internal" ? ro.internalSquads : ro.externalSquads;
+      if (Array.isArray(byKind)) return byKind as { uuid: string; name?: string }[];
+      if (Array.isArray(ro.items)) return ro.items as { uuid: string; name?: string }[];
+    }
+    const rootByKind = kind === "internal" ? obj.internalSquads : obj.externalSquads;
+    if (Array.isArray(rootByKind)) return rootByKind as { uuid: string; name?: string }[];
+    if (Array.isArray(obj.items)) return obj.items as { uuid: string; name?: string }[];
+    return [];
+  };
+
   useEffect(() => {
     api.getSettings(token).then((data) => {
       setSettings({
@@ -335,23 +353,13 @@ export function SettingsPage() {
 
   useEffect(() => {
     api.getRemnaSquadsInternal(token).then((raw: unknown) => {
-      const res = raw as { response?: { internalSquads?: { uuid: string; name?: string }[] } | { uuid: string; name?: string }[] };
-      const items =
-        (res?.response && !Array.isArray(res.response) ? res.response.internalSquads : undefined)
-        ?? (Array.isArray(res?.response) ? res.response : undefined)
-        ?? (Array.isArray(res) ? res : []);
-      setSquads(Array.isArray(items) ? items : []);
+      setSquads(pickSquadList(raw, "internal"));
     }).catch(() => setSquads([]));
   }, [token]);
 
   useEffect(() => {
     api.getRemnaSquadsExternal(token).then((raw: unknown) => {
-      const res = raw as { response?: { externalSquads?: { uuid: string; name?: string }[] } | { uuid: string; name?: string }[] };
-      const items =
-        (res?.response && !Array.isArray(res.response) ? res.response.externalSquads : undefined)
-        ?? (Array.isArray(res?.response) ? res.response : undefined)
-        ?? (Array.isArray(res) ? res : []);
-      setExternalSquads(Array.isArray(items) ? items : []);
+      setExternalSquads(pickSquadList(raw, "external"));
     }).catch(() => setExternalSquads([]));
   }, [token]);
 
