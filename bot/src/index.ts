@@ -331,7 +331,7 @@ function bytesToGb(bytes: number): string {
 /** Прогресс-бар из символов (0..1), длина barLen */
 function progressBar(pct: number, barLen: number): string {
   const filled = Math.round(Math.max(0, Math.min(1, pct)) * barLen);
-  return "█".repeat(filled) + "в–вЂ?".repeat(barLen - filled);
+  return "█".repeat(filled) + "█".repeat(barLen - filled);
 }
 
 const DEFAULT_MENU_TEXTS: Record<string, string> = {
