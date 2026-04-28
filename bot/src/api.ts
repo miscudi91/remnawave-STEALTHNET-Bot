@@ -206,6 +206,22 @@ export async function getSubscriptionByUuid(
   return fetchJson("/api/client/subscription/by-uuid/" + encodeURIComponent(uuid), { token });
 }
 
+/** Все подписки клиента (root + secondary) */
+export async function getAllSubscriptions(
+  token: string
+): Promise<{
+  items: {
+    type: "root" | "secondary";
+    id: string;
+    subscriptionIndex: number | null;
+    subscription: unknown;
+    tariffDisplayName: string;
+    remnawaveUuid: string | null;
+  }[];
+}> {
+  return fetchJson("/api/client/subscription/all", { token });
+}
+
 /** Список устройств (HWID) пользователя в Remna */
 export async function getClientDevices(token: string): Promise<{ total: number; devices: { hwid: string; platform?: string; deviceModel?: string; createdAt?: string }[] }> {
   return fetchJson("/api/client/devices", { token });

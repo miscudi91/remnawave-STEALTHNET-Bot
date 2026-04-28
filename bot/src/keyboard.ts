@@ -60,7 +60,7 @@ const DEFAULT_BUTTONS: BotButtonConfig[] = [
   { id: "topup", visible: true, label: "💳 Пополнить баланс", order: 2, style: "success" },
   { id: "referral", visible: true, label: "🔗 Реферальная программа", order: 3, style: "primary" },
   { id: "trial", visible: true, label: "🎁 Бесплатный Тест", order: 4, style: "success" },
-  { id: "vpn", visible: true, label: "🌐 Подключиться к VPN", order: 5, style: "danger", onePerRow: true },
+  { id: "vpn", visible: true, label: "📋 Скопировать ссылку VPN", order: 5, style: "danger", onePerRow: true },
   { id: "cabinet", visible: true, label: "🌐 Web Кабинет", order: 6, style: "primary" },
   { id: "tickets", visible: true, label: "🎫 Тикеты", order: 6.5, style: "primary" },
   { id: "support", visible: true, label: "🆘 Поддержка", order: 7, style: "primary" },
