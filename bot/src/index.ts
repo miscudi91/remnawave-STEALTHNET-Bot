@@ -2923,8 +2923,11 @@ bot.on("callback_query:data", async (ctx) => {
         await ctx.answerCallbackQuery({ text: _t("vpn.link_unavailable", lang), show_alert: true }).catch(() => {});
         return;
       }
-      await ctx.reply(`СЂСџвЂњвЂ№ Р РЋРЎРѓРЎвЂ№Р В»Р С”Р В° Р Т‘Р В»РЎРЏ Р С”Р С•Р С—Р С‘РЎР‚Р С•Р Р†Р В°Р Р…Р С‘РЎРЏ:\n<code>${escapeHtml(vpnUrl)}</code>`, { parse_mode: "HTML" });
-      await ctx.answerCallbackQuery({ text: "Р РЋРЎРѓРЎвЂ№Р В»Р С”Р В° Р С•РЎвЂљР С—РЎР‚Р В°Р Р†Р В»Р ВµР Р…Р В°", show_alert: false }).catch(() => {});
+      const sent = await ctx.reply(`<code>${escapeHtml(vpnUrl)}</code>`, { parse_mode: "HTML" });
+      setTimeout(() => {
+        bot.api.deleteMessage(sent.chat.id, sent.message_id).catch(() => {});
+      }, 15000);
+      await ctx.answerCallbackQuery({ text: "Ссылка скопирована", show_alert: false }).catch(() => {});
       return;
     }
 
@@ -3029,8 +3032,11 @@ bot.on("callback_query:data", async (ctx) => {
           await ctx.answerCallbackQuery({ text: "Ссылка не найдена", show_alert: true }).catch(() => {});
           return;
         }
-        await ctx.reply(`Ссылка для копирования:\n<code>${escapeHtml(link)}</code>`, { parse_mode: "HTML" });
-        await ctx.answerCallbackQuery({ text: "Ссылка отправлена", show_alert: false }).catch(() => {});
+        const sent = await ctx.reply(`<code>${escapeHtml(link)}</code>`, { parse_mode: "HTML" });
+        setTimeout(() => {
+          bot.api.deleteMessage(sent.chat.id, sent.message_id).catch(() => {});
+        }, 15000);
+        await ctx.answerCallbackQuery({ text: "Ссылка скопирована", show_alert: false }).catch(() => {});
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : "Ошибка получения ссылки";
         await ctx.answerCallbackQuery({ text: msg.slice(0, 180), show_alert: true }).catch(() => {});
@@ -3064,7 +3070,7 @@ bot.on("callback_query:data", async (ctx) => {
             {
               inline_keyboard: [
                 [{ text: "СЂСџвЂњР† Р СџР С•Р Т‘Р С”Р В»РЎР‹РЎвЂЎР С‘РЎвЂљРЎРЉРЎРѓРЎРЏ Р С” VPN", url: remnaUrl }],
-                [{ text: "СЂСџвЂњвЂ№ Р РЋР С”Р С•Р С—Р С‘РЎР‚Р С•Р Р†Р В°РЎвЂљРЎРЉ РЎРѓРЎРѓРЎвЂ№Р В»Р С”РЎС“", callback_data: `gift:copy:${subscriptionId}` }],
+                [{ text: "📋 Скопировать ссылку", callback_data: `gift:copy:${subscriptionId}` }],
                 [{ text: config?.botBackLabel ?? "РІвЂ”Р‚РїС‘РЏ Р СњР В°Р В·Р В°Р Т‘", callback_data: "menu:gift" }],
               ],
             },
@@ -3106,8 +3112,11 @@ bot.on("callback_query:data", async (ctx) => {
           await ctx.answerCallbackQuery({ text: "Р РЋРЎРѓРЎвЂ№Р В»Р С”Р В° Р Р…Р Вµ Р Р…Р В°Р в„–Р Т‘Р ВµР Р…Р В°", show_alert: true }).catch(() => {});
           return;
         }
-        await ctx.reply(`Р РЋРЎРѓРЎвЂ№Р В»Р С”Р В° Р Т‘Р В»РЎРЏ Р С”Р С•Р С—Р С‘РЎР‚Р С•Р Р†Р В°Р Р…Р С‘РЎРЏ:\n<code>${escapeHtml(remnaUrl)}</code>`, { parse_mode: "HTML" });
-        await ctx.answerCallbackQuery({ text: "Р РЋРЎРѓРЎвЂ№Р В»Р С”Р В° Р С•РЎвЂљР С—РЎР‚Р В°Р Р†Р В»Р ВµР Р…Р В°", show_alert: false }).catch(() => {});
+        const sent = await ctx.reply(`<code>${escapeHtml(remnaUrl)}</code>`, { parse_mode: "HTML" });
+        setTimeout(() => {
+          bot.api.deleteMessage(sent.chat.id, sent.message_id).catch(() => {});
+        }, 15000);
+        await ctx.answerCallbackQuery({ text: "Ссылка скопирована", show_alert: false }).catch(() => {});
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : "Р С›РЎв‚¬Р С‘Р В±Р С”Р В° Р С—Р С•Р В»РЎС“РЎвЂЎР ВµР Р…Р С‘РЎРЏ РЎРѓРЎРѓРЎвЂ№Р В»Р С”Р С‘";
         await ctx.answerCallbackQuery({ text: msg.slice(0, 180), show_alert: true }).catch(() => {});
