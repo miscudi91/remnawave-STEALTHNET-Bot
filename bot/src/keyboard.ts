@@ -746,6 +746,7 @@ export function giftSubscriptionButtons(
     // остаётся только «Назад», без страницы подписки / Remna.
     rows.push([
       btn(`📲 Подписка #${idx}${statusLabel}`, `gift:connect:${sub.id}`, "primary", emojiIds?.connect),
+      btn("📋 Скопировать", `gift:copy:${sub.id}`, "primary"),
     ]);
     if (!sub.giftStatus) {
       rows.push([
