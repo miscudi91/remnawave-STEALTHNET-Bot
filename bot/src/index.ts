@@ -1,7 +1,7 @@
 /**
- * STEALTHNET 3.2.7 вЂ” Telegram-Р±РѕС‚
- * РџРѕР»РЅС‹Р№ С„СѓРЅРєС†РёРѕРЅР°Р» РєР°Р±РёРЅРµС‚Р°: РіР»Р°РІРЅР°СЏ, С‚Р°СЂРёС„С‹, РїСЂРѕС„РёР»СЊ, РїРѕРїРѕР»РЅРµРЅРёРµ, С‚СЂРёР°Р», СЂРµС„РµСЂР°Р»СЊРЅР°СЏ СЃСЃС‹Р»РєР°, VPN.
- * Р¦РІРµС‚РЅС‹Рµ РєРЅРѕРїРєРё: style primary / success / danger (Telegram Bot API).
+ * STEALTHNET 3.2.7 � Telegram-���
+ * ������ ���������� ��������: �������, ������, �������, ����������, �����, ����������� ������, VPN.
+ * ������� ������: style primary / success / danger (Telegram Bot API).
  */
 
 import "dotenv/config";
@@ -70,7 +70,7 @@ async function waitForApi(maxRetries = 10, delayMs = 3000): Promise<Awaited<Retu
       return await api.getPublicConfig();
     } catch {
       if (i < maxRetries) {
-        console.log(`[Bot] API РЅРµРґРѕСЃС‚СѓРїРµРЅ, РїРѕРІС‚РѕСЂ С‡РµСЂРµР· ${delayMs / 1000}СЃ (${i}/${maxRetries})вЂ¦`);
+        console.log(`[Bot] API ����������, ������ ����� ${delayMs / 1000}� (${i}/${maxRetries})�`);
         await new Promise((r) => setTimeout(r, delayMs));
       }
     }
@@ -85,22 +85,22 @@ async function createBotWithProxy(token: string): Promise<Bot> {
       const url = cfg.proxyUrl.trim();
       const lower = url.toLowerCase();
       if (lower.startsWith("http://") || lower.startsWith("https://")) {
-        console.log("[Proxy] Telegram Bot API С‡РµСЂРµР· HTTP РїСЂРѕРєСЃРё");
+        console.log("[Proxy] Telegram Bot API ����� HTTP ������");
         return new Bot(token, {
           client: { baseFetchConfig: { dispatcher: new UndiciProxyAgent(url) } as any },
         });
       }
       if (lower.startsWith("socks5://") || lower.startsWith("socks4://") || lower.startsWith("socks://")) {
-        console.log("[Proxy] Telegram Bot API С‡РµСЂРµР· SOCKS РїСЂРѕРєСЃРё");
+        console.log("[Proxy] Telegram Bot API ����� SOCKS ������");
         const agent = new SocksProxyAgent(url);
         return new Bot(token, {
           client: { baseFetchConfig: { agent } as any },
         });
       }
-      console.warn(`[Proxy] РќРµРёР·РІРµСЃС‚РЅС‹Р№ РїСЂРѕС‚РѕРєРѕР» РїСЂРѕРєСЃРё: ${url}, Р·Р°РїСѓСЃРє Р±РµР· РїСЂРѕРєСЃРё`);
+      console.warn(`[Proxy] ����������� �������� ������: ${url}, ������ ��� ������`);
     }
   } catch {
-    console.warn("[Bot] РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РєРѕРЅС„РёРі, Р·Р°РїСѓСЃРє Р±РµР· РїСЂРѕРєСЃРё");
+    console.warn("[Bot] �� ������� �������� ������, ������ ��� ������");
   }
   return new Bot(token);
 }
@@ -109,7 +109,7 @@ const bot = await createBotWithProxy(BOT_TOKEN);
 
 let BOT_USERNAME = "";
 
-// вЂ”вЂ”вЂ” РџСЂРёРЅСѓРґРёС‚РµР»СЊРЅР°СЏ РїРѕРґРїРёСЃРєР° РЅР° РєР°РЅР°Р» вЂ”вЂ”вЂ”
+// ��� �������������� �������� �� ����� ���
 
 type SubscriptionCheckState = "subscribed" | "not_subscribed" | "cannot_verify";
 
@@ -168,7 +168,7 @@ function parseForceChannelTarget(channelInput: string): ForceChannelTarget {
   return { chatId: null, joinUrl: null };
 }
 
-/** РџСЂРѕРІРµСЂСЏРµС‚, РїРѕРґРїРёСЃР°РЅ Р»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅР° СѓРєР°Р·Р°РЅРЅС‹Р№ РєР°РЅР°Р»/РіСЂСѓРїРїСѓ. */
+/** ���������, �������� �� ������������ �� ��������� �����/������. */
 async function checkUserSubscription(userId: number, channelInput: string): Promise<{ state: SubscriptionCheckState; target: ForceChannelTarget; error?: string }> {
   const target = parseForceChannelTarget(channelInput);
   if (!target.chatId) {
@@ -196,8 +196,8 @@ function subscribeKeyboard(channelInput: string, lang = "ru"): InlineMarkup {
 }
 
 /**
- * РџСЂРѕРІРµСЂСЏРµС‚ РїРѕРґРїРёСЃРєСѓ Рё, РµСЃР»Рё РЅРµ РїРѕРґРїРёСЃР°РЅ, РѕС‚РїСЂР°РІР»СЏРµС‚/СЂРµРґР°РєС‚РёСЂСѓРµС‚ СЃРѕРѕР±С‰РµРЅРёРµ.
- * Р’РѕР·РІСЂР°С‰Р°РµС‚ true РµСЃР»Рё РќР• РїРѕРґРїРёСЃР°РЅ (РЅСѓР¶РЅРѕ РїСЂРµСЂРІР°С‚СЊ РѕР±СЂР°Р±РѕС‚РєСѓ).
+ * ��������� �������� �, ���� �� ��������, ����������/����������� ���������.
+ * ���������� true ���� �� �������� (����� �������� ���������).
  */
 async function enforceSubscription(
   ctx: {
@@ -217,12 +217,12 @@ async function enforceSubscription(
   const msg = config.forceSubscribeMessage?.trim() || _t("subscribe.default_message", lang);
   if (result.state === "cannot_verify") {
     await ctx.reply(
-      `вљ пёЏ ${msg}\n\n${_t("subscribe.cannot_verify", lang)}`,
+      `?? ${msg}\n\n${_t("subscribe.cannot_verify", lang)}`,
       { reply_markup: subscribeKeyboard(channelId, lang) }
     );
     return true;
   }
-  await ctx.reply(`вљ пёЏ ${msg}`, { reply_markup: subscribeKeyboard(channelId, lang) });
+  await ctx.reply(`?? ${msg}`, { reply_markup: subscribeKeyboard(channelId, lang) });
   return true;
 }
 
@@ -239,7 +239,7 @@ type TariffItem = {
 };
 type TariffCategory = { id: string; name: string; emoji?: string; emojiKey?: string | null; tariffs: TariffItem[] };
 
-// РўРѕРєРµРЅС‹ РїРѕ telegram_id (РІ РїР°Р�?СЏС‚Рё; Р°РІС‚РѕР�?Р°С‚РёС‡РµСЃРєР°СЏ РїРµСЂРµР°РІС‚РѕСЂРёР·Р°С†РёСЏ РїСЂРё РїРѕС‚РµСЂРµ)
+// ������ �� telegram_id (� ������; �������������� ��������������� ��� ������)
 const tokenStore = new Map<number, string>();
 
 function getToken(userId: number): string | undefined {
@@ -251,8 +251,8 @@ function setToken(userId: number, token: string): void {
 }
 
 /**
- * РџРѕР»СѓС‡РёС‚СЊ С‚РѕРєРµРЅ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ. Р•СЃР»Рё С‚РѕРєРµРЅ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ (СЂРµСЃС‚Р°СЂС‚ Р±РѕС‚Р°, РїСЂРѕС‚СѓС… Рё С‚.Рґ.),
- * Р°РІС‚РѕР�?Р°С‚РёС‡РµСЃРєРё РїРµСЂРµР°РІС‚РѕСЂРёР·СѓРµС‚ С‡РµСЂРµР· registerByTelegram Рё РІРѕР·РІСЂР°С‰Р°РµС‚ СЃРІРµР¶РёР№ С‚РѕРєРµРЅ.
+ * �������� ����� ������������. ���� ����� ����������� (������� ����, ������ � �.�.),
+ * ������������� �������������� ����� registerByTelegram � ���������� ������ �����.
  */
 async function getOrRestoreToken(userId: number, username?: string): Promise<string | null> {
   const existing = tokenStore.get(userId);
@@ -274,30 +274,30 @@ async function getOrRestoreToken(userId: number, username?: string): Promise<str
   }
 }
 
-// РџРѕР»СЊР·РѕРІР°С‚РµР»Рё, РѕР¶РёРґР°СЋС‰РёРµ РІРІРѕРґР° РїСЂРѕР�?РѕРєРѕРґР°
+// ������������, ��������� ����� ���������
 const awaitingPromoCode = new Set<number>();
-// РђРєС‚РёРІРЅС‹Р№ РїСЂРѕР�?РѕРєРѕРґ РЅР° СЃРєРёРґРєСѓ (С…СЂР°РЅРёС‚СЃСЏ РґРѕ РѕРїР»Р°С‚С‹)
+// �������� �������� �� ������ (�������� �� ������)
 type DiscountInfo = { code: string; discountPercent?: number | null; discountFixed?: number | null };
 const activeDiscountCode = new Map<number, DiscountInfo>();
-// РћР¶РёРґР°РЅРёРµ РІРІРѕРґР° РїРѕРґР°СЂРѕС‡РЅРѕРіРѕ РєРѕРґР°
+// �������� ����� ����������� ����
 const awaitingGiftCode = new Set<number>();
 
-// РђРґР�?РёРЅ: РѕР¶РёРґР°РЅРёРµ РІРІРѕРґР° РїРѕРёСЃРєР°; РїРѕСЃР»РµРґРЅРёР№ РїРѕРёСЃРє РїРѕ userId РґР»СЏ РїР°РіРёРЅР°С†РёРё
+// �����: �������� ����� ������; ��������� ����� �� userId ��� ���������
 const awaitingAdminSearch = new Set<number>();
 const lastAdminSearch = new Map<number, string>();
-// РђРґР�?РёРЅ: РїРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР° РєР»РёРµРЅС‚Р° вЂ” РѕР¶РёРґР°РµР�? С‡РёСЃР»Рѕ
+// �����: ���������� ������� ������� � ������� �����
 const awaitingAdminBalance = new Map<number, string>();
-// РђРґР�?РёРЅ: СЂР°СЃСЃС‹Р»РєР° вЂ” РѕР¶РёРґР°РµР�? С‚РµРєСЃС‚ РёР»Рё С„РѕС‚Рѕ+РїРѕРґРїРёСЃСЊ, Р·Р°С‚РµР�? РєР°РЅР°Р»
+// �����: �������� � ������� ����� ��� ����+�������, ����� �����
 const awaitingBroadcastMessage = new Set<number>();
 type BroadcastPayload = { text: string; photoFileId?: string; buttonText?: string; buttonUrl?: string };
 const lastBroadcastMessage = new Map<number, string | BroadcastPayload>();
-// РђРґР�?РёРЅ: СЃРєРІР°РґС‹ вЂ” СЃРїРёСЃРѕРє РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ/СѓРґР°Р»РµРЅРёСЏ (clientId + items СЃ uuid/name)
+// �����: ������ � ������ ��� ����������/�������� (clientId + items � uuid/name)
 const lastSquadsForAdd = new Map<number, { clientId: string; items: { uuid: string; name: string }[] }>();
 const lastSquadsForRemove = new Map<number, { clientId: string; items: { uuid: string; name: string }[] }>();
-// РЈСЃС‚СЂРѕР№СЃС‚РІР° (HWID): СЃРїРёСЃРѕРє РґР»СЏ СЌРєСЂР°РЅР° В«РЈРґР°Р»РёС‚СЊ СѓСЃС‚СЂРѕР№СЃС‚РІРѕВ» (РёРЅРґРµРєСЃ РІ callback)
+// ���������� (HWID): ������ ��� ������ �������� ���������� (������ � callback)
 const lastDevicesList = new Map<number, { devices: { hwid: string; platform?: string; deviceModel?: string }[] }>();
 
-/** Р”РѕСЃС‚Р°С�?Р�? subscriptionUrl РёР· РѕС‚РІРµС‚Р° Remna */
+/** �������?� subscriptionUrl �� ������ Remna */
 function getSubscriptionUrl(sub: unknown): string | null {
   if (!sub || typeof sub !== "object") return null;
   const o = sub as Record<string, unknown>;
@@ -311,7 +311,7 @@ function getSubscriptionUrl(sub: unknown): string | null {
   return null;
 }
 
-/** Р”РѕСЃС‚Р°С�?Р�? РѕР±СЉРµРєС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР· РѕС‚РІРµС‚Р° Remna (response РёР»Рё data РёР»Рё СЃР°Р�? РѕР±СЉРµРєС‚) */
+/** �������?� ������ ������������ �� ������ Remna (response ��� data ��� ��� ������) */
 function getSubUser(sub: unknown): Record<string, unknown> | null {
   if (!sub || typeof sub !== "object") return null;
   const o = sub as Record<string, unknown>;
@@ -328,34 +328,34 @@ function bytesToGb(bytes: number): string {
   return (bytes / (1024 * 1024 * 1024)).toFixed(2);
 }
 
-/** РџСЂРѕРіСЂРµСЃСЃ-Р±Р°СЂ РёР· СЃРёР�?РІРѕР»РѕРІ (0..1), РґР»РёРЅР° barLen */
+/** ��������-��� �� �������� (0..1), ����� barLen */
 function progressBar(pct: number, barLen: number): string {
   const filled = Math.round(Math.max(0, Math.min(1, pct)) * barLen);
-  return "в–€".repeat(filled) + "в–�?".repeat(barLen - filled);
+  return "?".repeat(filled) + "��?".repeat(barLen - filled);
 }
 
 const DEFAULT_MENU_TEXTS: Record<string, string> = {
-  welcomeTitlePrefix: "рџ›Ў ",
-  welcomeGreeting: "рџ�?‹ Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ РІ ",
-  balancePrefix: "рџ’° Р�?Р°Р»Р°РЅСЃ: ",
-  tariffPrefix: "рџ’Ћ Р’Р°С€ С‚Р°СЂРёС„ : ",
-  subscriptionPrefix: "{{CHART}} РЎС‚Р°С‚СѓСЃ РїРѕРґРїРёСЃРєРё вЂ” ",
-  statusInactive: "{{STATUS_INACTIVE}} Р�?СЃС‚РµРєР»Р°",
-  statusActive: "{{STATUS_ACTIVE}} РђРєС‚РёРІРЅР°",
-  statusExpired: "{{STATUS_EXPIRED}} Р�?СЃС‚РµРєР»Р°",
-  statusLimited: "{{STATUS_LIMITED}} РћРіСЂР°РЅРёС‡РµРЅР°",
-  statusDisabled: "{{STATUS_DISABLED}} РћС‚РєР»СЋС‡РµРЅР°",
-  expirePrefix: "рџ“… РґРѕ ",
-  daysLeftPrefix: "вЏ° РѕСЃС‚Р°Р»РѕСЃСЊ ",
-  devicesLabel: "рџ“± РЈСЃС‚СЂРѕР№СЃС‚РІ: ",
-  devicesAvailable: " РґРѕСЃС‚СѓРїРЅРѕ",
-  trafficPrefix: "рџ“€ РўСЂР°С„РёРє вЂ” ",
-  linkLabel: "рџ”— РЎСЃС‹Р»РєР° РїРѕРґРєР»СЋС‡РµРЅРёСЏ:",
-  chooseAction: "Р’С‹Р±РµСЂРёС‚Рµ РґРµР№СЃС‚РІРёРµ:",
+  welcomeTitlePrefix: "?? ",
+  welcomeGreeting: "��?� ����� ���������� � ",
+  balancePrefix: "?? ��?�����: ",
+  tariffPrefix: "?? ��� ����� : ",
+  subscriptionPrefix: "{{CHART}} ������ �������� � ",
+  statusInactive: "{{STATUS_INACTIVE}} �������",
+  statusActive: "{{STATUS_ACTIVE}} �������",
+  statusExpired: "{{STATUS_EXPIRED}} �������",
+  statusLimited: "{{STATUS_LIMITED}} ����������",
+  statusDisabled: "{{STATUS_DISABLED}} ���������",
+  expirePrefix: "?? �� ",
+  daysLeftPrefix: "? �������� ",
+  devicesLabel: "?? ���������: ",
+  devicesAvailable: " ��������",
+  trafficPrefix: "?? ������ � ",
+  linkLabel: "?? ������ �����������:",
+  chooseAction: "�������� ��������:",
 };
 
-const DEFAULT_TARIFFS_TEXT = "РўР°СЂРёС„С‹\n\n{{CATEGORY}}\n{{TARIFFS}}\n\nР’С‹Р±РµСЂРёС‚Рµ С‚Р°СЂРёС„ РґР»СЏ РѕРїР»Р°С‚С‹:";
-const DEFAULT_PAYMENT_TEXT = "РћРїР»Р°С‚Р°: {{NAME}} вЂ” {{PRICE}}\n\n{{ACTION}}";
+const DEFAULT_TARIFFS_TEXT = "������\n\n{{CATEGORY}}\n{{TARIFFS}}\n\n�������� ����� ��� ������:";
+const DEFAULT_PAYMENT_TEXT = "������: {{NAME}} � {{PRICE}}\n\n{{ACTION}}";
 
 type BotTariffLineFields = {
   name?: boolean;
@@ -384,9 +384,9 @@ function formatDaysRu(days: number): string {
 
 const RESET_MODE_LABELS: Record<string, string> = {
   no_reset: "",
-  on_purchase: "СЃР±СЂРѕСЃ РїСЂРё РїРѕРєСѓРїРєРµ",
-  monthly: "СЃР±СЂРѕСЃ РµР¶РµР�?РµСЃСЏС‡РЅРѕ",
-  monthly_rolling: "СЃРєРѕР»СЊР·СЏС‰РёР№ Р�?РµСЃСЏС†",
+  on_purchase: "����� ��� �������",
+  monthly: "����� ����������",
+  monthly_rolling: "���������� �����",
 };
 
 function formatTariffLine(tariff: TariffItem, fields: Required<BotTariffLineFields>): string {
@@ -401,7 +401,7 @@ function formatTariffLine(tariff: TariffItem, fields: Required<BotTariffLineFiel
   }
   if (fields.trafficLimit) {
     const limit = tariff.trafficLimitBytes;
-    parts.push(limit == null ? "С‚СЂР°С„РёРє Р±РµР· Р»РёР�?РёС‚Р°" : `С‚СЂР°С„РёРє ${bytesToGb(limit)} GB`);
+    parts.push(limit == null ? "������ ��� ������" : `������ ${bytesToGb(limit)} GB`);
   }
   if (fields.trafficResetMode) {
     const label = RESET_MODE_LABELS[tariff.trafficResetMode ?? "no_reset"];
@@ -409,10 +409,10 @@ function formatTariffLine(tariff: TariffItem, fields: Required<BotTariffLineFiel
   }
   if (fields.deviceLimit) {
     const limit = tariff.deviceLimit;
-    parts.push(limit == null ? "СѓСЃС‚СЂРѕР№СЃС‚РІР° Р±РµР· Р»РёР�?РёС‚Р°" : `СѓСЃС‚СЂРѕР№СЃС‚РІР° ${limit}`);
+    parts.push(limit == null ? "���������� ��� ������" : `���������� ${limit}`);
   }
-  if (!parts.length) return `вЂў ${tariff.name}`;
-  return `вЂў ${parts.join(" вЂ” ")}`;
+  if (!parts.length) return `� ${tariff.name}`;
+  return `� ${parts.join(" � ")}`;
 }
 
 function renderTariffsText(template: string, category: string, tariffLines: string): string {
@@ -439,7 +439,7 @@ function buildPaymentMessage(
   discount?: { originalPrice: string; discountedPrice: string }
 ): { text: string; entities: CustomEmojiEntity[] } {
   const priceDisplay = discount
-    ? `${discount.originalPrice} в†’ ${discount.discountedPrice}`
+    ? `${discount.originalPrice} ? ${discount.discountedPrice}`
     : vars.price;
   const template = (config?.botPaymentText ?? "").trim() || DEFAULT_PAYMENT_TEXT;
   const base = renderPaymentText(template, { ...vars, price: priceDisplay });
@@ -465,7 +465,7 @@ type CustomEmojiEntity =
   | { type: "strikethrough"; offset: number; length: number }
   | { type: "bold"; offset: number; length: number };
 
-/** Р”Р»РёРЅР° РїРµСЂРІРѕРіРѕ СЃРёР�?РІРѕР»Р° РІ UTF-16 (РґР»СЏ entity) */
+/** ����� ������� ������� � UTF-16 (��� entity) */
 function firstCharLengthUtf16(s: string): number {
   if (!s.length) return 0;
   const cp = s.codePointAt(0);
@@ -473,13 +473,13 @@ function firstCharLengthUtf16(s: string): number {
 }
 
 const DEFAULT_EMOJI_UNICODE: Record<string, string> = {
-  PACKAGE: "рџ“¦", TARIFFS: "рџ“¦", CARD: "рџ’і", LINK: "рџ”—", PUZZLE: "рџ�?¤", PROFILE: "рџ�?¤",
-  TRIAL: "рџЋЃ", SERVERS: "рџЊђ", CONNECT: "рџЊђ",
-  CHART: "рџ“Љ",
-  STATUS_ACTIVE: "рџџЎ", STATUS_EXPIRED: "рџ”ґ", STATUS_INACTIVE: "рџ”ґ",
-  STATUS_LIMITED: "рџџЎ", STATUS_DISABLED: "рџ”ґ",
+  PACKAGE: "??", TARIFFS: "??", CARD: "??", LINK: "??", PUZZLE: "��?�", PROFILE: "��?�",
+  TRIAL: "??", SERVERS: "??", CONNECT: "??",
+  CHART: "??",
+  STATUS_ACTIVE: "??", STATUS_EXPIRED: "??", STATUS_INACTIVE: "??",
+  STATUS_LIMITED: "??", STATUS_DISABLED: "??",
 };
-const DEFAULT_CUSTOM_EMOJI_CHAR = "рџ™‚";
+const DEFAULT_CUSTOM_EMOJI_CHAR = "??";
 
 const DEFAULT_MENU_EMOJI_KEY_BY_ID: Record<string, string> = {
   tariffs: "PACKAGE",
@@ -509,14 +509,14 @@ function getMenuEmojiKey(
   return btn?.emojiKey || DEFAULT_MENU_EMOJI_KEY_BY_ID[menuId];
 }
 
-/** Р—Р°РіРѕР»РѕРІРѕРє СЃ СЌР�?РѕРґР·Рё: РµСЃР»Рё РІ botEmojis РµСЃС‚СЊ tgEmojiId РґР»СЏ РєР»СЋС‡Р° вЂ” РґРѕР±Р°РІР»СЏРµР�? entity (РїСЂРµР�?РёСѓР�?-СЌР�?РѕРґР·Рё РІ С‚РµРєСЃС‚Рµ). */
+/** ��������� � ������: ���� � botEmojis ���� tgEmojiId ��� ����� � ��������� entity (�������-������ � ������). */
 function titleWithEmoji(
   emojiKey: string,
   rest: string,
   botEmojis?: Record<string, { unicode?: string; tgEmojiId?: string }> | null
 ): { text: string; entities: CustomEmojiEntity[] } {
   const entry = botEmojis?.[emojiKey];
-  const unicode = entry?.unicode?.trim() || DEFAULT_EMOJI_UNICODE[emojiKey] || "вЂў";
+  const unicode = entry?.unicode?.trim() || DEFAULT_EMOJI_UNICODE[emojiKey] || "�";
   const space = rest.startsWith("\n") ? "" : " ";
   const text = unicode + space + rest;
   const entities: CustomEmojiEntity[] = [];
@@ -564,7 +564,7 @@ function titleWithEmojiAndCustomEmojis(
   botEmojis?: Record<string, { unicode?: string; tgEmojiId?: string }> | null
 ): { text: string; entities: CustomEmojiEntity[] } {
   const entry = botEmojis?.[emojiKey];
-  const unicode = entry?.unicode?.trim() || DEFAULT_EMOJI_UNICODE[emojiKey] || "вЂў";
+  const unicode = entry?.unicode?.trim() || DEFAULT_EMOJI_UNICODE[emojiKey] || "�";
   const space = rest.startsWith("\n") ? "" : " ";
   const leading = unicode + space;
   const { text: restText, entities: restEntities } = applyCustomEmojiPlaceholders(rest, botEmojis);
@@ -588,13 +588,13 @@ function titleWithOptionalEmoji(
   return titleWithEmojiAndCustomEmojis(emojiKey, rest, botEmojis);
 }
 
-/** РџРѕР»РЅС‹Р№ С‚РµРєСЃС‚ РіР»Р°РІРЅРѕРіРѕ Р�?РµРЅСЋ + entities РґР»СЏ РїСЂРµР�?РёСѓР�?-СЌР�?РѕРґР·Рё РІ С‚РµРєСЃС‚Рµ (РІР»Р°РґРµР»РµС† Р±РѕС‚Р° РґРѕР»Р¶РµРЅ РёР�?РµС‚СЊ Telegram Premium). */
+/** ������ ����� �������� ���� + entities ��� �������-������ � ������ (�������� ���� ������ ����� Telegram Premium). */
 function buildMainMenuText(opts: {
   serviceName: string;
   balance: number;
   currency: string;
   subscription: unknown;
-  /** РћС‚РѕР±СЂР°Р¶Р°РµР�?РѕРµ РёР�?СЏ С‚Р°СЂРёС„Р° СЃ Р±СЌРєРµРЅРґР°: РўСЂРёР°Р», РЅР°Р·РІР°РЅРёРµ СЃ СЃР°Р№С‚Р° РёР»Рё В«РўР°СЂРёС„ РЅРµ РІС‹Р±СЂР°РЅВ» */
+  /** ������������ ��� ������ � �������: �����, �������� � ����� ��� ������ �� ������� */
   tariffDisplayName?: string | null;
   menuTexts?: Record<string, string> | null;
   menuLineVisibility?: Record<string, boolean> | null;
@@ -602,7 +602,7 @@ function buildMainMenuText(opts: {
   botEmojis?: Record<string, { unicode?: string; tgEmojiId?: string }> | null;
 }): { text: string; entities: CustomEmojiEntity[] } {
   const { serviceName, balance, currency, subscription, tariffDisplayName, menuTexts, menuLineVisibility, menuTextCustomEmojiIds, botEmojis } = opts;
-  const name = serviceName.trim() || "РљР°Р±РёРЅРµС‚";
+  const name = serviceName.trim() || "�������";
   const balanceStr = formatMoney(balance, currency);
   const lines: string[] = [];
   const lineStartKeys: (string | null)[] = [];
@@ -622,7 +622,7 @@ function buildMainMenuText(opts: {
 
   const user = getSubUser(subscription);
   const url = getSubscriptionUrl(subscription);
-  const tariffName = (tariffDisplayName && tariffDisplayName.trim()) || "РўР°СЂРёС„ РЅРµ РІС‹Р±СЂР°РЅ";
+  const tariffName = (tariffDisplayName && tariffDisplayName.trim()) || "����� �� ������";
   pushLine("tariffPrefix", t(menuTexts, "tariffPrefix") + tariffName);
 
   if (!user && !url) {
@@ -642,10 +642,10 @@ function buildMainMenuText(opts: {
       : status === "EXPIRED" ? t(menuTexts, "statusExpired")
       : status === "LIMITED" ? t(menuTexts, "statusLimited")
       : status === "DISABLED" ? t(menuTexts, "statusDisabled")
-      : `рџџЎ ${status}`;
+      : `?? ${status}`;
     const expireStr = expireDate
       ? expireDate.toLocaleString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })
-      : "вЂ”";
+      : "�";
     const daysLeft =
       expireDate && expireDate > new Date()
         ? Math.max(0, Math.ceil((expireDate.getTime() - Date.now()) / (24 * 60 * 60 * 1000)))
@@ -654,7 +654,7 @@ function buildMainMenuText(opts: {
     pushLine("subscriptionPrefix", t(menuTexts, "subscriptionPrefix") + statusLabel);
     pushLine("expirePrefix", t(menuTexts, "expirePrefix") + expireStr);
     if (daysLeft != null) {
-      pushLine("daysLeftPrefix", t(menuTexts, "daysLeftPrefix") + `${daysLeft} ${daysLeft === 1 ? "РґРµРЅСЊ" : daysLeft < 5 ? "РґРЅСЏ" : "РґРЅРµР№"}`);
+      pushLine("daysLeftPrefix", t(menuTexts, "daysLeftPrefix") + `${daysLeft} ${daysLeft === 1 ? "����" : daysLeft < 5 ? "���" : "����"}`);
     }
     const deviceLimit = user?.hwidDeviceLimit ?? user?.deviceLimit ?? user?.device_limit;
     const devicesUsed = user?.devicesUsed ?? user?.devices_used;
@@ -675,7 +675,7 @@ function buildMainMenuText(opts: {
       const usedGb = bytesToGb(usedNum);
       const limitGb = bytesToGb(limitNum);
       const pctInt = Math.round(Math.min(100, pct * 100));
-      pushLine("trafficPrefix", t(menuTexts, "trafficPrefix") + `рџџў ${progressBar(pct, 14)} ${pctInt}% (${usedGb} / ${limitGb} GB)`);
+      pushLine("trafficPrefix", t(menuTexts, "trafficPrefix") + `?? ${progressBar(pct, 14)} ${pctInt}% (${usedGb} / ${limitGb} GB)`);
     } else if (Number.isFinite(usedNum)) {
       pushLine("trafficPrefix", t(menuTexts, "trafficPrefix") + ` ${bytesToGb(usedNum)} GB`);
     } else {
@@ -713,7 +713,7 @@ function buildMainMenuText(opts: {
 
 const TELEGRAM_CAPTION_MAX = 1024;
 
-/** Р›РѕРіРѕС‚РёРї РёР· РЅР°СЃС‚СЂРѕРµРє: data URL РёР»Рё URL в†’ РёСЃС‚РѕС‡РЅРёРє РґР»СЏ sendPhoto/sendAnimation Рё РїСЂРёР·РЅР°Рє GIF */
+/** ������� �� ��������: data URL ��� URL ? �������� ��� sendPhoto/sendAnimation � ������� GIF */
 function logoToMediaSource(logo: string | null | undefined): { source: InputFile | string; isGif: boolean } | null {
   if (!logo || !logo.trim()) return null;
   const s = logo.trim();
@@ -744,7 +744,7 @@ function logoToMediaSource(logo: string | null | undefined): { source: InputFile
   return null;
 }
 
-/** Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ: С‚РµРєСЃС‚ Рё РєР»Р°РІРёР°С‚СѓСЂР° (РµСЃР»Рё СЃ С„РѕС‚Рѕ/Р°РЅРёР�?Р°С†РёРµР№ вЂ” caption, РёРЅР°С‡Рµ text) */
+/** ������������� ���������: ����� � ���������� (���� � ����/��������� � caption, ����� text) */
 async function editMessageContent(ctx: {
   editMessageCaption: (opts: { caption: string; caption_entities?: CustomEmojiEntity[]; reply_markup?: InlineMarkup }) => Promise<unknown>;
   editMessageText: (text: string, opts?: { entities?: CustomEmojiEntity[]; reply_markup?: InlineMarkup }) => Promise<unknown>;
@@ -769,7 +769,7 @@ async function editMessageContent(ctx: {
 
 function formatMoney(amount: number, currency: string): string {
   const c = currency.toUpperCase();
-  const sym = c === "RUB" ? "в‚Ѕ" : c === "USD" ? "$" : "в‚ґ";
+  const sym = c === "RUB" ? "?" : c === "USD" ? "$" : "?";
   return `${amount} ${sym}`;
 }
 
@@ -780,7 +780,7 @@ function escapeHtml(text: string): string {
     .replaceAll(">", "&gt;");
 }
 
-/** Р Р°СЃСЃС‡РёС‚Р°С‚СЊ С†РµРЅСѓ СЃРѕ СЃРєРёРґРєРѕР№ */
+/** ���������� ���� �� ������� */
 function getDiscountedPrice(price: number, discount: DiscountInfo): number {
   let final = price;
   if (discount.discountPercent && discount.discountPercent > 0) final -= final * discount.discountPercent / 100;
@@ -834,7 +834,7 @@ function parseStartPayload(payload: string): {
   return out;
 }
 
-// вЂ”вЂ”вЂ” /start СЃ СЂРµС„РµСЂР°Р»СЊРЅС‹Р�? РєРѕРґРѕР�? (РЅР°РїСЂРёР�?РµСЂ /start ref_ABC123) РёР»Рё РїСЂРѕР�?Рѕ (/start promo_XXXX) РёР»Рё РєР°Р�?РїР°РЅРёСЏ (/start c_facebook_summer)
+// ��� /start � ����������� ����� (�������� /start ref_ABC123) ��� ����� (/start promo_XXXX) ��� �������� (/start c_facebook_summer)
 bot.command("start", async (ctx) => {
   const from = ctx.from;
   if (!from) return;
@@ -842,11 +842,11 @@ bot.command("start", async (ctx) => {
   const telegramUsername = from.username ?? undefined;
   const payload = ctx.match?.trim() || "";
 
-  // РЎР±СЂР°СЃС‹РІР°РµР�? СЃРѕСЃС‚РѕСЏРЅРёРµ СЂР°СЃСЃС‹Р»РєРё, С‡С‚РѕР±С‹ Р±Р°РЅРЅРµСЂ/С„РѕС‚Рѕ РЅРµ В«Р·Р°Р»РёРїР°Р»РѕВ»
+  // ���������� ��������� ��������, ����� ������/���� �� ���������
   lastBroadcastMessage.delete(from.id);
   awaitingBroadcastMessage.delete(from.id);
 
-  // Deep-link Р°РІС‚РѕСЂРёР·Р°С†РёСЏ РЅР° СЃР°Р№С‚Рµ: /start auth_TOKEN
+  // Deep-link ����������� �� �����: /start auth_TOKEN
   if (/^auth_/i.test(payload)) {
     const lang = getUserLang(from.id);
     const authToken = payload.replace(/^auth_/i, "");
@@ -871,7 +871,7 @@ bot.command("start", async (ctx) => {
     return;
   }
 
-  // РћРїСЂРµРґРµР»СЏРµР�? С‚РёРї deeplink
+  // ���������� ��� deeplink
   const isPromo = /^promo_/i.test(payload);
   const promoCode = isPromo ? payload.replace(/^promo_/i, "") : undefined;
   const parsed = parseStartPayload(payload);
@@ -880,7 +880,7 @@ bot.command("start", async (ctx) => {
   try {
     const config = await api.getPublicConfig();
     if (config?.translations) setTranslations(config.translations);
-    const name = config?.serviceName?.trim() || "РљР°Р±РёРЅРµС‚";
+    const name = config?.serviceName?.trim() || "�������";
 
     const auth = await api.registerByTelegram({
       telegramId,
@@ -899,20 +899,20 @@ bot.command("start", async (ctx) => {
     const client = auth.client;
     if (client?.preferredLang) setUserLang(from.id, client.preferredLang);
 
-    // Р•СЃР»Рё СЌС‚Рѕ РїСЂРѕР�?Рѕ-СЃСЃС‹Р»РєР° вЂ” Р°РєС‚РёРІРёСЂСѓРµР�? РїСЂРѕР�?РѕРєРѕРґ
+    // ���� ��� �����-������ � ���������� ��������
     if (promoCode) {
       try {
         const result = await api.activatePromo(auth.token, promoCode);
-        await ctx.reply(`вњ… ${result.message}\n\nРќР°Р¶Р�?РёС‚Рµ /start С‡С‚РѕР±С‹ РѕС‚РєСЂС‹С‚СЊ Р�?РµРЅСЋ.`);
+        await ctx.reply(`? ${result.message}\n\n������� /start ����� ������� ����.`);
         return;
       } catch (promoErr: unknown) {
-        const promoMsg = promoErr instanceof Error ? promoErr.message : "РћС€РёР±РєР° Р°РєС‚РёРІР°С†РёРё РїСЂРѕР�?РѕРєРѕРґР°";
-        await ctx.reply(`вќЊ ${promoMsg}\n\nРќР°Р¶Р�?РёС‚Рµ /start С‡С‚РѕР±С‹ РѕС‚РєСЂС‹С‚СЊ Р�?РµРЅСЋ.`);
+        const promoMsg = promoErr instanceof Error ? promoErr.message : "������ ��������� ���������";
+        await ctx.reply(`? ${promoMsg}\n\n������� /start ����� ������� ����.`);
         return;
       }
     }
 
-    // РџСЂРѕРІРµСЂРєР° РїРѕРґРїРёСЃРєРё РЅР° РєР°РЅР°Р»
+    // �������� �������� �� �����
     if (await enforceSubscription(ctx, config)) return;
 
     const [subRes, proxyRes, singboxRes] = await Promise.all([
@@ -958,7 +958,7 @@ bot.command("start", async (ctx) => {
     });
     const isBotAdmin = config?.botAdminTelegramIds?.includes(String(from.id)) ?? false;
     if (isBotAdmin) {
-      markup.inline_keyboard.push([{ text: "вљ™пёЏ РџР°РЅРµР»СЊ Р°РґР�?РёРЅР°", callback_data: "admin:menu" }]);
+      markup.inline_keyboard.push([{ text: "?? ������ ������", callback_data: "admin:menu" }]);
     }
 
     const media = logoToMediaSource(config?.logoBot);
@@ -973,12 +973,12 @@ bot.command("start", async (ctx) => {
       await ctx.reply(text, { entities: entities.length ? entities : undefined, reply_markup: markup });
     }
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РІС…РѕРґР°";
-    await ctx.reply(`вќЊ ${msg}`);
+    const msg = e instanceof Error ? e.message : "������ �����";
+    await ctx.reply(`? ${msg}`);
   }
 });
 
-// вЂ”вЂ”вЂ” /link РљРћР” вЂ” РїСЂРёРІСЏР·РєР° Telegram Рє Р°РєРєР°СѓРЅС‚Сѓ (РєРѕРґ РёР· РєР°Р±РёРЅРµС‚Р° РЅР° СЃР°Р№С‚Рµ)
+// ��� /link ��� � �������� Telegram � �������� (��� �� �������� �� �����)
 bot.command("link", async (ctx) => {
   const from = ctx.from;
   if (!from) return;
@@ -993,22 +993,22 @@ bot.command("link", async (ctx) => {
     await ctx.reply(_t("link.success", lang));
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : _t("error_generic", lang);
-    await ctx.reply(`вќЊ ${msg}`);
+    await ctx.reply(`? ${msg}`);
   }
 });
 
-// вЂ”вЂ”вЂ” Callback: Р�?РµРЅСЋ Рё РґРµР№СЃС‚РІРёСЏ
+// ��� Callback: ���� � ��������
 bot.on("callback_query:data", async (ctx) => {
   const data = ctx.callbackQuery.data;
   const userId = ctx.from?.id;
   if (!userId) return;
   await ctx.answerCallbackQuery().catch(() => {});
 
-  // РђРґР�?РёРЅ-РїР°РЅРµР»СЊ РІ Р±РѕС‚Рµ (РЅРµ С‚СЂРµР±СѓРµС‚ С‚РѕРєРµРЅР° РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ)
+  // �����-������ � ���� (�� ������� ������ ������������)
   if (data.startsWith("admin:")) {
     const config = await api.getPublicConfig();
     if (!config?.botAdminTelegramIds?.includes(String(userId))) {
-      await ctx.answerCallbackQuery({ text: "Р”РѕСЃС‚СѓРї Р·Р°РїСЂРµС‰С�?РЅ", show_alert: true }).catch(() => {});
+      await ctx.answerCallbackQuery({ text: "������ ��������?�", show_alert: true }).catch(() => {});
       return;
     }
     if (data === "admin:menu") {
@@ -1021,39 +1021,39 @@ bot.on("callback_query:data", async (ctx) => {
       lastSquadsForRemove.delete(userId);
       const markup: InlineMarkup = {
         inline_keyboard: [
-          [{ text: "рџ“Љ РЎС‚Р°С‚РёСЃС‚РёРєР°", callback_data: "admin:stats" }],
-          [{ text: "рџ”” РЈРІРµРґРѕР�?Р»РµРЅРёСЏ", callback_data: "admin:notifications" }],
-          [{ text: "рџ�?Ґ РљР»РёРµРЅС‚С‹", callback_data: "admin:clients:1" }],
-          [{ text: "рџ”Ќ РџРѕРёСЃРє РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ", callback_data: "admin:search" }],
+          [{ text: "?? ����������", callback_data: "admin:stats" }],
+          [{ text: "?? �����������", callback_data: "admin:notifications" }],
+          [{ text: "��?� �������", callback_data: "admin:clients:1" }],
+          [{ text: "?? ����� ������������", callback_data: "admin:search" }],
           [
-            { text: "рџ’і РћР¶РёРґР°СЋС‚ РѕРїР»Р°С‚С‹", callback_data: "admin:payments:pending:1" },
-            { text: "рџ’° РџРѕСЃР»РµРґРЅРёРµ РїР»Р°С‚РµР¶Рё", callback_data: "admin:payments:paid:1" },
+            { text: "?? ������� ������", callback_data: "admin:payments:pending:1" },
+            { text: "?? ��������� �������", callback_data: "admin:payments:paid:1" },
           ],
-          [{ text: "рџ“ў Р Р°СЃСЃС‹Р»РєР°", callback_data: "admin:broadcast" }],
-          [{ text: "в—ЂпёЏ Р’ Р�?РµРЅСЋ", callback_data: "menu:main" }],
+          [{ text: "?? ��������", callback_data: "admin:broadcast" }],
+          [{ text: "?? � ����", callback_data: "menu:main" }],
         ],
       };
-      await editMessageContent(ctx, "вљ™пёЏ РџР°РЅРµР»СЊ Р°РґР�?РёРЅР°\n\nР’С‹Р±РµСЂРёС‚Рµ СЂР°Р·РґРµР»:", markup);
+      await editMessageContent(ctx, "?? ������ ������\n\n�������� ������:", markup);
       return;
     }
     if (data === "admin:notifications") {
       const settings = await api.getBotAdminNotificationSettings(userId);
       const s = settings;
-      const yesNo = (v: boolean) => (v ? "Р’РєР»" : "Р’С‹РєР»");
+      const yesNo = (v: boolean) => (v ? "���" : "����");
       const text =
-        "рџ”” РќР°СЃС‚СЂРѕР№РєРё СѓРІРµРґРѕР�?Р»РµРЅРёР№\n\n" +
-        `РџРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР°: ${yesNo(s.notifyBalanceTopup)}\n` +
-        `РћРїР»Р°С‚Р° С‚Р°СЂРёС„РѕРІ: ${yesNo(s.notifyTariffPayment)}\n` +
-        `РќРѕРІС‹Рµ РєР»РёРµРЅС‚С‹: ${yesNo(s.notifyNewClient)}\n` +
-        `РќРѕРІС‹Рµ С‚РёРєРµС‚С‹: ${yesNo(s.notifyNewTicket)}\n\n` +
-        "РќР°Р¶Р�?РёС‚Рµ РЅР° РїСѓРЅРєС‚ РЅРёР¶Рµ, С‡С‚РѕР±С‹ РїРµСЂРµРєР»СЋС‡РёС‚СЊ.";
+        "?? ��������� �����������\n\n" +
+        `���������� �������: ${yesNo(s.notifyBalanceTopup)}\n` +
+        `������ �������: ${yesNo(s.notifyTariffPayment)}\n` +
+        `����� �������: ${yesNo(s.notifyNewClient)}\n` +
+        `����� ������: ${yesNo(s.notifyNewTicket)}\n\n` +
+        "������� �� ����� ����, ����� �����������.";
       const markup: InlineMarkup = {
         inline_keyboard: [
-          [{ text: `рџ’° РџРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР°: ${yesNo(s.notifyBalanceTopup)}`, callback_data: "admin:notif:balance" }],
-          [{ text: `рџ“¦ РћРїР»Р°С‚Р° С‚Р°СЂРёС„РѕРІ: ${yesNo(s.notifyTariffPayment)}`, callback_data: "admin:notif:tariff" }],
-          [{ text: `рџ�?¤ РќРѕРІС‹Рµ РєР»РёРµРЅС‚С‹: ${yesNo(s.notifyNewClient)}`, callback_data: "admin:notif:newclient" }],
-          [{ text: `рџЋ« РќРѕРІС‹Рµ С‚РёРєРµС‚С‹: ${yesNo(s.notifyNewTicket)}`, callback_data: "admin:notif:newticket" }],
-          [{ text: "в—ЂпёЏ Р’ Р°РґР�?РёРЅРєСѓ", callback_data: "admin:menu" }],
+          [{ text: `?? ���������� �������: ${yesNo(s.notifyBalanceTopup)}`, callback_data: "admin:notif:balance" }],
+          [{ text: `?? ������ �������: ${yesNo(s.notifyTariffPayment)}`, callback_data: "admin:notif:tariff" }],
+          [{ text: `��?� ����� �������: ${yesNo(s.notifyNewClient)}`, callback_data: "admin:notif:newclient" }],
+          [{ text: `?? ����� ������: ${yesNo(s.notifyNewTicket)}`, callback_data: "admin:notif:newticket" }],
+          [{ text: "?? � �������", callback_data: "admin:menu" }],
         ],
       };
       await editMessageContent(ctx, text, markup);
@@ -1074,21 +1074,21 @@ bot.on("callback_query:data", async (ctx) => {
       }
       const updated = await api.patchBotAdminNotificationSettings(userId, payload);
       const s = updated;
-      const yesNo = (v: boolean) => (v ? "Р’РєР»" : "Р’С‹РєР»");
+      const yesNo = (v: boolean) => (v ? "���" : "����");
       const text =
-        "рџ”” РќР°СЃС‚СЂРѕР№РєРё СѓРІРµРґРѕР�?Р»РµРЅРёР№\n\n" +
-        `РџРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР°: ${yesNo(s.notifyBalanceTopup)}\n` +
-        `РћРїР»Р°С‚Р° С‚Р°СЂРёС„РѕРІ: ${yesNo(s.notifyTariffPayment)}\n` +
-        `РќРѕРІС‹Рµ РєР»РёРµРЅС‚С‹: ${yesNo(s.notifyNewClient)}\n` +
-        `РќРѕРІС‹Рµ С‚РёРєРµС‚С‹: ${yesNo(s.notifyNewTicket)}\n\n` +
-        "РќР°Р¶Р�?РёС‚Рµ РЅР° РїСѓРЅРєС‚ РЅРёР¶Рµ, С‡С‚РѕР±С‹ РїРµСЂРµРєР»СЋС‡РёС‚СЊ.";
+        "?? ��������� �����������\n\n" +
+        `���������� �������: ${yesNo(s.notifyBalanceTopup)}\n` +
+        `������ �������: ${yesNo(s.notifyTariffPayment)}\n` +
+        `����� �������: ${yesNo(s.notifyNewClient)}\n` +
+        `����� ������: ${yesNo(s.notifyNewTicket)}\n\n` +
+        "������� �� ����� ����, ����� �����������.";
       const markup: InlineMarkup = {
         inline_keyboard: [
-          [{ text: `рџ’° РџРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР°: ${yesNo(s.notifyBalanceTopup)}`, callback_data: "admin:notif:balance" }],
-          [{ text: `рџ“¦ РћРїР»Р°С‚Р° С‚Р°СЂРёС„РѕРІ: ${yesNo(s.notifyTariffPayment)}`, callback_data: "admin:notif:tariff" }],
-          [{ text: `рџ�?¤ РќРѕРІС‹Рµ РєР»РёРµРЅС‚С‹: ${yesNo(s.notifyNewClient)}`, callback_data: "admin:notif:newclient" }],
-          [{ text: `рџЋ« РќРѕРІС‹Рµ С‚РёРєРµС‚С‹: ${yesNo(s.notifyNewTicket)}`, callback_data: "admin:notif:newticket" }],
-          [{ text: "в—ЂпёЏ Р’ Р°РґР�?РёРЅРєСѓ", callback_data: "admin:menu" }],
+          [{ text: `?? ���������� �������: ${yesNo(s.notifyBalanceTopup)}`, callback_data: "admin:notif:balance" }],
+          [{ text: `?? ������ �������: ${yesNo(s.notifyTariffPayment)}`, callback_data: "admin:notif:tariff" }],
+          [{ text: `��?� ����� �������: ${yesNo(s.notifyNewClient)}`, callback_data: "admin:notif:newclient" }],
+          [{ text: `?? ����� ������: ${yesNo(s.notifyNewTicket)}`, callback_data: "admin:notif:newticket" }],
+          [{ text: "?? � �������", callback_data: "admin:menu" }],
         ],
       };
       await editMessageContent(ctx, text, markup);
@@ -1098,8 +1098,8 @@ bot.on("callback_query:data", async (ctx) => {
       awaitingAdminSearch.add(userId);
       await editMessageContent(
         ctx,
-        "рџ”Ќ РџРѕРёСЃРє РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ\n\nР’РІРµРґРёС‚Рµ Telegram ID, @username РёР»Рё email:",
-        { inline_keyboard: [[{ text: "в—ЂпёЏ РћС‚Р�?РµРЅР°", callback_data: "admin:menu" }]] }
+        "?? ����� ������������\n\n������� Telegram ID, @username ��� email:",
+        { inline_keyboard: [[{ text: "?? ������", callback_data: "admin:menu" }]] }
       );
       return;
     }
@@ -1108,9 +1108,9 @@ bot.on("callback_query:data", async (ctx) => {
       const u = stats.users;
       const s = stats.sales;
       const text =
-        `рџ“Љ РЎС‚Р°С‚РёСЃС‚РёРєР°\n\nрџ�?Ґ РџРѕР»СЊР·РѕРІР°С‚РµР»Рё: ${u.total}\nРЎ Remna: ${u.withRemna}\nРќРѕРІС‹С… Р·Р° 7 РґРЅ.: ${u.newLast7Days}\nРќРѕРІС‹С… Р·Р° 30 РґРЅ.: ${u.newLast30Days}\n\n` +
-        `рџ’° РџСЂРѕРґР°Р¶Рё (РІСЃРµРіРѕ): ${s.totalAmount} в‚Ѕ (${s.totalCount})\nР—Р° 7 РґРЅ.: ${s.last7DaysAmount} в‚Ѕ (${s.last7DaysCount})\nР—Р° 30 РґРЅ.: ${s.last30DaysAmount} в‚Ѕ (${s.last30DaysCount})`;
-      const back: InlineMarkup = { inline_keyboard: [[{ text: "в—ЂпёЏ Р’ Р°РґР�?РёРЅРєСѓ", callback_data: "admin:menu" }]] };
+        `?? ����������\n\n��?� ������������: ${u.total}\n� Remna: ${u.withRemna}\n����� �� 7 ��.: ${u.newLast7Days}\n����� �� 30 ��.: ${u.newLast30Days}\n\n` +
+        `?? ������� (�����): ${s.totalAmount} ? (${s.totalCount})\n�� 7 ��.: ${s.last7DaysAmount} ? (${s.last7DaysCount})\n�� 30 ��.: ${s.last30DaysAmount} ? (${s.last30DaysCount})`;
+      const back: InlineMarkup = { inline_keyboard: [[{ text: "?? � �������", callback_data: "admin:menu" }]] };
       await editMessageContent(ctx, text, back);
       return;
     }
@@ -1118,27 +1118,27 @@ bot.on("callback_query:data", async (ctx) => {
       const suffix = data.slice("admin:clients:".length);
       if (suffix === "clear") {
         lastAdminSearch.delete(userId);
-        // РџРѕРєР°Р·Р°С‚СЊ РїРµСЂРІСѓСЋ СЃС‚СЂР°РЅРёС†Сѓ Р±РµР· РїРѕРёСЃРєР°
+        // �������� ������ �������� ��� ������
         const { items, total, limit } = await api.getBotAdminClients(userId, 1);
         const totalPages = Math.max(1, Math.ceil(total / limit));
-        let msg = `рџ�?Ґ РљР»РёРµРЅС‚С‹ (${total})\n\n`;
+        let msg = `��?� ������� (${total})\n\n`;
         items.forEach((c, i) => {
           const label = c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8);
-          msg += `${i + 1}. ${label} ${c.isBlocked ? "рџљ«" : ""}\n`;
+          msg += `${i + 1}. ${label} ${c.isBlocked ? "??" : ""}\n`;
         });
-        msg += `\nРЎС‚СЂ. 1/${totalPages}`;
+        msg += `\n���. 1/${totalPages}`;
         const rows: InlineMarkup["inline_keyboard"] = [];
         items.forEach((c) => {
           rows.push([
             {
-              text: `${c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8)} ${c.isBlocked ? "рџљ«" : ""}`,
+              text: `${c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8)} ${c.isBlocked ? "??" : ""}`,
               callback_data: `admin:client:${c.id}`,
             },
           ]);
         });
         const nav: InlineMarkup["inline_keyboard"][0] = [];
-        nav.push({ text: "в—ЂпёЏ Р’ Р°РґР�?РёРЅРєСѓ", callback_data: "admin:menu" });
-        if (totalPages > 1) nav.push({ text: "Р’РїРµСЂС�?Рґ в–¶", callback_data: "admin:clients:2" });
+        nav.push({ text: "?? � �������", callback_data: "admin:menu" });
+        if (totalPages > 1) nav.push({ text: "������?� ?", callback_data: "admin:clients:2" });
         rows.push(nav);
         await editMessageContent(ctx, msg, { inline_keyboard: rows });
         return;
@@ -1147,26 +1147,26 @@ bot.on("callback_query:data", async (ctx) => {
       const search = lastAdminSearch.get(userId);
       const { items, total, limit } = await api.getBotAdminClients(userId, page, search);
       const totalPages = Math.max(1, Math.ceil(total / limit));
-      let msg = search ? `рџ�?Ґ РџРѕРёСЃРє В«${search}В» (${total})\n\n` : `рџ�?Ґ РљР»РёРµРЅС‚С‹ (${total})\n\n`;
+      let msg = search ? `��?� ����� �${search}� (${total})\n\n` : `��?� ������� (${total})\n\n`;
       items.forEach((c, i) => {
         const label = c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8);
-        msg += `${(page - 1) * limit + i + 1}. ${label} ${c.isBlocked ? "рџљ«" : ""}\n`;
+        msg += `${(page - 1) * limit + i + 1}. ${label} ${c.isBlocked ? "??" : ""}\n`;
       });
-      msg += `\nРЎС‚СЂ. ${page}/${totalPages}`;
+      msg += `\n���. ${page}/${totalPages}`;
       const rows: InlineMarkup["inline_keyboard"] = [];
       items.forEach((c) => {
         rows.push([
           {
-            text: `${c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8)} ${c.isBlocked ? "рџљ«" : ""}`,
+            text: `${c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8)} ${c.isBlocked ? "??" : ""}`,
             callback_data: `admin:client:${c.id}`,
           },
         ]);
       });
       const nav: InlineMarkup["inline_keyboard"][0] = [];
-      if (page > 1) nav.push({ text: "в—Ђ РќР°Р·Р°Рґ", callback_data: `admin:clients:${page - 1}` });
-      nav.push({ text: "в—ЂпёЏ Р’ Р°РґР�?РёРЅРєСѓ", callback_data: "admin:menu" });
-      if (search) nav.push({ text: "вњ– РЎР±СЂРѕСЃРёС‚СЊ РїРѕРёСЃРє", callback_data: "admin:clients:clear" });
-      if (page < totalPages) nav.push({ text: "Р’РїРµСЂС�?Рґ в–¶", callback_data: `admin:clients:${page + 1}` });
+      if (page > 1) nav.push({ text: "? �����", callback_data: `admin:clients:${page - 1}` });
+      nav.push({ text: "?? � �������", callback_data: "admin:menu" });
+      if (search) nav.push({ text: "? �������� �����", callback_data: "admin:clients:clear" });
+      if (page < totalPages) nav.push({ text: "������?� ?", callback_data: `admin:clients:${page + 1}` });
       rows.push(nav);
       await editMessageContent(ctx, msg, { inline_keyboard: rows });
       return;
@@ -1175,34 +1175,34 @@ bot.on("callback_query:data", async (ctx) => {
       const clientId = data.slice("admin:client:".length);
       if (!clientId) return;
       const client = await api.getBotAdminClient(userId, clientId);
-      const created = client.createdAt ? new Date(client.createdAt).toLocaleString("ru-RU") : "вЂ”";
-      let text = `рџ�?¤ ${client.email || client.telegramUsername || client.telegramId || client.id}\n\n`;
-      text += `ID: ${client.id}\nР�?Р°Р»Р°РЅСЃ: ${client.balance}\nР РµС„РµСЂР°Р»РѕРІ: ${client._count?.referrals ?? 0}\nРЎРѕР·РґР°РЅ: ${created}\n`;
-      if (client.isBlocked) text += `\nрџљ« Р—Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ${client.blockReason ? `: ${client.blockReason}` : ""}`;
+      const created = client.createdAt ? new Date(client.createdAt).toLocaleString("ru-RU") : "�";
+      let text = `��?� ${client.email || client.telegramUsername || client.telegramId || client.id}\n\n`;
+      text += `ID: ${client.id}\n��?�����: ${client.balance}\n���������: ${client._count?.referrals ?? 0}\n������: ${created}\n`;
+      if (client.isBlocked) text += `\n?? ������������${client.blockReason ? `: ${client.blockReason}` : ""}`;
       const kb: InlineMarkup["inline_keyboard"] = [];
       if (client.isBlocked) {
-        kb.push([{ text: "вњ… Р Р°Р·Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ", callback_data: `admin:unblock:${client.id}` }]);
+        kb.push([{ text: "? ��������������", callback_data: `admin:unblock:${client.id}` }]);
       } else {
-        kb.push([{ text: "рџљ« Р—Р°Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ", callback_data: `admin:block:${client.id}` }]);
+        kb.push([{ text: "?? �������������", callback_data: `admin:block:${client.id}` }]);
       }
-      kb.push([{ text: "рџ’µ РџРѕРїРѕР»РЅРёС‚СЊ Р±Р°Р»Р°РЅСЃ", callback_data: `admin:balance:${client.id}` }]);
+      kb.push([{ text: "?? ��������� ������", callback_data: `admin:balance:${client.id}` }]);
       if (client.remnawaveUuid) {
         kb.push(
           [
-            { text: "рџ”„ РћС‚РѕР·РІР°С‚СЊ РїРѕРґРїРёСЃРєСѓ", callback_data: `admin:remna:revoke:${client.id}` },
-            { text: "вЏё РћС‚РєР»СЋС‡РёС‚СЊ Remna", callback_data: `admin:remna:disable:${client.id}` },
+            { text: "?? �������� ��������", callback_data: `admin:remna:revoke:${client.id}` },
+            { text: "? ��������� Remna", callback_data: `admin:remna:disable:${client.id}` },
           ],
           [
-            { text: "в–¶ Р’РєР»СЋС‡РёС‚СЊ Remna", callback_data: `admin:remna:enable:${client.id}` },
-            { text: "рџ“Љ РЎР±СЂРѕСЃРёС‚СЊ С‚СЂР°С„РёРє", callback_data: `admin:remna:reset:${client.id}` },
+            { text: "? �������� Remna", callback_data: `admin:remna:enable:${client.id}` },
+            { text: "?? �������� ������", callback_data: `admin:remna:reset:${client.id}` },
           ],
           [
-            { text: "вћ• Р”РѕР±Р°РІРёС‚СЊ СЃРєРІР°Рґ", callback_data: `admin:squad:add:${client.id}` },
-            { text: "вћ– РЈР±СЂР°С‚СЊ СЃРєРІР°Рґ", callback_data: `admin:squad:remove:${client.id}` },
+            { text: "? �������� �����", callback_data: `admin:squad:add:${client.id}` },
+            { text: "? ������ �����", callback_data: `admin:squad:remove:${client.id}` },
           ]
         );
       }
-      kb.push([{ text: "в—ЂпёЏ Рљ СЃРїРёСЃРєСѓ", callback_data: "admin:clients:1" }]);
+      kb.push([{ text: "?? � ������", callback_data: "admin:clients:1" }]);
       await editMessageContent(ctx, text, { inline_keyboard: kb });
       return;
     }
@@ -1212,8 +1212,8 @@ bot.on("callback_query:data", async (ctx) => {
       awaitingAdminBalance.set(userId, clientId);
       await editMessageContent(
         ctx,
-        "рџ’µ РџРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР°\n\nР’РІРµРґРёС‚Рµ СЃСѓР�?Р�?Сѓ (С‡РёСЃР»Рѕ):",
-        { inline_keyboard: [[{ text: "в—ЂпёЏ РћС‚Р�?РµРЅР°", callback_data: "admin:menu" }]] }
+        "?? ���������� �������\n\n������� ����� (�����):",
+        { inline_keyboard: [[{ text: "?? ������", callback_data: "admin:menu" }]] }
       );
       return;
     }
@@ -1222,12 +1222,12 @@ bot.on("callback_query:data", async (ctx) => {
       if (!clientId) return;
       try {
         await api.postBotAdminClientRemnaRevoke(userId, clientId);
-        await editMessageContent(ctx, `вњ… РџРѕРґРїРёСЃРєР° Remna РѕС‚РѕР·РІР°РЅР° РґР»СЏ РєР»РёРµРЅС‚Р°.`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, `? �������� Remna �������� ��� �������.`, {
+          inline_keyboard: [[{ text: "?? � �������", callback_data: `admin:client:${clientId}` }]],
         });
       } catch (e: unknown) {
-        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, `? ${e instanceof Error ? e.message : "������"}`, {
+          inline_keyboard: [[{ text: "?? �����", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1237,12 +1237,12 @@ bot.on("callback_query:data", async (ctx) => {
       if (!clientId) return;
       try {
         await api.postBotAdminClientRemnaDisable(userId, clientId);
-        await editMessageContent(ctx, "вњ… РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РѕС‚РєР»СЋС‡С�?РЅ РІ Remna.", {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, "? ������������ ��������?� � Remna.", {
+          inline_keyboard: [[{ text: "?? � �������", callback_data: `admin:client:${clientId}` }]],
         });
       } catch (e: unknown) {
-        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, `? ${e instanceof Error ? e.message : "������"}`, {
+          inline_keyboard: [[{ text: "?? �����", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1252,12 +1252,12 @@ bot.on("callback_query:data", async (ctx) => {
       if (!clientId) return;
       try {
         await api.postBotAdminClientRemnaEnable(userId, clientId);
-        await editMessageContent(ctx, "вњ… РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РІРєР»СЋС‡С�?РЅ РІ Remna.", {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, "? ������������ �������?� � Remna.", {
+          inline_keyboard: [[{ text: "?? � �������", callback_data: `admin:client:${clientId}` }]],
         });
       } catch (e: unknown) {
-        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, `? ${e instanceof Error ? e.message : "������"}`, {
+          inline_keyboard: [[{ text: "?? �����", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1267,12 +1267,12 @@ bot.on("callback_query:data", async (ctx) => {
       if (!clientId) return;
       try {
         await api.postBotAdminClientRemnaResetTraffic(userId, clientId);
-        await editMessageContent(ctx, "вњ… РўСЂР°С„РёРє СЃР±СЂРѕС€РµРЅ.", {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, "? ������ �������.", {
+          inline_keyboard: [[{ text: "?? � �������", callback_data: `admin:client:${clientId}` }]],
         });
       } catch (e: unknown) {
-        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, `? ${e instanceof Error ? e.message : "������"}`, {
+          inline_keyboard: [[{ text: "?? �����", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1287,8 +1287,8 @@ bot.on("callback_query:data", async (ctx) => {
         const index = parseInt(indexStr, 10);
         const stored = lastSquadsForAdd.get(userId);
         if (!stored || index < 0 || index >= stored.items.length) {
-          await editMessageContent(ctx, "РЎРµСЃСЃРёСЏ РёСЃС‚РµРєР»Р° РёР»Рё СЃРєРІР°Рґ РЅРµ РЅР°Р№РґРµРЅ. Р’РµСЂРЅРёС‚РµСЃСЊ Рє РєР»РёРµРЅС‚Сѓ.", {
-            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+          await editMessageContent(ctx, "������ ������� ��� ����� �� ������. ��������� � �������.", {
+            inline_keyboard: [[{ text: "?? � �������", callback_data: `admin:client:${clientId}` }]],
           });
           return;
         }
@@ -1296,12 +1296,12 @@ bot.on("callback_query:data", async (ctx) => {
         try {
           await api.postBotAdminClientRemnaSquadAdd(userId, clientId, squadUuid);
           lastSquadsForAdd.delete(userId);
-          await editMessageContent(ctx, `вњ… РЎРєРІР°Рґ В«${stored.items[index]!.name}В» РґРѕР±Р°РІР»РµРЅ.`, {
-            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+          await editMessageContent(ctx, `? ����� �${stored.items[index]!.name}� ��������.`, {
+            inline_keyboard: [[{ text: "?? � �������", callback_data: `admin:client:${clientId}` }]],
           });
         } catch (e: unknown) {
-          await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-            inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:squad:add:${clientId}` }]],
+          await editMessageContent(ctx, `? ${e instanceof Error ? e.message : "������"}`, {
+            inline_keyboard: [[{ text: "?? �����", callback_data: `admin:squad:add:${clientId}` }]],
           });
         }
         return;
@@ -1309,20 +1309,20 @@ bot.on("callback_query:data", async (ctx) => {
       try {
         const { items } = await api.getBotAdminRemnaSquadsInternal(userId);
         if (!items.length) {
-          await editMessageContent(ctx, "РќРµС‚ РґРѕСЃС‚СѓРїРЅС‹С… СЃРєРІР°РґРѕРІ РІ Remna.", {
-            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+          await editMessageContent(ctx, "��� ��������� ������� � Remna.", {
+            inline_keyboard: [[{ text: "?? � �������", callback_data: `admin:client:${clientId}` }]],
           });
           return;
         }
         lastSquadsForAdd.set(userId, { clientId, items });
         const rows: InlineMarkup["inline_keyboard"] = items.slice(0, 15).map((s, i) => [
-          { text: `вћ• ${s.name || s.uuid.slice(0, 8)}`, callback_data: `admin:squad:add:${clientId}:${i}` },
+          { text: `? ${s.name || s.uuid.slice(0, 8)}`, callback_data: `admin:squad:add:${clientId}:${i}` },
         ]);
-        rows.push([{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]);
-        await editMessageContent(ctx, "Р’С‹Р±РµСЂРёС‚Рµ СЃРєРІР°Рґ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ:", { inline_keyboard: rows });
+        rows.push([{ text: "?? � �������", callback_data: `admin:client:${clientId}` }]);
+        await editMessageContent(ctx, "�������� ����� ��� ����������:", { inline_keyboard: rows });
       } catch (e: unknown) {
-        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, `? ${e instanceof Error ? e.message : "������"}`, {
+          inline_keyboard: [[{ text: "?? � �������", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1337,8 +1337,8 @@ bot.on("callback_query:data", async (ctx) => {
         const index = parseInt(indexStr, 10);
         const stored = lastSquadsForRemove.get(userId);
         if (!stored || index < 0 || index >= stored.items.length) {
-          await editMessageContent(ctx, "РЎРµСЃСЃРёСЏ РёСЃС‚РµРєР»Р° РёР»Рё СЃРєРІР°Рґ РЅРµ РЅР°Р№РґРµРЅ. Р’РµСЂРЅРёС‚РµСЃСЊ Рє РєР»РёРµРЅС‚Сѓ.", {
-            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+          await editMessageContent(ctx, "������ ������� ��� ����� �� ������. ��������� � �������.", {
+            inline_keyboard: [[{ text: "?? � �������", callback_data: `admin:client:${clientId}` }]],
           });
           return;
         }
@@ -1346,12 +1346,12 @@ bot.on("callback_query:data", async (ctx) => {
         try {
           await api.postBotAdminClientRemnaSquadRemove(userId, clientId, squadUuid);
           lastSquadsForRemove.delete(userId);
-          await editMessageContent(ctx, `вњ… РЎРєРІР°Рґ В«${stored.items[index]!.name}В» СѓР±СЂР°РЅ.`, {
-            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+          await editMessageContent(ctx, `? ����� �${stored.items[index]!.name}� �����.`, {
+            inline_keyboard: [[{ text: "?? � �������", callback_data: `admin:client:${clientId}` }]],
           });
         } catch (e: unknown) {
-          await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-            inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:squad:remove:${clientId}` }]],
+          await editMessageContent(ctx, `? ${e instanceof Error ? e.message : "������"}`, {
+            inline_keyboard: [[{ text: "?? �����", callback_data: `admin:squad:remove:${clientId}` }]],
           });
         }
         return;
@@ -1362,20 +1362,20 @@ bot.on("callback_query:data", async (ctx) => {
         const uuidToName = new Map(allSquads.items.map((s) => [s.uuid, s.name || s.uuid.slice(0, 8)]));
         const current = remna.activeInternalSquads.map((uuid) => ({ uuid, name: uuidToName.get(uuid) ?? uuid.slice(0, 8) }));
         if (!current.length) {
-          await editMessageContent(ctx, "РЈ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РЅРµС‚ СЃРєРІР°РґРѕРІ.", {
-            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+          await editMessageContent(ctx, "� ������������ ��� �������.", {
+            inline_keyboard: [[{ text: "?? � �������", callback_data: `admin:client:${clientId}` }]],
           });
           return;
         }
         lastSquadsForRemove.set(userId, { clientId, items: current });
         const rows: InlineMarkup["inline_keyboard"] = current.slice(0, 15).map((s, i) => [
-          { text: `вћ– ${s.name}`, callback_data: `admin:squad:remove:${clientId}:${i}` },
+          { text: `? ${s.name}`, callback_data: `admin:squad:remove:${clientId}:${i}` },
         ]);
-        rows.push([{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]);
-        await editMessageContent(ctx, "Р’С‹Р±РµСЂРёС‚Рµ СЃРєРІР°Рґ РґР»СЏ СѓРґР°Р»РµРЅРёСЏ Сѓ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ:", { inline_keyboard: rows });
+        rows.push([{ text: "?? � �������", callback_data: `admin:client:${clientId}` }]);
+        await editMessageContent(ctx, "�������� ����� ��� �������� � ������������:", { inline_keyboard: rows });
       } catch (e: unknown) {
-        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, `? ${e instanceof Error ? e.message : "������"}`, {
+          inline_keyboard: [[{ text: "?? � �������", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1387,21 +1387,21 @@ bot.on("callback_query:data", async (ctx) => {
       const isPending = status === "pending";
       const { items, total, limit } = await api.getBotAdminPayments(userId, isPending ? "PENDING" : "PAID", page);
       const totalPages = Math.max(1, Math.ceil(total / limit));
-      const title = isPending ? `рџ’і РћР¶РёРґР°СЋС‚ РѕРїР»Р°С‚С‹ (${total})` : `рџ’° РџРѕСЃР»РµРґРЅРёРµ РїР»Р°С‚РµР¶Рё (${total})`;
+      const title = isPending ? `?? ������� ������ (${total})` : `?? ��������� ������� (${total})`;
       let msg = `${title}\n\n`;
       const rows: InlineMarkup["inline_keyboard"] = [];
       items.forEach((p, i) => {
-        const label = `${p.amount} ${p.currency} вЂ” ${p.clientTelegramUsername || p.clientEmail || p.clientTelegramId || "вЂ”"}`;
+        const label = `${p.amount} ${p.currency} � ${p.clientTelegramUsername || p.clientEmail || p.clientTelegramId || "�"}`;
         msg += `${(page - 1) * limit + i + 1}. ${label}\n`;
         if (isPending) {
-          rows.push([{ text: `вњ… ${p.amount} ${p.currency} вЂ” РѕС‚Р�?РµС‚РёС‚СЊ РѕРїР»Р°С‡РµРЅРЅС‹Р�?`, callback_data: `admin:pay:${p.id}` }]);
+          rows.push([{ text: `? ${p.amount} ${p.currency} � �������� ����������`, callback_data: `admin:pay:${p.id}` }]);
         }
       });
-      msg += `\nРЎС‚СЂ. ${page}/${totalPages}`;
+      msg += `\n���. ${page}/${totalPages}`;
       const nav: InlineMarkup["inline_keyboard"][0] = [];
-      if (page > 1) nav.push({ text: "в—Ђ РќР°Р·Р°Рґ", callback_data: `admin:payments:${status}:${page - 1}` });
-      nav.push({ text: "в—ЂпёЏ Р’ Р°РґР�?РёРЅРєСѓ", callback_data: "admin:menu" });
-      if (page < totalPages) nav.push({ text: "Р’РїРµСЂС�?Рґ в–¶", callback_data: `admin:payments:${status}:${page + 1}` });
+      if (page > 1) nav.push({ text: "? �����", callback_data: `admin:payments:${status}:${page - 1}` });
+      nav.push({ text: "?? � �������", callback_data: "admin:menu" });
+      if (page < totalPages) nav.push({ text: "������?� ?", callback_data: `admin:payments:${status}:${page + 1}` });
       rows.push(nav);
       await editMessageContent(ctx, msg, { inline_keyboard: rows });
       return;
@@ -1411,12 +1411,12 @@ bot.on("callback_query:data", async (ctx) => {
       if (!paymentId) return;
       try {
         await api.patchBotAdminPaymentMarkPaid(userId, paymentId);
-        await editMessageContent(ctx, "вњ… РџР»Р°С‚С�?Р¶ РѕС‚Р�?РµС‡РµРЅ РєР°Рє РѕРїР»Р°С‡РµРЅРЅС‹Р№.", {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РїР»Р°С‚РµР¶Р°Р�?", callback_data: "admin:payments:pending:1" }]],
+        await editMessageContent(ctx, "? ����� ������� ��� ����������.", {
+          inline_keyboard: [[{ text: "?? � ��������", callback_data: "admin:payments:pending:1" }]],
         });
       } catch (e: unknown) {
-        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: "admin:payments:pending:1" }]],
+        await editMessageContent(ctx, `? ${e instanceof Error ? e.message : "������"}`, {
+          inline_keyboard: [[{ text: "?? �����", callback_data: "admin:payments:pending:1" }]],
         });
       }
       return;
@@ -1426,8 +1426,8 @@ bot.on("callback_query:data", async (ctx) => {
       awaitingBroadcastMessage.add(userId);
       await editMessageContent(
         ctx,
-        `рџ“ў Р Р°СЃСЃС‹Р»РєР°\n\nРЎРµР№С‡Р°СЃ: Telegram ${counts.withTelegram}, Email ${counts.withEmail}\n\nРћС‚РїСЂР°РІСЊС‚Рµ С‚РµРєСЃС‚ СЃРѕРѕР±С‰РµРЅРёСЏ РёР»Рё С„РѕС‚Рѕ СЃ РїРѕРґРїРёСЃСЊСЋ (caption):`,
-        { inline_keyboard: [[{ text: "в—ЂпёЏ РћС‚Р�?РµРЅР°", callback_data: "admin:menu" }]] }
+        `?? ��������\n\n������: Telegram ${counts.withTelegram}, Email ${counts.withEmail}\n\n��������� ����� ��������� ��� ���� � �������� (caption):`,
+        { inline_keyboard: [[{ text: "?? ������", callback_data: "admin:menu" }]] }
       );
       return;
     }
@@ -1435,28 +1435,28 @@ bot.on("callback_query:data", async (ctx) => {
       const channel = data.slice("admin:bc:".length) as "tg" | "email" | "both";
       const raw = lastBroadcastMessage.get(userId);
       if (raw == null) {
-        await editMessageContent(ctx, "РўРµРєСЃС‚ СЂР°СЃСЃС‹Р»РєРё РЅРµ РЅР°Р№РґРµРЅ. РќР°С‡РЅРёС‚Рµ Р·Р°РЅРѕРІРѕ.", {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Р’ Р°РґР�?РёРЅРєСѓ", callback_data: "admin:menu" }]],
+        await editMessageContent(ctx, "����� �������� �� ������. ������� ������.", {
+          inline_keyboard: [[{ text: "?? � �������", callback_data: "admin:menu" }]],
         });
         return;
       }
       const msg: BroadcastPayload = typeof raw === "string" ? { text: raw } : raw;
       const ch: "telegram" | "email" | "both" = channel === "tg" ? "telegram" : channel === "email" ? "email" : "both";
-      const channelLabel = ch === "telegram" ? "Telegram" : ch === "email" ? "Email" : "Telegram Рё Email";
-      // РЎСЂР°Р·Сѓ РїРѕРєР°Р·С‹РІР°РµР�?, С‡С‚Рѕ СЂР°СЃСЃС‹Р»РєР° Р·Р°РїСѓС‰РµРЅР°, С‡С‚РѕР±С‹ Р±С‹Р»Рѕ РїРѕРЅСЏС‚РЅРѕ Рё РЅРµ РЅР°Р¶РёР�?Р°Р»Рё РїРѕРІС‚РѕСЂРЅРѕ
-      await editMessageContent(ctx, `рџ“ў Р Р°СЃСЃС‹Р»РєР° РїРѕ РєР°РЅР°Р»Сѓ В«${channelLabel}В» Р·Р°РїСѓС‰РµРЅР°, РїРѕРґРѕР¶РґРёС‚РµвЂ¦`, {
-        inline_keyboard: [[{ text: "в—ЂпёЏ Р’ Р°РґР�?РёРЅРєСѓ", callback_data: "admin:menu" }]],
+      const channelLabel = ch === "telegram" ? "Telegram" : ch === "email" ? "Email" : "Telegram � Email";
+      // ����� ����������, ��� �������� ��������, ����� ���� ������� � �� �������� ��������
+      await editMessageContent(ctx, `?? �������� �� ������ �${channelLabel}� ��������, ���������`, {
+        inline_keyboard: [[{ text: "?? � �������", callback_data: "admin:menu" }]],
       });
       lastBroadcastMessage.delete(userId);
       try {
         const result = await api.postBotAdminBroadcast(userId, msg.text, ch, msg.photoFileId, msg.buttonText, msg.buttonUrl);
-        const text = `вњ… Р Р°СЃСЃС‹Р»РєР° Р·Р°РІРµСЂС€РµРЅР°.\n\nTelegram: РѕС‚РїСЂР°РІР»РµРЅРѕ ${result.sentTelegram}, РѕС€РёР±РѕРє ${result.failedTelegram}\nEmail: РѕС‚РїСЂР°РІР»РµРЅРѕ ${result.sentEmail}, РѕС€РёР±РѕРє ${result.failedEmail}${result.errors?.length ? "\n\nРћС€РёР±РєРё: " + result.errors.slice(0, 3).join("; ") : ""}`;
+        const text = `? �������� ���������.\n\nTelegram: ���������� ${result.sentTelegram}, ������ ${result.failedTelegram}\nEmail: ���������� ${result.sentEmail}, ������ ${result.failedEmail}${result.errors?.length ? "\n\n������: " + result.errors.slice(0, 3).join("; ") : ""}`;
         await editMessageContent(ctx, text, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Р’ Р°РґР�?РёРЅРєСѓ", callback_data: "admin:menu" }]],
+          inline_keyboard: [[{ text: "?? � �������", callback_data: "admin:menu" }]],
         });
       } catch (e: unknown) {
-        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Р’ Р°РґР�?РёРЅРєСѓ", callback_data: "admin:menu" }]],
+        await editMessageContent(ctx, `? ${e instanceof Error ? e.message : "������"}`, {
+          inline_keyboard: [[{ text: "?? � �������", callback_data: "admin:menu" }]],
         });
       }
       return;
@@ -1466,11 +1466,11 @@ bot.on("callback_query:data", async (ctx) => {
       if (!clientId) return;
       await api.patchBotAdminClientBlock(userId, clientId, true);
       const client = await api.getBotAdminClient(userId, clientId);
-      const created = client.createdAt ? new Date(client.createdAt).toLocaleString("ru-RU") : "вЂ”";
-      let text = `рџ�?¤ ${client.email || client.telegramUsername || client.telegramId || client.id}\n\nID: ${client.id}\nР�?Р°Р»Р°РЅСЃ: ${client.balance}\nР РµС„РµСЂР°Р»РѕРІ: ${client._count?.referrals ?? 0}\nРЎРѕР·РґР°РЅ: ${created}\n\nрџљ« Р—Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ`;
+      const created = client.createdAt ? new Date(client.createdAt).toLocaleString("ru-RU") : "�";
+      let text = `��?� ${client.email || client.telegramUsername || client.telegramId || client.id}\n\nID: ${client.id}\n��?�����: ${client.balance}\n���������: ${client._count?.referrals ?? 0}\n������: ${created}\n\n?? ������������`;
       const kb: InlineMarkup["inline_keyboard"] = [
-        [{ text: "вњ… Р Р°Р·Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ", callback_data: `admin:unblock:${client.id}` }],
-        [{ text: "в—ЂпёЏ Рљ СЃРїРёСЃРєСѓ", callback_data: "admin:clients:1" }],
+        [{ text: "? ��������������", callback_data: `admin:unblock:${client.id}` }],
+        [{ text: "?? � ������", callback_data: "admin:clients:1" }],
       ];
       await editMessageContent(ctx, text, { inline_keyboard: kb });
       return;
@@ -1480,11 +1480,11 @@ bot.on("callback_query:data", async (ctx) => {
       if (!clientId) return;
       await api.patchBotAdminClientBlock(userId, clientId, false);
       const client = await api.getBotAdminClient(userId, clientId);
-      const created = client.createdAt ? new Date(client.createdAt).toLocaleString("ru-RU") : "вЂ”";
-      let text = `рџ�?¤ ${client.email || client.telegramUsername || client.telegramId || client.id}\n\nID: ${client.id}\nР�?Р°Р»Р°РЅСЃ: ${client.balance}\nР РµС„РµСЂР°Р»РѕРІ: ${client._count?.referrals ?? 0}\nРЎРѕР·РґР°РЅ: ${created}`;
+      const created = client.createdAt ? new Date(client.createdAt).toLocaleString("ru-RU") : "�";
+      let text = `��?� ${client.email || client.telegramUsername || client.telegramId || client.id}\n\nID: ${client.id}\n��?�����: ${client.balance}\n���������: ${client._count?.referrals ?? 0}\n������: ${created}`;
       const kb: InlineMarkup["inline_keyboard"] = [
-        [{ text: "рџљ« Р—Р°Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ", callback_data: `admin:block:${client.id}` }],
-        [{ text: "в—ЂпёЏ Рљ СЃРїРёСЃРєСѓ", callback_data: "admin:clients:1" }],
+        [{ text: "?? �������������", callback_data: `admin:block:${client.id}` }],
+        [{ text: "?? � ������", callback_data: "admin:clients:1" }],
       ];
       await editMessageContent(ctx, text, { inline_keyboard: kb });
       return;
@@ -1502,7 +1502,7 @@ bot.on("callback_query:data", async (ctx) => {
     const config = await api.getPublicConfig();
     if (config?.translations) setTranslations(config.translations);
 
-    // РћР±СЂР°Р±РѕС‚РєР° РєРЅРѕРїРєРё В«РЇ РїРѕРґРїРёСЃР°Р»СЃСЏВ»
+    // ��������� ������ �� �����������
     if (data === "check_subscribe") {
       const lang = getUserLang(userId);
       const channelId = config?.forceSubscribeChannelId?.trim();
@@ -1515,7 +1515,7 @@ bot.on("callback_query:data", async (ctx) => {
           }).catch(() => {});
           await editMessageContent(
             ctx,
-            `вљ пёЏ ${_t("subscribe.cannot_verify", lang)}`,
+            `?? ${_t("subscribe.cannot_verify", lang)}`,
             subscribeKeyboard(channelId, lang)
           );
           return;
@@ -1530,7 +1530,7 @@ bot.on("callback_query:data", async (ctx) => {
       return;
     }
 
-    // РџСЂРѕРІРµСЂРєР° РїРѕРґРїРёСЃРєРё РЅР° РєР°РЅР°Р» РґР»СЏ РІСЃРµС… РґРµР№СЃС‚РІРёР№
+    // �������� �������� �� ����� ��� ���� ��������
     if (config?.forceSubscribeEnabled && config.forceSubscribeChannelId?.trim()) {
       const lang = getUserLang(userId);
       const channelId = config.forceSubscribeChannelId.trim();
@@ -1540,7 +1540,7 @@ bot.on("callback_query:data", async (ctx) => {
         const details = result.state === "cannot_verify"
           ? `\n\n${_t("subscribe.cannot_verify", lang)}`
           : "";
-        await editMessageContent(ctx, `вљ пёЏ ${msg}${details}`, subscribeKeyboard(channelId, lang));
+        await editMessageContent(ctx, `?? ${msg}${details}`, subscribeKeyboard(channelId, lang));
         return;
       }
     }
@@ -1580,7 +1580,7 @@ bot.on("callback_query:data", async (ctx) => {
       const showTrial = Boolean(config?.trialEnabled && !client?.trialUsed);
       const showProxy = proxyRes.items?.some((c: { tariffs: unknown[] }) => c.tariffs?.length > 0) ?? false;
       const showSingbox = singboxRes.items?.some((c: { tariffs: unknown[] }) => c.tariffs?.length > 0) ?? false;
-      const name = config?.serviceName?.trim() || "РљР°Р±РёРЅРµС‚";
+      const name = config?.serviceName?.trim() || "�������";
       const { text, entities } = buildMainMenuText({
         serviceName: name,
         balance: client?.balance ?? 0,
@@ -1610,7 +1610,7 @@ bot.on("callback_query:data", async (ctx) => {
         remnaSubscriptionUrl: config?.useRemnaSubscriptionPage ? vpnUrl : null,
       });
       if (config?.botAdminTelegramIds?.includes(String(userId))) {
-        backMarkup.inline_keyboard.push([{ text: "вљ™пёЏ РџР°РЅРµР»СЊ Р°РґР�?РёРЅР°", callback_data: "admin:menu" }]);
+        backMarkup.inline_keyboard.push([{ text: "?? ������ ������", callback_data: "admin:menu" }]);
       }
       await editMessageContent(ctx, text, backMarkup, entities);
       return;
@@ -1647,15 +1647,15 @@ bot.on("callback_query:data", async (ctx) => {
     if (data === "menu:video_instructions") {
       const vItems = config?.videoInstructions ?? [];
       if (!vItems.length) {
-        await editMessageContent(ctx, "Р�?РЅСЃС‚СЂСѓРєС†РёРё РїРѕРєР° РЅРµ РґРѕР±Р°РІР»РµРЅС‹.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "���������� ���� �� ���������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
-      const backLabel = (config?.botBackLabel && config.botBackLabel.trim()) || "В« РќР°Р·Р°Рґ";
+      const backLabel = (config?.botBackLabel && config.botBackLabel.trim()) || "� �����";
       const rows: { text: string; callback_data: string }[][] = vItems
         .sort((a, b) => a.sortOrder - b.sortOrder)
-        .map((v) => [{ text: `рџ“№ ${v.title}`, callback_data: `vinstr:${v.id}` }]);
+        .map((v) => [{ text: `?? ${v.title}`, callback_data: `vinstr:${v.id}` }]);
       rows.push([{ text: backLabel, callback_data: "menu:support" }]);
-      await editMessageContent(ctx, "рџ“№ Р’РёРґРµРѕ-РёРЅСЃС‚СЂСѓРєС†РёРё\n\nР’С‹Р±РµСЂРёС‚Рµ РёРЅСЃС‚СЂСѓРєС†РёСЋ:", { inline_keyboard: rows });
+      await editMessageContent(ctx, "?? �����-����������\n\n�������� ����������:", { inline_keyboard: rows });
       return;
     }
 
@@ -1664,10 +1664,10 @@ bot.on("callback_query:data", async (ctx) => {
       const vItems = config?.videoInstructions ?? [];
       const instr = vItems.find((v) => v.id === instrId);
       if (!instr) {
-        await editMessageContent(ctx, "Р�?РЅСЃС‚СЂСѓРєС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "���������� �� �������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
-      const backLabel = (config?.botBackLabel && config.botBackLabel.trim()) || "В« РќР°Р·Р°Рґ";
+      const backLabel = (config?.botBackLabel && config.botBackLabel.trim()) || "� �����";
       const chatId = ctx.chat?.id;
       if (!chatId) return;
       try {
@@ -1675,20 +1675,20 @@ bot.on("callback_query:data", async (ctx) => {
       } catch { /* ignore */ }
       try {
         await ctx.api.sendVideo(chatId, instr.telegramFileId, {
-          caption: `рџ“№ ${instr.title}`,
+          caption: `?? ${instr.title}`,
           reply_markup: {
             inline_keyboard: [
-              [{ text: "В« РќР°Р·Р°Рґ Рє РёРЅСЃС‚СЂСѓРєС†РёСЏР�?", callback_data: "menu:video_instructions_fresh" }],
-              [{ text: "рџЏ  Р“Р»Р°РІРЅРѕРµ Р�?РµРЅСЋ", callback_data: "menu:main" }],
+              [{ text: "� ����� � �����������", callback_data: "menu:video_instructions_fresh" }],
+              [{ text: "?? ������� ����", callback_data: "menu:main" }],
             ],
           },
         });
       } catch (e) {
-        await ctx.api.sendMessage(chatId, "РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РїСЂР°РІРёС‚СЊ РІРёРґРµРѕ. РџРѕРїСЂРѕР±СѓР№С‚Рµ РїРѕР·Р¶Рµ.", {
+        await ctx.api.sendMessage(chatId, "�� ������� ��������� �����. ���������� �����.", {
           reply_markup: {
             inline_keyboard: [
-              [{ text: "В« РќР°Р·Р°Рґ Рє РёРЅСЃС‚СЂСѓРєС†РёСЏР�?", callback_data: "menu:video_instructions_fresh" }],
-              [{ text: "рџЏ  Р“Р»Р°РІРЅРѕРµ Р�?РµРЅСЋ", callback_data: "menu:main" }],
+              [{ text: "� ����� � �����������", callback_data: "menu:video_instructions_fresh" }],
+              [{ text: "?? ������� ����", callback_data: "menu:main" }],
             ],
           },
         });
@@ -1699,20 +1699,20 @@ bot.on("callback_query:data", async (ctx) => {
     if (data === "menu:video_instructions_fresh") {
       const vItems = config?.videoInstructions ?? [];
       if (!vItems.length) {
-        await ctx.api.sendMessage(ctx.chat!.id, "Р�?РЅСЃС‚СЂСѓРєС†РёРё РїРѕРєР° РЅРµ РґРѕР±Р°РІР»РµРЅС‹.", {
+        await ctx.api.sendMessage(ctx.chat!.id, "���������� ���� �� ���������.", {
           reply_markup: backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds),
         });
         return;
       }
-      const backLabel = (config?.botBackLabel && config.botBackLabel.trim()) || "В« РќР°Р·Р°Рґ";
+      const backLabel = (config?.botBackLabel && config.botBackLabel.trim()) || "� �����";
       const rows: { text: string; callback_data: string }[][] = vItems
         .sort((a, b) => a.sortOrder - b.sortOrder)
-        .map((v) => [{ text: `рџ“№ ${v.title}`, callback_data: `vinstr:${v.id}` }]);
+        .map((v) => [{ text: `?? ${v.title}`, callback_data: `vinstr:${v.id}` }]);
       rows.push([{ text: backLabel, callback_data: "menu:support" }]);
       try {
         await ctx.deleteMessage().catch(() => {});
       } catch { /* ignore */ }
-      await ctx.api.sendMessage(ctx.chat!.id, "рџ“№ Р’РёРґРµРѕ-РёРЅСЃС‚СЂСѓРєС†РёРё\n\nР’С‹Р±РµСЂРёС‚Рµ РёРЅСЃС‚СЂСѓРєС†РёСЋ:", {
+      await ctx.api.sendMessage(ctx.chat!.id, "?? �����-����������\n\n�������� ����������:", {
         reply_markup: { inline_keyboard: rows },
       });
       return;
@@ -1733,7 +1733,7 @@ bot.on("callback_query:data", async (ctx) => {
         ? { ...innerEmojiIds, tariff: tariffsEmojiEntry.tgEmojiId }
         : innerEmojiIds;
       if (items.length > 1) {
-        const { text, entities } = titleWithOptionalEmoji(tariffsEmojiKey, "РўР°СЂРёС„С‹\n\nР’С‹Р±РµСЂРёС‚Рµ РєР°С‚РµРіРѕСЂРёСЋ:", config?.botEmojis);
+        const { text, entities } = titleWithOptionalEmoji(tariffsEmojiKey, "������\n\n�������� ���������:", config?.botEmojis);
         await editMessageContent(ctx, text, tariffPayButtons(items, config?.botBackLabel ?? null, innerStyles, tariffsEmojiIds, tariffsEmojiUnicode), entities);
         return;
       }
@@ -1754,7 +1754,7 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicTariffs();
       const category = items?.find((c: TariffCategory) => c.id === categoryId);
       if (!category?.tariffs?.length) {
-        await editMessageContent(ctx, "РљР°С‚РµРіРѕСЂРёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "��������� �� �������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const nameOnly = (category.name || "").replace(/^\p{Extended_Pictographic}\uFE0F?\s*/u, "").trim() || category.name || "";
@@ -1779,16 +1779,16 @@ bot.on("callback_query:data", async (ctx) => {
     if (data === "menu:proxy") {
       const { items } = await api.getPublicProxyTariffs();
       if (!items?.length || items.every((c: { tariffs: unknown[] }) => !c.tariffs?.length)) {
-        await editMessageContent(ctx, "РўР°СЂРёС„С‹ РїСЂРѕРєСЃРё РїРѕРєР° РЅРµ РЅР°СЃС‚СЂРѕРµРЅС‹.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "������ ������ ���� �� ���������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const cats = items.filter((c: { tariffs: unknown[] }) => c.tariffs?.length > 0);
       if (cats.length === 1 && cats[0]!.tariffs.length <= 5) {
         const head = cats[0]!.name;
-        const lines = cats[0]!.tariffs.map((t: { name: string; price: number; currency: string }) => `вЂў ${t.name} вЂ” ${t.price} ${t.currency}`).join("\n");
-        await editMessageContent(ctx, `рџЊђ РџСЂРѕРєСЃРё\n\n${head}\n${lines}\n\nР’С‹Р±РµСЂРёС‚Рµ С‚Р°СЂРёС„:`, proxyTariffPayButtons(cats, config?.botBackLabel ?? null, innerStyles, innerEmojiIds));
+        const lines = cats[0]!.tariffs.map((t: { name: string; price: number; currency: string }) => `� ${t.name} � ${t.price} ${t.currency}`).join("\n");
+        await editMessageContent(ctx, `?? ������\n\n${head}\n${lines}\n\n�������� �����:`, proxyTariffPayButtons(cats, config?.botBackLabel ?? null, innerStyles, innerEmojiIds));
       } else {
-        await editMessageContent(ctx, "рџЊђ РџСЂРѕРєСЃРё\n\nР’С‹Р±РµСЂРёС‚Рµ РєР°С‚РµРіРѕСЂРёСЋ:", proxyTariffPayButtons(cats, config?.botBackLabel ?? null, innerStyles, innerEmojiIds));
+        await editMessageContent(ctx, "?? ������\n\n�������� ���������:", proxyTariffPayButtons(cats, config?.botBackLabel ?? null, innerStyles, innerEmojiIds));
       }
       return;
     }
@@ -1798,28 +1798,28 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicProxyTariffs();
       const category = items?.find((c: { id: string }) => c.id === categoryId);
       if (!category?.tariffs?.length) {
-        await editMessageContent(ctx, "РљР°С‚РµРіРѕСЂРёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "��������� �� �������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const head = category.name;
-      const lines = category.tariffs.map((t: { name: string; price: number; currency: string }) => `вЂў ${t.name} вЂ” ${t.price} ${t.currency}`).join("\n");
-      await editMessageContent(ctx, `рџЊђ ${head}\n\n${lines}\n\nР’С‹Р±РµСЂРёС‚Рµ С‚Р°СЂРёС„:`, proxyTariffsOfCategoryButtons(category, config?.botBackLabel ?? null, innerStyles, "menu:proxy", innerEmojiIds));
+      const lines = category.tariffs.map((t: { name: string; price: number; currency: string }) => `� ${t.name} � ${t.price} ${t.currency}`).join("\n");
+      await editMessageContent(ctx, `?? ${head}\n\n${lines}\n\n�������� �����:`, proxyTariffsOfCategoryButtons(category, config?.botBackLabel ?? null, innerStyles, "menu:proxy", innerEmojiIds));
       return;
     }
 
     if (data === "menu:singbox") {
       const { items } = await api.getPublicSingboxTariffs();
       if (!items?.length || items.every((c: { tariffs: unknown[] }) => !c.tariffs?.length)) {
-        await editMessageContent(ctx, "РўР°СЂРёС„С‹ РґРѕСЃС‚СѓРїРѕРІ РїРѕРєР° РЅРµ РЅР°СЃС‚СЂРѕРµРЅС‹.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "������ �������� ���� �� ���������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const cats = items.filter((c: { tariffs: unknown[] }) => c.tariffs?.length > 0);
       if (cats.length === 1 && cats[0]!.tariffs.length <= 5) {
         const head = cats[0]!.name;
-        const lines = cats[0]!.tariffs.map((t: { name: string; price: number; currency: string }) => `вЂў ${t.name} вЂ” ${t.price} ${t.currency}`).join("\n");
-        await editMessageContent(ctx, `рџ”�? Р”РѕСЃС‚СѓРїС‹\n\n${head}\n${lines}\n\nР’С‹Р±РµСЂРёС‚Рµ С‚Р°СЂРёС„:`, singboxTariffPayButtons(cats, config?.botBackLabel ?? null, innerStyles, innerEmojiIds));
+        const lines = cats[0]!.tariffs.map((t: { name: string; price: number; currency: string }) => `� ${t.name} � ${t.price} ${t.currency}`).join("\n");
+        await editMessageContent(ctx, `��? �������\n\n${head}\n${lines}\n\n�������� �����:`, singboxTariffPayButtons(cats, config?.botBackLabel ?? null, innerStyles, innerEmojiIds));
       } else {
-        await editMessageContent(ctx, "рџ”�? Р”РѕСЃС‚СѓРїС‹\n\nР’С‹Р±РµСЂРёС‚Рµ РєР°С‚РµРіРѕСЂРёСЋ:", singboxTariffPayButtons(cats, config?.botBackLabel ?? null, innerStyles, innerEmojiIds));
+        await editMessageContent(ctx, "��? �������\n\n�������� ���������:", singboxTariffPayButtons(cats, config?.botBackLabel ?? null, innerStyles, innerEmojiIds));
       }
       return;
     }
@@ -1829,12 +1829,12 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicSingboxTariffs();
       const category = items?.find((c: { id: string }) => c.id === categoryId);
       if (!category?.tariffs?.length) {
-        await editMessageContent(ctx, "РљР°С‚РµРіРѕСЂРёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "��������� �� �������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const head = category.name;
-      const lines = category.tariffs.map((t: { name: string; price: number; currency: string }) => `вЂў ${t.name} вЂ” ${t.price} ${t.currency}`).join("\n");
-      await editMessageContent(ctx, `рџ”�? ${head}\n\n${lines}\n\nР’С‹Р±РµСЂРёС‚Рµ С‚Р°СЂРёС„:`, singboxTariffsOfCategoryButtons(category, config?.botBackLabel ?? null, innerStyles, "menu:singbox", innerEmojiIds));
+      const lines = category.tariffs.map((t: { name: string; price: number; currency: string }) => `� ${t.name} � ${t.price} ${t.currency}`).join("\n");
+      await editMessageContent(ctx, `��? ${head}\n\n${lines}\n\n�������� �����:`, singboxTariffsOfCategoryButtons(category, config?.botBackLabel ?? null, innerStyles, "menu:singbox", innerEmojiIds));
       return;
     }
 
@@ -1842,14 +1842,14 @@ bot.on("callback_query:data", async (ctx) => {
       const slotsRes = await api.getSingboxSlots(token);
       const slots = slotsRes.slots ?? [];
       if (slots.length === 0) {
-        await editMessageContent(ctx, "РЈ РІР°СЃ РїРѕРєР° РЅРµС‚ Р°РєС‚РёРІРЅС‹С… РґРѕСЃС‚СѓРїРѕРІ. РљСѓРїРёС‚Рµ С‚Р°СЂРёС„ РІ СЂР°Р·РґРµР»Рµ В«Р”РѕСЃС‚СѓРїС‹В».", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "� ��� ���� ��� �������� ��������. ������ ����� � ������� ���������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const lines = slots.map((s: { subscriptionLink: string; expiresAt: string; protocol: string }) => {
         const exp = new Date(s.expiresAt).toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
-        return `${s.protocol} вЂ” РґРѕ ${exp}\n${s.subscriptionLink}`;
+        return `${s.protocol} � �� ${exp}\n${s.subscriptionLink}`;
       }).join("\n\n");
-      const msg = `рџ“‹ РњРѕРё РґРѕСЃС‚СѓРїС‹ (${slots.length})\n\nРЎРєРѕРїРёСЂСѓР№С‚Рµ СЃСЃС‹Р»РєСѓ РІ РїСЂРёР»РѕР¶РµРЅРёРµ (v2rayN, Nekoray Рё РґСЂ.):\n\n${lines}`;
+      const msg = `?? ��� ������� (${slots.length})\n\n���������� ������ � ���������� (v2rayN, Nekoray � ��.):\n\n${lines}`;
       await editMessageContent(ctx, msg.slice(0, 4096), backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       return;
     }
@@ -1857,16 +1857,16 @@ bot.on("callback_query:data", async (ctx) => {
     if (data === "menu:my_proxy") {
       const { slots } = await api.getProxySlots(token);
       if (!slots?.length) {
-        await editMessageContent(ctx, "рџ“‹ РњРѕРё РїСЂРѕРєСЃРё\n\nРЈ РІР°СЃ РїРѕРєР° РЅРµС‚ Р°РєС‚РёРІРЅС‹С… РїСЂРѕРєСЃРё. РљСѓРїРёС‚Рµ С‚Р°СЂРёС„ РІ СЂР°Р·РґРµР»Рµ В«РџСЂРѕРєСЃРёВ».", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "?? ��� ������\n\n� ��� ���� ��� �������� ������. ������ ����� � ������� �������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
-      let text = "рџ“‹ РњРѕРё РїСЂРѕРєСЃРё\n\n";
+      let text = "?? ��� ������\n\n";
       for (const s of slots) {
-        text += `вЂў SOCKS5: \`socks5://${s.login}:${s.password}@${s.host}:${s.socksPort}\`\n`;
-        text += `вЂў HTTP: \`http://${s.login}:${s.password}@${s.host}:${s.httpPort}\`\n`;
-        text += `  Р”Рѕ: ${new Date(s.expiresAt).toLocaleString("ru-RU")}\n\n`;
+        text += `� SOCKS5: \`socks5://${s.login}:${s.password}@${s.host}:${s.socksPort}\`\n`;
+        text += `� HTTP: \`http://${s.login}:${s.password}@${s.host}:${s.httpPort}\`\n`;
+        text += `  ��: ${new Date(s.expiresAt).toLocaleString("ru-RU")}\n\n`;
       }
-      text += "РЎРєРѕРїРёСЂСѓР№С‚Рµ СЃС‚СЂРѕРєСѓ РІ РЅР°СЃС‚СЂРѕР№РєРё РїСЂРѕРєСЃРё РїСЂРёР»РѕР¶РµРЅРёСЏ.";
+      text += "���������� ������ � ��������� ������ ����������.";
       await editMessageContent(ctx, text.slice(0, 4096), backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       return;
     }
@@ -1875,10 +1875,10 @@ bot.on("callback_query:data", async (ctx) => {
       const proxyTariffId = data.slice("pay_proxy_balance:".length);
       try {
         const result = await api.payByBalance(token, { proxyTariffId });
-        await editMessageContent(ctx, `вњ… ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, `? ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РѕРїР»Р°С‚С‹";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ ������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -1888,7 +1888,7 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicProxyTariffs();
       const tariff = items?.flatMap((c: { tariffs: { id: string; name: string; price: number; currency: string }[] }) => c.tariffs).find((t: { id: string }) => t.id === proxyTariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� ������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -1898,12 +1898,12 @@ bot.on("callback_query:data", async (ctx) => {
           price: formatMoney(tariff.price, tariff.currency),
           amount: String(tariff.price),
           currency: tariff.currency,
-          action: "РќР°Р¶Р�?РёС‚Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Money:",
+          action: "������� ��� ������ ����� �Money:",
         });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ �������� �������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -1913,11 +1913,11 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicProxyTariffs();
       const tariff = items?.flatMap((c: { tariffs: { id: string; name: string; price: number; currency: string }[] }) => c.tariffs).find((t: { id: string }) => t.id === proxyTariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� ������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       if (tariff.currency.toUpperCase() !== "RUB") {
-        await editMessageContent(ctx, "Р®Kassa РїСЂРёРЅРёР�?Р°РµС‚ С‚РѕР»СЊРєРѕ СЂСѓР±Р»Рё (RUB).", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "�Kassa ��������� ������ ����� (RUB).", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -1927,12 +1927,12 @@ bot.on("callback_query:data", async (ctx) => {
           price: formatMoney(tariff.price, tariff.currency),
           amount: String(tariff.price),
           currency: tariff.currency,
-          action: "РќР°Р¶Р�?РёС‚Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Kassa:",
+          action: "������� ��� ������ ����� �Kassa:",
         });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.confirmationUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ �������� �������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -1942,16 +1942,16 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicProxyTariffs();
       const tariff = items?.flatMap((c: { tariffs: { id: string; name: string; price: number; currency: string }[] }) => c.tariffs).find((t: { id: string }) => t.id === proxyTariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� ������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
         const payment = await api.createCryptopayPayment(token, { amount: tariff.price, currency: tariff.currency, proxyTariffId });
-        const msg = buildPaymentMessage(config, { name: tariff.name, price: formatMoney(tariff.price, tariff.currency), amount: String(tariff.price), currency: tariff.currency, action: "РќР°Р¶Р�?РёС‚Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Crypto Bot:" });
+        const msg = buildPaymentMessage(config, { name: tariff.name, price: formatMoney(tariff.price, tariff.currency), amount: String(tariff.price), currency: tariff.currency, action: "������� ��� ������ ����� Crypto Bot:" });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.payUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ �������� �������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -1964,12 +1964,12 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicProxyTariffs();
       const tariff = items?.flatMap((c: { tariffs: { id: string; name: string; price: number; currency: string }[] }) => c.tariffs).find((t: { id: string }) => t.id === proxyTariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� ������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const methods = config?.plategaMethods ?? [];
       const client = await api.getMe(token);
-      const balanceLabel = client && client.balance >= tariff.price ? `рџ’° РћРїР»Р°С‚РёС‚СЊ Р±Р°Р»Р°РЅСЃРѕР�? (${formatMoney(client.balance, client.preferredCurrency ?? "RUB")})` : null;
+      const balanceLabel = client && client.balance >= tariff.price ? `?? �������� �������� (${formatMoney(client.balance, client.preferredCurrency ?? "RUB")})` : null;
       const discountInfoProxy = activeDiscountCode.get(userId);
       const promoCodeProxy = discountInfoProxy?.code;
       const discountArgProxy = discountInfoProxy ? {
@@ -1982,7 +1982,7 @@ bot.on("callback_query:data", async (ctx) => {
             amount: tariff.price,
             currency: tariff.currency,
             paymentMethod: methodIdFromBtn,
-            description: `РџСЂРѕРєСЃРё: ${tariff.name}`,
+            description: `������: ${tariff.name}`,
             proxyTariffId: tariff.id,
             promoCode: promoCodeProxy,
           });
@@ -1992,12 +1992,12 @@ bot.on("callback_query:data", async (ctx) => {
             price: formatMoney(tariff.price, tariff.currency),
             amount: String(tariff.price),
             currency: tariff.currency,
-            action: "РќР°Р¶Р�?РёС‚Рµ РґР»СЏ РѕРїР»Р°С‚С‹:",
+            action: "������� ��� ������:",
           }, discountArgProxy);
           await editMessageContent(ctx, msg.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
         } catch (e: unknown) {
-          const msg = e instanceof Error ? e.message : "РћС€РёР±РєР°";
-          await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+          const msg = e instanceof Error ? e.message : "������";
+          await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         }
         return;
       }
@@ -2018,7 +2018,7 @@ bot.on("callback_query:data", async (ctx) => {
         price: formatMoney(tariff.price, tariff.currency),
         amount: String(tariff.price),
         currency: tariff.currency,
-        action: "Р’С‹Р±РµСЂРёС‚Рµ СЃРїРѕСЃРѕР± РѕРїР»Р°С‚С‹:",
+        action: "�������� ������ ������:",
       }, discountArgProxy);
       await editMessageContent(ctx, msg.text, markup, msg.entities);
       return;
@@ -2028,10 +2028,10 @@ bot.on("callback_query:data", async (ctx) => {
       const singboxTariffId = data.slice("pay_singbox_balance:".length);
       try {
         const result = await api.payByBalance(token, { singboxTariffId });
-        await editMessageContent(ctx, `вњ… ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, `? ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РѕРїР»Р°С‚С‹";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ ������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2041,7 +2041,7 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicSingboxTariffs();
       const tariff = items?.flatMap((c: { tariffs: { id: string; name: string; price: number; currency: string }[] }) => c.tariffs).find((t: { id: string }) => t.id === singboxTariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� ������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -2051,12 +2051,12 @@ bot.on("callback_query:data", async (ctx) => {
           price: formatMoney(tariff.price, tariff.currency),
           amount: String(tariff.price),
           currency: tariff.currency,
-          action: "РќР°Р¶Р�?РёС‚Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Money:",
+          action: "������� ��� ������ ����� �Money:",
         });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ �������� �������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2066,11 +2066,11 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicSingboxTariffs();
       const tariff = items?.flatMap((c: { tariffs: { id: string; name: string; price: number; currency: string }[] }) => c.tariffs).find((t: { id: string }) => t.id === singboxTariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� ������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       if (tariff.currency.toUpperCase() !== "RUB") {
-        await editMessageContent(ctx, "Р®Kassa РїСЂРёРЅРёР�?Р°РµС‚ С‚РѕР»СЊРєРѕ СЂСѓР±Р»Рё (RUB).", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "�Kassa ��������� ������ ����� (RUB).", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -2080,12 +2080,12 @@ bot.on("callback_query:data", async (ctx) => {
           price: formatMoney(tariff.price, tariff.currency),
           amount: String(tariff.price),
           currency: tariff.currency,
-          action: "РќР°Р¶Р�?РёС‚Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Kassa:",
+          action: "������� ��� ������ ����� �Kassa:",
         });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.confirmationUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ �������� �������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2095,16 +2095,16 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicSingboxTariffs();
       const tariff = items?.flatMap((c: { tariffs: { id: string; name: string; price: number; currency: string }[] }) => c.tariffs).find((t: { id: string }) => t.id === singboxTariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� ������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
         const payment = await api.createCryptopayPayment(token, { amount: tariff.price, currency: tariff.currency, singboxTariffId });
-        const msg = buildPaymentMessage(config, { name: tariff.name, price: formatMoney(tariff.price, tariff.currency), amount: String(tariff.price), currency: tariff.currency, action: "РќР°Р¶Р�?РёС‚Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Crypto Bot:" });
+        const msg = buildPaymentMessage(config, { name: tariff.name, price: formatMoney(tariff.price, tariff.currency), amount: String(tariff.price), currency: tariff.currency, action: "������� ��� ������ ����� Crypto Bot:" });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.payUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ �������� �������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2117,12 +2117,12 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicSingboxTariffs();
       const tariff = items?.flatMap((c: { tariffs: { id: string; name: string; price: number; currency: string }[] }) => c.tariffs).find((t: { id: string }) => t.id === singboxTariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� ������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const methods = config?.plategaMethods ?? [];
       const client = await api.getMe(token);
-      const balanceLabel = client && client.balance >= tariff.price ? `рџ’° РћРїР»Р°С‚РёС‚СЊ Р±Р°Р»Р°РЅСЃРѕР�? (${formatMoney(client.balance, client.preferredCurrency ?? "RUB")})` : null;
+      const balanceLabel = client && client.balance >= tariff.price ? `?? �������� �������� (${formatMoney(client.balance, client.preferredCurrency ?? "RUB")})` : null;
       const discountInfoSingbox = activeDiscountCode.get(userId);
       const promoCodeSingbox = discountInfoSingbox?.code;
       const discountArgSingbox = discountInfoSingbox ? {
@@ -2135,7 +2135,7 @@ bot.on("callback_query:data", async (ctx) => {
             amount: tariff.price,
             currency: tariff.currency,
             paymentMethod: methodIdFromBtn,
-            description: `Р”РѕСЃС‚СѓРїС‹: ${tariff.name}`,
+            description: `�������: ${tariff.name}`,
             singboxTariffId: tariff.id,
             promoCode: promoCodeSingbox,
           });
@@ -2145,12 +2145,12 @@ bot.on("callback_query:data", async (ctx) => {
             price: formatMoney(tariff.price, tariff.currency),
             amount: String(tariff.price),
             currency: tariff.currency,
-            action: "РќР°Р¶Р�?РёС‚Рµ РґР»СЏ РѕРїР»Р°С‚С‹:",
+            action: "������� ��� ������:",
           }, discountArgSingbox);
           await editMessageContent(ctx, msg.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
         } catch (e: unknown) {
-          const msg = e instanceof Error ? e.message : "РћС€РёР±РєР°";
-          await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+          const msg = e instanceof Error ? e.message : "������";
+          await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         }
         return;
       }
@@ -2171,7 +2171,7 @@ bot.on("callback_query:data", async (ctx) => {
         price: formatMoney(tariff.price, tariff.currency),
         amount: String(tariff.price),
         currency: tariff.currency,
-        action: "Р’С‹Р±РµСЂРёС‚Рµ СЃРїРѕСЃРѕР± РѕРїР»Р°С‚С‹:",
+        action: "�������� ������ ������:",
       }, discountArgSingbox);
       await editMessageContent(ctx, msg.text, markup, msg.entities);
       return;
@@ -2184,10 +2184,10 @@ bot.on("callback_query:data", async (ctx) => {
         const promoCode = discountInfoBal?.code;
         const result = await api.payByBalance(token, { tariffId, promoCode });
         if (promoCode) activeDiscountCode.delete(userId);
-        await editMessageContent(ctx, `вњ… ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, `? ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РѕРїР»Р°С‚С‹";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ ������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2197,7 +2197,7 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicTariffs();
       const tariff = items?.flatMap((c: TariffCategory) => c.tariffs).find((t: TariffItem) => t.id === tariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� ������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -2219,12 +2219,12 @@ bot.on("callback_query:data", async (ctx) => {
           price: formatMoney(tariff.price, tariff.currency),
           amount: String(tariff.price),
           currency: tariff.currency,
-          action: "РќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Money:",
+          action: "������� ������ ���� ��� ������ ����� �Money:",
         }, discountArgYm);
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р° Р®Money";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ �������� ������� �Money";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2234,11 +2234,11 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicTariffs();
       const tariff = items?.flatMap((c: TariffCategory) => c.tariffs).find((t: TariffItem) => t.id === tariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� ������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       if (tariff.currency.toUpperCase() !== "RUB") {
-        await editMessageContent(ctx, "Р®Kassa РїСЂРёРЅРёР�?Р°РµС‚ С‚РѕР»СЊРєРѕ СЂСѓР±Р»Рё (RUB).", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "�Kassa ��������� ������ ����� (RUB).", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -2260,12 +2260,12 @@ bot.on("callback_query:data", async (ctx) => {
           price: formatMoney(tariff.price, tariff.currency),
           amount: String(tariff.price),
           currency: tariff.currency,
-          action: "РќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Kassa:",
+          action: "������� ������ ���� ��� ������ ����� �Kassa:",
         }, discountArgYk);
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.confirmationUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р° Р®Kassa";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ �������� ������� �Kassa";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2275,7 +2275,7 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicTariffs();
       const tariff = items?.flatMap((c: TariffCategory) => c.tariffs).find((t: TariffItem) => t.id === tariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� ������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -2287,11 +2287,11 @@ bot.on("callback_query:data", async (ctx) => {
           originalPrice: formatMoney(tariff.price, tariff.currency),
           discountedPrice: formatMoney(getDiscountedPrice(tariff.price, discountInfoCp), tariff.currency),
         } : undefined;
-        const msg = buildPaymentMessage(config, { name: tariff.name, price: formatMoney(tariff.price, tariff.currency), amount: String(tariff.price), currency: tariff.currency, action: "РќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Crypto Bot:" }, discountArgCp);
+        const msg = buildPaymentMessage(config, { name: tariff.name, price: formatMoney(tariff.price, tariff.currency), amount: String(tariff.price), currency: tariff.currency, action: "������� ������ ���� ��� ������ ����� Crypto Bot:" }, discountArgCp);
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.payUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ �������� �������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2299,10 +2299,10 @@ bot.on("callback_query:data", async (ctx) => {
     if (data === "menu:extra_options") {
       const options = config?.sellOptions ?? [];
       if (!options.length) {
-        await editMessageContent(ctx, "Р”РѕРї. РѕРїС†РёРё РїРѕРєР° РЅРµ РґРѕСЃС‚СѓРїРЅС‹. РћС„РѕСЂР�?РёС‚Рµ РїРѕРґРїРёСЃРєСѓ РІ СЂР°Р·РґРµР»Рµ В«РўР°СЂРёС„С‹В».", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "���. ����� ���� �� ��������. �������� �������� � ������� ��������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
-      const { text, entities } = titleWithEmoji("PACKAGE", "Р”РѕРї. РѕРїС†РёРё\n\nРўСЂР°С„РёРє, СѓСЃС‚СЂРѕР№СЃС‚РІР° РёР»Рё СЃРµСЂРІРµСЂС‹ вЂ” РґРѕРєСѓРїРєР° Рє РїРѕРґРїРёСЃРєРµ. Р’С‹Р±РµСЂРёС‚Рµ РѕРїС†РёСЋ:", config?.botEmojis);
+      const { text, entities } = titleWithEmoji("PACKAGE", "���. �����\n\n������, ���������� ��� ������� � ������� � ��������. �������� �����:", config?.botEmojis);
       await editMessageContent(ctx, text, extraOptionsButtons(options, config?.botBackLabel ?? null, innerStyles, innerEmojiIds), entities);
       return;
     }
@@ -2314,15 +2314,15 @@ bot.on("callback_query:data", async (ctx) => {
       const options = config?.sellOptions ?? [];
       const option = options.find((o) => o.kind === kind && o.id === productId);
       if (!option) {
-        await editMessageContent(ctx, "РћРїС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� �������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
         const result = await api.payOptionByBalance(token, { kind: option.kind, productId: option.id });
-        await editMessageContent(ctx, `вњ… ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, `? ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РѕРїР»Р°С‚С‹";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ ������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2334,35 +2334,35 @@ bot.on("callback_query:data", async (ctx) => {
       const options = config?.sellOptions ?? [];
       const option = options.find((o) => o.kind === kind && o.id === productId);
       if (!option) {
-        await editMessageContent(ctx, "РћРїС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� �������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
         const payment = await api.createYookassaPayment(token, {
           extraOption: { kind: option.kind, productId: option.id },
         });
-        const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} Р“Р�?` : option.kind === "devices" ? `+${option.deviceCount} СѓСЃС‚СЂ.` : "РЎРµСЂРІРµСЂ");
+        const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} ���?` : option.kind === "devices" ? `+${option.deviceCount} ����.` : "������");
         const msg = buildPaymentMessage(config, {
           name: optName,
           price: formatMoney(option.price, option.currency),
           amount: String(option.price),
           currency: option.currency,
-          action: "РќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Kassa:",
+          action: "������� ������ ���� ��� ������ ����� �Kassa:",
         });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.confirmationUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
-        const isAuthError = /401|unauthorized|РёСЃС‚РµРє|Р°РІС‚РѕСЂРёР·|С‚РѕРєРµРЅ/i.test(msg);
+        const msg = e instanceof Error ? e.message : "������ �������� �������";
+        const isAuthError = /401|unauthorized|�����|�������|�����/i.test(msg);
         if (isAuthError) {
           tokenStore.delete(userId);
           const freshToken = await getOrRestoreToken(userId, ctx.from?.username);
           if (freshToken) {
-            await editMessageContent(ctx, "рџ”„ РџРѕРІС‚РѕСЂРёС‚Рµ РґРµР№СЃС‚РІРёРµ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+            await editMessageContent(ctx, "?? ��������� ��������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
           } else {
-            await editMessageContent(ctx, "вќЊ РћС€РёР±РєР° Р°РІС‚РѕСЂРёР·Р°С†РёРё. РћС‚РїСЂР°РІСЊС‚Рµ /start", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+            await editMessageContent(ctx, "? ������ �����������. ��������� /start", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
           }
         } else {
-          await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+          await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         }
       }
       return;
@@ -2375,27 +2375,27 @@ bot.on("callback_query:data", async (ctx) => {
       const options = config?.sellOptions ?? [];
       const option = options.find((o) => o.kind === kind && o.id === productId);
       if (!option) {
-        await editMessageContent(ctx, "РћРїС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� �������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
         const payment = await api.createCryptopayPayment(token, { extraOption: { kind: option.kind, productId: option.id } });
-        const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} Р“Р�?` : option.kind === "devices" ? `+${option.deviceCount} СѓСЃС‚СЂ.` : "РЎРµСЂРІРµСЂ");
-        const msg = buildPaymentMessage(config, { name: optName, price: formatMoney(option.price, option.currency), amount: String(option.price), currency: option.currency, action: "РќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Crypto Bot:" });
+        const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} ���?` : option.kind === "devices" ? `+${option.deviceCount} ����.` : "������");
+        const msg = buildPaymentMessage(config, { name: optName, price: formatMoney(option.price, option.currency), amount: String(option.price), currency: option.currency, action: "������� ������ ���� ��� ������ ����� Crypto Bot:" });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.payUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
-        const isAuthError = /401|unauthorized|РёСЃС‚РµРє|Р°РІС‚РѕСЂРёР·|С‚РѕРєРµРЅ/i.test(msg);
+        const msg = e instanceof Error ? e.message : "������ �������� �������";
+        const isAuthError = /401|unauthorized|�����|�������|�����/i.test(msg);
         if (isAuthError) {
           tokenStore.delete(userId);
           const freshToken = await getOrRestoreToken(userId, ctx.from?.username);
           if (freshToken) {
-            await editMessageContent(ctx, "рџ”„ РџРѕРІС‚РѕСЂРёС‚Рµ РґРµР№СЃС‚РІРёРµ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+            await editMessageContent(ctx, "?? ��������� ��������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
           } else {
-            await editMessageContent(ctx, "вќЊ РћС€РёР±РєР° Р°РІС‚РѕСЂРёР·Р°С†РёРё. РћС‚РїСЂР°РІСЊС‚Рµ /start", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+            await editMessageContent(ctx, "? ������ �����������. ��������� /start", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
           }
         } else {
-          await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+          await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         }
       }
       return;
@@ -2408,7 +2408,7 @@ bot.on("callback_query:data", async (ctx) => {
       const options = config?.sellOptions ?? [];
       const option = options.find((o) => o.kind === kind && o.id === productId);
       if (!option) {
-        await editMessageContent(ctx, "РћРїС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� �������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -2417,18 +2417,18 @@ bot.on("callback_query:data", async (ctx) => {
           paymentType: "AC",
           extraOption: { kind: option.kind, productId: option.id },
         });
-        const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} Р“Р�?` : option.kind === "devices" ? `+${option.deviceCount} СѓСЃС‚СЂ.` : "РЎРµСЂРІРµСЂ");
+        const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} ���?` : option.kind === "devices" ? `+${option.deviceCount} ����.` : "������");
         const msg = buildPaymentMessage(config, {
           name: optName,
           price: formatMoney(option.price, option.currency),
           amount: String(option.price),
           currency: option.currency,
-          action: "РќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Money:",
+          action: "������� ������ ���� ��� ������ ����� �Money:",
         });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р° Р®Money";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ �������� ������� �Money";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2441,11 +2441,11 @@ bot.on("callback_query:data", async (ctx) => {
       const options = config?.sellOptions ?? [];
       const option = options.find((o) => o.kind === kind && o.id === productId);
       if (!option) {
-        await editMessageContent(ctx, "РћРїС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� �������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       if (!Number.isFinite(methodId)) {
-        await editMessageContent(ctx, "РќРµРІРµСЂРЅС‹Р№ СЃРїРѕСЃРѕР± РѕРїР»Р°С‚С‹.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "�������� ������ ������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -2456,18 +2456,18 @@ bot.on("callback_query:data", async (ctx) => {
           description: option.name || `${option.kind} ${option.id}`,
           extraOption: { kind: option.kind, productId: option.id },
         });
-        const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} Р“Р�?` : option.kind === "devices" ? `+${option.deviceCount} СѓСЃС‚СЂ.` : "РЎРµСЂРІРµСЂ");
+        const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} ���?` : option.kind === "devices" ? `+${option.deviceCount} ����.` : "������");
         const msg = buildPaymentMessage(config, {
           name: optName,
           price: formatMoney(option.price, option.currency),
           amount: String(option.price),
           currency: option.currency,
-          action: "РќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹:",
+          action: "������� ������ ���� ��� ������:",
         });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ �������� �������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2479,21 +2479,21 @@ bot.on("callback_query:data", async (ctx) => {
       const options = config?.sellOptions ?? [];
       const option = options.find((o) => o.kind === kind && o.id === productId);
       if (!option) {
-        await editMessageContent(ctx, "РћРїС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°. РћР±РЅРѕРІРёС‚Рµ Р�?РµРЅСЋ (/start) Рё РїРѕРїСЂРѕР±СѓР№С‚Рµ СЃРЅРѕРІР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� �������. �������� ���� (/start) � ���������� �����.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       if (option.currency.toUpperCase() !== "RUB") {
-        await editMessageContent(ctx, "РћРїР»Р°С‚Р° РІ Р±РѕС‚Рµ РґРѕСЃС‚СѓРїРЅР° С‚РѕР»СЊРєРѕ РІ СЂСѓР±Р»СЏС… (RUB).", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "������ � ���� �������� ������ � ������ (RUB).", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const client = await api.getMe(token);
-      const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} Р“Р�?` : option.kind === "devices" ? `+${option.deviceCount} СѓСЃС‚СЂ.` : "РЎРµСЂРІРµСЂ");
+      const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} ���?` : option.kind === "devices" ? `+${option.deviceCount} ����.` : "������");
       const choiceText = buildPaymentMessage(config, {
         name: optName,
         price: formatMoney(option.price, option.currency),
         amount: String(option.price),
         currency: option.currency,
-        action: "Р’С‹Р±РµСЂРёС‚Рµ СЃРїРѕСЃРѕР± РѕРїР»Р°С‚С‹:",
+        action: "�������� ������ ������:",
       });
       const markup = optionPaymentMethodButtons(
         option,
@@ -2518,12 +2518,12 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicTariffs();
       const tariff = items?.flatMap((c: TariffCategory) => c.tariffs).find((t: TariffItem) => t.id === tariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� ������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const methods = config?.plategaMethods ?? [];
       const client = await api.getMe(token);
-      const balanceLabel = client && client.balance >= tariff.price ? `рџ’° РћРїР»Р°С‚РёС‚СЊ Р±Р°Р»Р°РЅСЃРѕР�? (${formatMoney(client.balance, client.preferredCurrency ?? "RUB")})` : null;
+      const balanceLabel = client && client.balance >= tariff.price ? `?? �������� �������� (${formatMoney(client.balance, client.preferredCurrency ?? "RUB")})` : null;
 
       const discountInfoTariff = activeDiscountCode.get(userId);
       const discountArgTariff = discountInfoTariff ? {
@@ -2537,7 +2537,7 @@ bot.on("callback_query:data", async (ctx) => {
           amount: tariff.price,
           currency: tariff.currency,
           paymentMethod: methodIdFromBtn,
-          description: `РўР°СЂРёС„: ${tariff.name}`,
+          description: `�����: ${tariff.name}`,
           tariffId: tariff.id,
           promoCode,
         });
@@ -2547,18 +2547,18 @@ bot.on("callback_query:data", async (ctx) => {
           price: formatMoney(tariff.price, tariff.currency),
           amount: String(tariff.price),
           currency: tariff.currency,
-          action: "РќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹:",
+          action: "������� ������ ���� ��� ������:",
         }, discountArgTariff);
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
         return;
       }
-      // РџРѕРєР°Р·С‹РІР°РµР�? СЃРїРѕСЃРѕР±С‹ РѕРїР»Р°С‚С‹ (РІСЃРµРіРґР°, С‡С‚РѕР±С‹ Р±С‹Р»Р° РєРЅРѕРїРєР° Р±Р°Р»Р°РЅСЃР°)
+      // ���������� ������� ������ (������, ����� ���� ������ �������)
       const pay2 = buildPaymentMessage(config, {
         name: tariff.name,
         price: formatMoney(tariff.price, tariff.currency),
         amount: String(tariff.price),
         currency: tariff.currency,
-        action: "Р’С‹Р±РµСЂРёС‚Рµ СЃРїРѕСЃРѕР± РѕРїР»Р°С‚С‹:",
+        action: "�������� ������ ������:",
       }, discountArgTariff);
       await editMessageContent(ctx, pay2.text, tariffPaymentMethodButtons(tariffId, methods, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds, balanceLabel, !!config?.yoomoneyEnabled, !!config?.yookassaEnabled, !!config?.cryptopayEnabled, tariff.currency), pay2.entities);
       return;
@@ -2596,16 +2596,16 @@ bot.on("callback_query:data", async (ctx) => {
         const lines = [_t("devices.delete_hint", lang) + "\n"];
         const rows: InlineMarkup["inline_keyboard"] = [];
         devices.slice(0, 15).forEach((d, i) => {
-          const label = [d.platform, d.deviceModel].filter(Boolean).join(" В· ") || d.hwid.slice(0, 12) + "вЂ¦";
+          const label = [d.platform, d.deviceModel].filter(Boolean).join(" � ") || d.hwid.slice(0, 12) + "�";
           lines.push(`${i + 1}. ${label}`);
-          rows.push([{ text: `рџ—�? РЈРґР°Р»РёС‚СЊ: ${label.slice(0, 25)}`, callback_data: `devices:delete:${i}` }]);
+          rows.push([{ text: `��? �������: ${label.slice(0, 25)}`, callback_data: `devices:delete:${i}` }]);
         });
-        rows.push([{ text: config?.botBackLabel ?? "в—ЂпёЏ Р’ Р�?РµРЅСЋ", callback_data: "menu:main" }]);
+        rows.push([{ text: config?.botBackLabel ?? "?? � ����", callback_data: "menu:main" }]);
         await editMessageContent(ctx, lines.join("\n"), { inline_keyboard: rows });
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР°";
-        await editMessageContent(ctx, `рџ“± РЈСЃС‚СЂРѕР№СЃС‚РІР°\n\nвќЊ ${msg}`, {
-          inline_keyboard: [[{ text: config?.botBackLabel ?? "в—ЂпёЏ Р’ Р�?РµРЅСЋ", callback_data: "menu:main" }]],
+        const msg = e instanceof Error ? e.message : "������";
+        await editMessageContent(ctx, `?? ����������\n\n? ${msg}`, {
+          inline_keyboard: [[{ text: config?.botBackLabel ?? "?? � ����", callback_data: "menu:main" }]],
         });
       }
       return;
@@ -2637,16 +2637,16 @@ bot.on("callback_query:data", async (ctx) => {
           const lines = [_t("devices.deleted", lang) + "\n"];
           const rows: InlineMarkup["inline_keyboard"] = [];
           nextDevices.slice(0, 15).forEach((d, i) => {
-            const label = [d.platform, d.deviceModel].filter(Boolean).join(" В· ") || d.hwid.slice(0, 12) + "вЂ¦";
+            const label = [d.platform, d.deviceModel].filter(Boolean).join(" � ") || d.hwid.slice(0, 12) + "�";
             lines.push(`${i + 1}. ${label}`);
-            rows.push([{ text: `рџ—�? РЈРґР°Р»РёС‚СЊ: ${label.slice(0, 25)}`, callback_data: `devices:delete:${i}` }]);
+            rows.push([{ text: `��? �������: ${label.slice(0, 25)}`, callback_data: `devices:delete:${i}` }]);
           });
-          rows.push([{ text: config?.botBackLabel ?? "в—ЂпёЏ Р’ Р�?РµРЅСЋ", callback_data: "menu:main" }]);
+          rows.push([{ text: config?.botBackLabel ?? "?? � ����", callback_data: "menu:main" }]);
           await editMessageContent(ctx, lines.join("\n"), { inline_keyboard: rows });
         }
       } catch (e: unknown) {
-        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: config?.botBackLabel ?? "в—ЂпёЏ Р’ Р�?РµРЅСЋ", callback_data: "menu:devices" }]],
+        await editMessageContent(ctx, `? ${e instanceof Error ? e.message : "������"}`, {
+          inline_keyboard: [[{ text: config?.botBackLabel ?? "?? � ����", callback_data: "menu:devices" }]],
         });
       }
       return;
@@ -2697,7 +2697,7 @@ bot.on("callback_query:data", async (ctx) => {
         );
         await editMessageContent(ctx, text, profileButtons(config?.botBackLabel ?? null, innerStyles, innerEmojiIds, client?.autoRenewEnabled, lang), entities);
       } catch (err: any) {
-        await ctx.answerCallbackQuery({ text: err.message || "РћС€РёР±РєР°", show_alert: true });
+        await ctx.answerCallbackQuery({ text: err.message || "������", show_alert: true });
       }
       return;
     }
@@ -2713,7 +2713,7 @@ bot.on("callback_query:data", async (ctx) => {
         await editMessageContent(ctx, _t("topup.unavailable", lang), backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
-      const topupTitle = titleWithEmoji("CARD", "РџРѕРїРѕР»РЅРёС‚СЊ Р±Р°Р»Р°РЅСЃ\n\nР’С‹Р±РµСЂРёС‚Рµ СЃСѓР�?Р�?Сѓ РёР»Рё РІРІРµРґРёС‚Рµ СЃРІРѕСЋ (С‡РёСЃР»РѕР�?):", config?.botEmojis);
+      const topupTitle = titleWithEmoji("CARD", "��������� ������\n\n�������� ����� ��� ������� ���� (������):", config?.botEmojis);
       await editMessageContent(ctx, topupTitle.text, topUpPresets(client.preferredCurrency, config?.botBackLabel ?? null, innerStyles, innerEmojiIds), topupTitle.entities);
       return;
     }
@@ -2722,7 +2722,7 @@ bot.on("callback_query:data", async (ctx) => {
       const amountStr = data.slice("topup_yoomoney:".length);
       const amount = Number(amountStr);
       if (!Number.isFinite(amount) || amount <= 0) {
-        await editMessageContent(ctx, "РќРµРІРµСЂРЅР°СЏ СЃСѓР�?Р�?Р°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "�������� �����.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const client = await api.getMe(token);
@@ -2731,11 +2731,11 @@ bot.on("callback_query:data", async (ctx) => {
           amount,
           paymentType: "AC",
         });
-        const yooTopup = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(amount, client.preferredCurrency)}\n\nРќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Money:`, config?.botEmojis);
+        const yooTopup = titleWithEmoji("CARD", `���������� �� ${formatMoney(amount, client.preferredCurrency)}\n\n������� ������ ���� ��� ������ ����� �Money:`, config?.botEmojis);
         await editMessageContent(ctx, yooTopup.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), yooTopup.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р° Р®Money";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ �������� ������� �Money";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2744,17 +2744,17 @@ bot.on("callback_query:data", async (ctx) => {
       const amountStr = data.slice("topup_yookassa:".length);
       const amount = Number(amountStr);
       if (!Number.isFinite(amount) || amount <= 0) {
-        await editMessageContent(ctx, "РќРµРІРµСЂРЅР°СЏ СЃСѓР�?Р�?Р°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "�������� �����.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const client = await api.getMe(token);
       try {
         const payment = await api.createYookassaPayment(token, { amount, currency: "RUB" });
-        const yooTopup = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(amount, "RUB")}\n\nРќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Kassa:`, config?.botEmojis);
+        const yooTopup = titleWithEmoji("CARD", `���������� �� ${formatMoney(amount, "RUB")}\n\n������� ������ ���� ��� ������ ����� �Kassa:`, config?.botEmojis);
         await editMessageContent(ctx, yooTopup.text, payUrlMarkup(payment.confirmationUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), yooTopup.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р° Р®Kassa";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ �������� ������� �Kassa";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2763,17 +2763,17 @@ bot.on("callback_query:data", async (ctx) => {
       const amountStr = data.slice("topup_cryptopay:".length);
       const amount = Number(amountStr);
       if (!Number.isFinite(amount) || amount <= 0) {
-        await editMessageContent(ctx, "РќРµРІРµСЂРЅР°СЏ СЃСѓР�?Р�?Р°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "�������� �����.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const client = await api.getMe(token);
       try {
         const payment = await api.createCryptopayPayment(token, { amount, currency: client.preferredCurrency ?? "RUB" });
-        const cpTopup = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(amount, client.preferredCurrency ?? "RUB")}\n\nРќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Crypto Bot:`, config?.botEmojis);
+        const cpTopup = titleWithEmoji("CARD", `���������� �� ${formatMoney(amount, client.preferredCurrency ?? "RUB")}\n\n������� ������ ���� ��� ������ ����� Crypto Bot:`, config?.botEmojis);
         await editMessageContent(ctx, cpTopup.text, payUrlMarkup(payment.payUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), cpTopup.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р° Crypto Bot";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ �������� ������� Crypto Bot";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2785,7 +2785,7 @@ bot.on("callback_query:data", async (ctx) => {
       const amount = Number(amountStr);
       const methodIdFromBtn = parts.length >= 2 ? Number(parts[1]) : null;
       if (!Number.isFinite(amount) || amount <= 0) {
-        await editMessageContent(ctx, "РќРµРІРµСЂРЅР°СЏ СЃСѓР�?Р�?Р°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "�������� �����.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const client = await api.getMe(token);
@@ -2795,9 +2795,9 @@ bot.on("callback_query:data", async (ctx) => {
           amount,
           currency: client.preferredCurrency,
           paymentMethod: methodIdFromBtn,
-          description: "РџРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР°",
+          description: "���������� �������",
         });
-        const topupPay1 = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(amount, client.preferredCurrency)}\n\nРќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹:`, config?.botEmojis);
+        const topupPay1 = titleWithEmoji("CARD", `���������� �� ${formatMoney(amount, client.preferredCurrency)}\n\n������� ������ ���� ��� ������:`, config?.botEmojis);
         await editMessageContent(ctx, topupPay1.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), topupPay1.entities);
         return;
       }
@@ -2805,31 +2805,31 @@ bot.on("callback_query:data", async (ctx) => {
       const yookassaEnabled = !!config?.yookassaEnabled;
       const cryptopayEnabled = !!config?.cryptopayEnabled;
       if (methods.length > 1 || (methods.length >= 1 && (yooEnabled || yookassaEnabled || cryptopayEnabled)) || (methods.length === 0 && ((yooEnabled && yookassaEnabled) || (yooEnabled && cryptopayEnabled) || (yookassaEnabled && cryptopayEnabled)))) {
-        const topupPay2 = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(amount, client.preferredCurrency)}\n\nР’С‹Р±РµСЂРёС‚Рµ СЃРїРѕСЃРѕР± РѕРїР»Р°С‚С‹:`, config?.botEmojis);
+        const topupPay2 = titleWithEmoji("CARD", `���������� �� ${formatMoney(amount, client.preferredCurrency)}\n\n�������� ������ ������:`, config?.botEmojis);
         await editMessageContent(ctx, topupPay2.text, topupPaymentMethodButtons(amountStr, methods, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds, yooEnabled, yookassaEnabled, cryptopayEnabled), topupPay2.entities);
         return;
       }
-      // Р•СЃР»Рё Р®Money РµРґРёРЅСЃС‚РІРµРЅРЅС‹Р№ СЃРїРѕСЃРѕР± (РЅРµС‚ platega, РЅРµС‚ Р®Kassa) вЂ” СЃСЂР°Р·Сѓ СЃРѕР·РґР°С�?Р�? РїР»Р°С‚С�?Р¶ Р®Money
+      // ���� �Money ������������ ������ (��� platega, ��� �Kassa) � ����� �������?� ������?� �Money
       if (methods.length === 0 && yooEnabled && !yookassaEnabled) {
         try {
           const payment = await api.createYoomoneyPayment(token, { amount, paymentType: "AC" });
-          const yooTopup = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(amount, client.preferredCurrency)}\n\nРќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Money:`, config?.botEmojis);
+          const yooTopup = titleWithEmoji("CARD", `���������� �� ${formatMoney(amount, client.preferredCurrency)}\n\n������� ������ ���� ��� ������ ����� �Money:`, config?.botEmojis);
           await editMessageContent(ctx, yooTopup.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), yooTopup.entities);
         } catch (e: unknown) {
-          const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р° Р®Money";
-          await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+          const msg = e instanceof Error ? e.message : "������ �������� ������� �Money";
+          await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         }
         return;
       }
-      // Р•СЃР»Рё С‚РѕР»СЊРєРѕ Р®Kassa вЂ” СЃСЂР°Р·Сѓ СЃРѕР·РґР°С�?Р�? РїР»Р°С‚С�?Р¶ Р®Kassa
+      // ���� ������ �Kassa � ����� �������?� ������?� �Kassa
       if (methods.length === 0 && yookassaEnabled) {
         try {
           const payment = await api.createYookassaPayment(token, { amount, currency: "RUB" });
-          const yooTopup = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(amount, "RUB")}\n\nРќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Kassa:`, config?.botEmojis);
+          const yooTopup = titleWithEmoji("CARD", `���������� �� ${formatMoney(amount, "RUB")}\n\n������� ������ ���� ��� ������ ����� �Kassa:`, config?.botEmojis);
           await editMessageContent(ctx, yooTopup.text, payUrlMarkup(payment.confirmationUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), yooTopup.entities);
         } catch (e: unknown) {
-          const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р° Р®Kassa";
-          await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+          const msg = e instanceof Error ? e.message : "������ �������� ������� �Kassa";
+          await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         }
         return;
       }
@@ -2838,9 +2838,9 @@ bot.on("callback_query:data", async (ctx) => {
         amount,
         currency: client.preferredCurrency,
         paymentMethod: methodId,
-        description: "РџРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР°",
+        description: "���������� �������",
       });
-      const topupPay3 = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(amount, client.preferredCurrency)}\n\nРќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹:`, config?.botEmojis);
+      const topupPay3 = titleWithEmoji("CARD", `���������� �� ${formatMoney(amount, client.preferredCurrency)}\n\n������� ������ ���� ��� ������:`, config?.botEmojis);
       await editMessageContent(ctx, topupPay3.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), topupPay3.entities);
       return;
     }
@@ -2855,16 +2855,16 @@ bot.on("callback_query:data", async (ctx) => {
       }
       const linkSite = appUrl ? `${appUrl}/cabinet/register?ref=${encodeURIComponent(client.referralCode)}` : null;
       const linkBot = `https://t.me/${BOT_USERNAME || "bot"}?start=ref_${client.referralCode}`;
-      // РџРѕРєР°Р·С‹РІР°РµР�? С„Р°РєС‚РёС‡РµСЃРєРёР№ РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹Р№ РїСЂРѕС†РµРЅС‚ РєР»РёРµРЅС‚Р°.
-      // Р¤РѕР»Р±СЌРє РЅР° РґРµС„РѕР»С‚ С‚РѕР»СЊРєРѕ РµСЃР»Рё РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹Р№ РЅРµ Р·Р°РґР°РЅ (null/undefined).
+      // ���������� ����������� ������������ ������� �������.
+      // ������ �� ������ ������ ���� ������������ �� ����� (null/undefined).
       const p1 = client.referralPercent ?? (config?.defaultReferralPercent ?? 0);
       const p2 = config?.referralPercentLevel2 ?? 0;
       const p3 = config?.referralPercentLevel3 ?? 0;
       let rest = `${_t("referral.title", lang)}\n\n${_t("referral.description", lang)}\n\n`;
       rest += `${_t("referral.how_it_works", lang)}\n`;
-      rest += `вЂў ${_t("referral.level1", lang, { percent: String(p1) })}\n`;
-      rest += `вЂў ${_t("referral.level2", lang, { percent: String(p2) })}\n`;
-      rest += `вЂў ${_t("referral.level3", lang, { percent: String(p3) })}\n`;
+      rest += `� ${_t("referral.level1", lang, { percent: String(p1) })}\n`;
+      rest += `� ${_t("referral.level2", lang, { percent: String(p2) })}\n`;
+      rest += `� ${_t("referral.level3", lang, { percent: String(p3) })}\n`;
       rest += `\n${_t("referral.earnings_info", lang)}`;
       rest += `\n\n${_t("referral.your_links", lang)}`;
       if (linkSite) rest += `\n\n${_t("referral.site", lang)}\n` + linkSite;
@@ -2888,10 +2888,10 @@ bot.on("callback_query:data", async (ctx) => {
     if (data === "menu:trial" || data === "trial:confirm") {
       try {
         const result = await api.activateTrial(token);
-        await editMessageContent(ctx, `вњ… ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, `? ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° Р°РєС‚РёРІР°С†РёРё";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ ���������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2913,7 +2913,7 @@ bot.on("callback_query:data", async (ctx) => {
       return;
     }
 
-    // вЂ”вЂ”вЂ” Gift / Secondary Subscriptions handlers вЂ”вЂ”вЂ”
+    // ��� Gift / Secondary Subscriptions handlers ���
 
     if (data === "vpn:copy") {
       const lang = getUserLang(userId);
@@ -2933,12 +2933,12 @@ bot.on("callback_query:data", async (ctx) => {
 
     if (data === "menu:gift") {
       if (!config?.giftSubscriptionsEnabled) {
-        await editMessageContent(ctx, "Р¤СѓРЅРєС†РёСЏ РїРѕРґР°СЂРєРѕРІ РЅРµРґРѕСЃС‚СѓРїРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "������� �������� ����������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       await editMessageContent(
         ctx,
-        "рџЋЃ РџРѕРґР°СЂРєРё Рё РїРѕРґРїРёСЃРєРё\n\nР—РґРµСЃСЊ РІС‹ Р�?РѕР¶РµС‚Рµ РєСѓРїРёС‚СЊ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ РїРѕРґРїРёСЃРєРё, РїРѕРґР°СЂРёС‚СЊ РёС… РёР»Рё Р°РєС‚РёРІРёСЂРѕРІР°С‚СЊ РїРѕРґР°СЂРѕРє.",
+        "?? ������� � ��������\n\n����� �� ������ ������ �������������� ��������, �������� �� ��� ������������ �������.",
         giftMenuButtons(config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
       );
       return;
@@ -2947,12 +2947,12 @@ bot.on("callback_query:data", async (ctx) => {
     if (data === "gift:buy") {
       const { items } = await api.getPublicTariffs();
       if (!items?.length) {
-        await editMessageContent(ctx, "РўР°СЂРёС„С‹ РЅРµ РЅР°СЃС‚СЂРѕРµРЅС‹.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "������ �� ���������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       await editMessageContent(
         ctx,
-        "рџ›’ РљСѓРїРёС‚СЊ РґРѕРї. РїРѕРґРїРёСЃРєСѓ\n\nР’С‹Р±РµСЂРёС‚Рµ С‚Р°СЂРёС„:",
+        "?? ������ ���. ��������\n\n�������� �����:",
         giftTariffButtons(items, config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
       );
       return;
@@ -2963,14 +2963,14 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicTariffs();
       const tariff = items?.flatMap((c: TariffCategory) => c.tariffs).find((t: TariffItem) => t.id === tariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "����� �� ������.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const client = await api.getMe(token);
-      const balanceLabel = `рџ’° РћРїР»Р°С‚РёС‚СЊ Р±Р°Р»Р°РЅСЃРѕР�? (${formatMoney(client?.balance ?? 0, client?.preferredCurrency ?? "RUB")})`;
+      const balanceLabel = `?? �������� �������� (${formatMoney(client?.balance ?? 0, client?.preferredCurrency ?? "RUB")})`;
       await editMessageContent(
         ctx,
-        `рџ›’ ${tariff.name}\n\nРЎС‚РѕРёР�?РѕСЃС‚СЊ: ${formatMoney(tariff.price, tariff.currency)}\n\nРџРѕРґС‚РІРµСЂРґРёС‚Рµ РѕРїР»Р°С‚Сѓ:`,
+        `?? ${tariff.name}\n\n���������: ${formatMoney(tariff.price, tariff.currency)}\n\n����������� ������:`,
         giftPaymentButtons(tariffId, balanceLabel, config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
       );
       return;
@@ -2982,12 +2982,12 @@ bot.on("callback_query:data", async (ctx) => {
         const result = await api.buyGiftSubscription(token, { tariffId });
         await editMessageContent(
           ctx,
-          `вњ… Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ РїРѕРґРїРёСЃРєР° СЃРѕР·РґР°РЅР°!\n\nРџРѕРґРїРёСЃРєР° #${result.subscriptionIndex}\n\nР’С‹ Р�?РѕР¶РµС‚Рµ Р°РєС‚РёРІРёСЂРѕРІР°С‚СЊ РµС�? РЅР° СЃРІРѕС�?Р�? Р°РєРєР°СѓРЅС‚Рµ РёР»Рё РїРѕРґР°СЂРёС‚СЊ РґСЂСѓРіСѓ.`,
+          `? �������������� �������� �������!\n\n�������� #${result.subscriptionIndex}\n\n�� ������ ������������ ���? �� �����?� �������� ��� �������� �����.`,
           giftPostPurchaseButtons(result.secondarySubscriptionId, result.subscriptionIndex, config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
         );
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РѕРїР»Р°С‚С‹";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ ������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -3046,57 +3046,57 @@ bot.on("callback_query:data", async (ctx) => {
     if (data.startsWith("gift:connect:")) {
       const subscriptionId = data.slice("gift:connect:".length);
       try {
-        // РЎРЅР°С‡Р°Р»Р° Р°РєС‚РёРІРёСЂСѓРµР�? РїРѕРґРїРёСЃРєСѓ (СЃРЅРёР�?Р°РµР�? GIFT_RESERVED, РµСЃР»Рё РµСЃС‚СЊ)
+        // ������� ���������� �������� (������� GIFT_RESERVED, ���� ����)
         await api.activateGiftForSelf(token, subscriptionId).catch(() => {});
-        // РџРѕС‚РѕР�? РїРѕР»СѓС‡Р°РµР�? URL
+        // ����� �������� URL
         const result = await api.getGiftSubscriptionUrl(token, subscriptionId);
         const appUrl2 = config?.publicAppUrl?.replace(/\/$/, "") ?? null;
 
-        // Р•СЃР»Рё РІРєР»СЋС‡РµРЅР° Remna-СЃС‚СЂР°РЅРёС†Р° РїРѕРґРїРёСЃРєРё вЂ” РѕС‚РґР°С�?Р�? remna subscriptionUrl.
+        // ���� �������� Remna-�������� �������� � ������?� remna subscriptionUrl.
         if (config?.useRemnaSubscriptionPage) {
           const byUuid = await api.getSubscriptionByUuid(token, result.uuid);
           const remnaUrl = getSubscriptionUrl(byUuid.subscription);
           if (!remnaUrl) {
             await editMessageContent(
               ctx,
-              "вќЊ РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ СЃСЃС‹Р»РєСѓ Remna РґР»СЏ СЌС‚РѕР№ РїРѕРґРїРёСЃРєРё.",
+              "? �� ������� �������� ������ Remna ��� ���� ��������.",
               backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds),
             );
             return;
           }
           await editMessageContent(
             ctx,
-            "Подключение готово. Выберите действие:",
+            "����������� ������. �������� ��������:",
             {
               inline_keyboard: [
-                [{ text: "рџ“І РџРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ Рє VPN", url: remnaUrl }],
+                [{ text: "?? ������������ � VPN", url: remnaUrl }],
                 [{ text: "?? ����������� ������", callback_data: `gift:copy:${subscriptionId}` }],
-                [{ text: config?.botBackLabel ?? "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: "menu:gift" }],
+                [{ text: config?.botBackLabel ?? "?? �����", callback_data: "menu:gift" }],
               ],
             },
           );
           return;
         }
 
-        // Р�?РЅР°С‡Рµ РїРѕРєР°Р·С‹РІР°РµР�? СЃСЃС‹Р»РєСѓ + РєРЅРѕРїРєСѓ "РџРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ" РІ Р�?РёРЅРё-Р°РїРї РЅР° РЅР°С€Сѓ СЃС‚СЂР°РЅРёС†Сѓ
-        // РїРѕРґРєР»СЋС‡РµРЅРёСЏ РґР»СЏ РєРѕРЅРєСЂРµС‚РЅРѕР№ secondary-РїРѕРґРїРёСЃРєРё.
+        // ����� ���������� ������ + ������ "������������" � ����-��� �� ���� ��������
+        // ����������� ��� ���������� secondary-��������.
         const webUrl = appUrl2 ? `${appUrl2}/cabinet/subscribe?uuid=${encodeURIComponent(result.uuid)}` : null;
         const buttons = webUrl
           ? {
               inline_keyboard: [
-                [{ text: "рџ“І РџРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ", web_app: { url: webUrl } }],
-                [{ text: config?.botBackLabel ?? "в†ђ РќР°Р·Р°Рґ", callback_data: "menu:gift" }],
+                [{ text: "?? ������������", web_app: { url: webUrl } }],
+                [{ text: config?.botBackLabel ?? "? �����", callback_data: "menu:gift" }],
               ],
             }
           : giftCodeResultButtons(config?.botBackLabel ?? null, innerStyles, innerEmojiIds);
         await editMessageContent(
           ctx,
-          `рџ“І РЎСЃС‹Р»РєР° РЅР° РїРѕРґРїРёСЃРєСѓ:\n\n${webUrl ?? `РџРѕРґРїРёСЃРєР° UUID: ${result.uuid}`}`,
+          `?? ������ �� ��������:\n\n${webUrl ?? `�������� UUID: ${result.uuid}`}`,
           buttons,
         );
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РїРѕР»СѓС‡РµРЅРёСЏ СЃСЃС‹Р»РєРё";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ ��������� ������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -3109,7 +3109,7 @@ bot.on("callback_query:data", async (ctx) => {
         const byUuid = await api.getSubscriptionByUuid(token, result.uuid);
         const remnaUrl = getSubscriptionUrl(byUuid.subscription);
         if (!remnaUrl) {
-          await ctx.answerCallbackQuery({ text: "РЎСЃС‹Р»РєР° РЅРµ РЅР°Р№РґРµРЅР°", show_alert: true }).catch(() => {});
+          await ctx.answerCallbackQuery({ text: "������ �� �������", show_alert: true }).catch(() => {});
           return;
         }
         const sent = await ctx.reply(`<code>${escapeHtml(remnaUrl)}</code>`, { parse_mode: "HTML" });
@@ -3118,7 +3118,7 @@ bot.on("callback_query:data", async (ctx) => {
         }, 15000);
         await ctx.answerCallbackQuery({ text: "������ �����������", show_alert: false }).catch(() => {});
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РїРѕР»СѓС‡РµРЅРёСЏ СЃСЃС‹Р»РєРё";
+        const msg = e instanceof Error ? e.message : "������ ��������� ������";
         await ctx.answerCallbackQuery({ text: msg.slice(0, 180), show_alert: true }).catch(() => {});
       }
       return;
@@ -3129,33 +3129,33 @@ bot.on("callback_query:data", async (ctx) => {
       try {
         const result = await api.createGiftCode(token, { secondarySubscriptionId: subscriptionId });
         const expiresAt = new Date(result.expiresAt).toLocaleDateString("ru-RU");
-        const tariffLabel = result.tariffName ? `\nРўР°СЂРёС„: ${result.tariffName}` : "";
+        const tariffLabel = result.tariffName ? `\n�����: ${result.tariffName}` : "";
 
-        // Р¤РѕСЂР�?РёСЂСѓРµР�? СЃСЃС‹Р»РєСѓ РЅР° РїРѕРґР°СЂРѕРє Рё РєРЅРѕРїРєСѓ "РџРѕРґРµР»РёС‚СЊСЃСЏ"
+        // ��������� ������ �� ������� � ������ "����������"
         const appUrl = config?.publicAppUrl?.replace(/\/$/, "") ?? "";
         const giftUrl = appUrl ? `${appUrl}/gift/${result.code}` : "";
-        const shareText = `рџЋЃ РЇ РґР°СЂСЋ С‚РµР±Рµ VPN-РїРѕРґРїРёСЃРєСѓ STEALTHNET${result.tariffName ? ` (${result.tariffName})` : ""}! РђРєС‚РёРІРёСЂСѓР№ РїРѕ СЃСЃС‹Р»РєРµ:`;
+        const shareText = `?? � ���� ���� VPN-�������� STEALTHNET${result.tariffName ? ` (${result.tariffName})` : ""}! ��������� �� ������:`;
         const shareUrl = giftUrl
           ? `https://t.me/share/url?url=${encodeURIComponent(giftUrl)}&text=${encodeURIComponent(shareText)}`
           : "";
 
         const buttons: (({ text: string; callback_data: string } | { text: string; url: string })[])[] = [];
         if (shareUrl) {
-          buttons.push([{ text: "рџ“¤ РџРѕРґРµР»РёС‚СЊСЃСЏ РІ Telegram", url: shareUrl }]);
+          buttons.push([{ text: "?? ���������� � Telegram", url: shareUrl }]);
         }
         if (giftUrl) {
-          buttons.push([{ text: "рџ”— РЎСЃС‹Р»РєР° РЅР° РїРѕРґР°СЂРѕРє", url: giftUrl }]);
+          buttons.push([{ text: "?? ������ �� �������", url: giftUrl }]);
         }
-        buttons.push([{ text: config?.botBackLabel ?? "в†ђ РќР°Р·Р°Рґ", callback_data: "menu:gift" }]);
+        buttons.push([{ text: config?.botBackLabel ?? "? �����", callback_data: "menu:gift" }]);
 
         await editMessageContent(
           ctx,
-          `рџЋЃ РџРѕРґР°СЂРѕС‡РЅС‹Р№ РєРѕРґ СЃРѕР·РґР°РЅ!\n\nРљРѕРґ: \`${result.code}\`${tariffLabel}\n\nРћС‚РїСЂР°РІСЊС‚Рµ СЌС‚РѕС‚ РєРѕРґ РїРѕР»СѓС‡Р°С‚РµР»СЋ РёР»Рё РїРѕРґРµР»РёС‚РµСЃСЊ СЃСЃС‹Р»РєРѕР№. РљРѕРґ РґРµР№СЃС‚РІРёС‚РµР»РµРЅ РґРѕ ${expiresAt}.`,
+          `?? ���������� ��� ������!\n\n���: \`${result.code}\`${tariffLabel}\n\n��������� ���� ��� ���������� ��� ���������� �������. ��� ������������ �� ${expiresAt}.`,
           { inline_keyboard: buttons },
         );
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РєРѕРґР°";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ �������� ����";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -3166,12 +3166,12 @@ bot.on("callback_query:data", async (ctx) => {
         const result = await api.deleteGiftSubscription(token, subscriptionId);
         await editMessageContent(
           ctx,
-          `вњ… ${result.message || "РџРѕРґРїРёСЃРєР° СѓРґР°Р»РµРЅР°"}`,
+          `? ${result.message || "�������� �������"}`,
           giftCodeResultButtons(config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
         );
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СѓРґР°Р»РµРЅРёСЏ";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ ��������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -3180,7 +3180,7 @@ bot.on("callback_query:data", async (ctx) => {
       awaitingGiftCode.add(userId);
       await editMessageContent(
         ctx,
-        "рџЋЃ Р’РІРµРґРёС‚Рµ РїРѕРґР°СЂРѕС‡РЅС‹Р№ РєРѕРґ:",
+        "?? ������� ���������� ���:",
         backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds),
       );
       return;
@@ -3192,23 +3192,23 @@ bot.on("callback_query:data", async (ctx) => {
         if (!result.codes?.length) {
           await editMessageContent(
             ctx,
-            "рџЋџпёЏ РњРѕРё РїРѕРґР°СЂРєРё\n\nРЈ РІР°СЃ РїРѕРєР° РЅРµС‚ РїРѕРґР°СЂРѕС‡РЅС‹С… РєРѕРґРѕРІ.",
+            "??? ��� �������\n\n� ��� ���� ��� ���������� �����.",
             giftCodeResultButtons(config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
           );
           return;
         }
         const lines = result.codes.map((c) => {
-          const statusLabel = c.status === "ACTIVE" ? "вњ… РђРєС‚РёРІРµРЅ" : c.status === "REDEEMED" ? "рџЋЃ Р�?СЃРїРѕР»СЊР·РѕРІР°РЅ" : "вќЊ РћС‚Р�?РµРЅС�?РЅ";
-          return `${c.code} вЂ” ${statusLabel}`;
+          const statusLabel = c.status === "ACTIVE" ? "? �������" : c.status === "REDEEMED" ? "?? �����������" : "? �������?�";
+          return `${c.code} � ${statusLabel}`;
         }).join("\n");
         await editMessageContent(
           ctx,
-          `рџЋџпёЏ РњРѕРё РїРѕРґР°СЂРєРё\n\n${lines}`,
+          `??? ��� �������\n\n${lines}`,
           giftCodesListButtons(result.codes, config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
         );
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ ��������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -3219,24 +3219,24 @@ bot.on("callback_query:data", async (ctx) => {
         const result = await api.cancelGiftCode(token, codeOrId);
         await editMessageContent(
           ctx,
-          `вњ… ${result.message}`,
+          `? ${result.message}`,
           giftCodeResultButtons(config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
         );
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РѕС‚Р�?РµРЅС‹";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "������ ������";
+        await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
 
-    await ctx.answerCallbackQuery({ text: "РќРµРёР·РІРµСЃС‚РЅРѕРµ РґРµР№СЃС‚РІРёРµ" });
+    await ctx.answerCallbackQuery({ text: "����������� ��������" });
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : "РћС€РёР±РєР°";
-    await ctx.reply(`вќЊ ${msg}`).catch(() => {});
+    const msg = e instanceof Error ? e.message : "������";
+    await ctx.reply(`? ${msg}`).catch(() => {});
   }
 });
 
-// Р’РёРґРµРѕ РѕС‚ Р°РґР�?РёРЅР° в†’ РІРѕР·РІСЂР°С‰Р°РµР�? file_id РґР»СЏ РІРёРґРµРѕ-РёРЅСЃС‚СЂСѓРєС†РёР№
+// ����� �� ������ ? ���������� file_id ��� �����-����������
 bot.on("message:video", async (ctx) => {
   const userId = ctx.from?.id;
   if (!userId) return;
@@ -3245,12 +3245,12 @@ bot.on("message:video", async (ctx) => {
   if (!isAdmin) return;
   const fileId = ctx.message.video.file_id;
   await ctx.reply(
-    `рџ“№ <b>file_id РІРёРґРµРѕ:</b>\n<code>${fileId}</code>\n\nРЎРєРѕРїРёСЂСѓР№С‚Рµ Рё РІСЃС‚Р°РІСЊС‚Рµ РІ Р°РґР�?РёРЅРєСѓ РїСЂРё РґРѕР±Р°РІР»РµРЅРёРё РІРёРґРµРѕ-РёРЅСЃС‚СЂСѓРєС†РёРё.`,
+    `?? <b>file_id �����:</b>\n<code>${fileId}</code>\n\n���������� � �������� � ������� ��� ���������� �����-����������.`,
     { parse_mode: "HTML" }
   );
 });
 
-// РЎРѕРѕР±С‰РµРЅРёСЏ СЃ С„РѕС‚Рѕ вЂ” Р°РґР�?РёРЅ Р�?РѕР¶РµС‚ РѕС‚РїСЂР°РІРёС‚СЊ С„РѕС‚Рѕ СЃ РїРѕРґРїРёСЃСЊСЋ РґР»СЏ СЂР°СЃСЃС‹Р»РєРё
+// ��������� � ���� � ����� ����� ��������� ���� � �������� ��� ��������
 bot.on("message:photo", async (ctx) => {
   const userId = ctx.from?.id;
   if (!userId) return;
@@ -3258,105 +3258,105 @@ bot.on("message:photo", async (ctx) => {
   awaitingBroadcastMessage.delete(userId);
   const config = await api.getPublicConfig();
   if (!config?.botAdminTelegramIds?.includes(String(userId))) {
-    await ctx.reply("Р”РѕСЃС‚СѓРї Р·Р°РїСЂРµС‰С�?РЅ.");
+    await ctx.reply("������ ��������?�.");
     return;
   }
   const photos = ctx.message.photo;
   if (!photos?.length) {
-    await ctx.reply("Р¤РѕС‚Рѕ РЅРµ РїРѕР»СѓС‡РµРЅРѕ. РћС‚РїСЂР°РІСЊС‚Рµ С„РѕС‚Рѕ СЃ РїРѕРґРїРёСЃСЊСЋ РёР»Рё С‚РµРєСЃС‚.");
+    await ctx.reply("���� �� ��������. ��������� ���� � �������� ��� �����.");
     return;
   }
   const largest = photos[photos.length - 1];
   const caption = ctx.message.caption?.trim() ?? "";
-  // РџР°СЂСЃРёР�? РєРЅРѕРїРєСѓ РІРёРґР° [РўРµРєСЃС‚ РєРЅРѕРїРєРё](URL) РёР· РїРѕРґРїРёСЃРё
+  // ������ ������ ���� [����� ������](URL) �� �������
   const btnMatch = caption.match(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/);
   const buttonText = btnMatch?.[1];
   const buttonUrl = btnMatch?.[2];
   const cleanCaption = btnMatch ? caption.replace(btnMatch[0], "").trim() : caption;
   lastBroadcastMessage.set(userId, { text: cleanCaption || caption, photoFileId: largest.file_id, buttonText, buttonUrl });
-  await ctx.reply("РљРѕР�?Сѓ РѕС‚РїСЂР°РІРёС‚СЊ?", {
+  await ctx.reply("���� ���������?", {
     reply_markup: {
       inline_keyboard: [
         [
-          { text: "рџ“± РўРѕР»СЊРєРѕ Telegram", callback_data: "admin:bc:tg" },
-          { text: "рџ“§ РўРѕР»СЊРєРѕ Email", callback_data: "admin:bc:email" },
+          { text: "?? ������ Telegram", callback_data: "admin:bc:tg" },
+          { text: "?? ������ Email", callback_data: "admin:bc:email" },
         ],
-        [{ text: "рџ“±+рџ“§ Telegram Рё Email", callback_data: "admin:bc:both" }],
-        [{ text: "в—ЂпёЏ РћС‚Р�?РµРЅР°", callback_data: "admin:menu" }],
+        [{ text: "??+?? Telegram � Email", callback_data: "admin:bc:both" }],
+        [{ text: "?? ������", callback_data: "admin:menu" }],
       ],
     },
   });
 });
 
-// РЎРѕРѕР±С‰РµРЅРёСЏ СЃ С‚РµРєСЃС‚РѕР�? вЂ” РїСЂРѕР�?РѕРєРѕРґ РёР»Рё С‡РёСЃР»Рѕ РґР»СЏ РїРѕРїРѕР»РЅРµРЅРёСЏ
+// ��������� � ������� � �������� ��� ����� ��� ����������
 bot.on("message:text", async (ctx) => {
   if (ctx.message.text?.startsWith("/")) return;
   const userId = ctx.from?.id;
   if (!userId) return;
 
-  // РђРґР�?РёРЅ: РІРІРѕРґ С‚РµРєСЃС‚Р° СЂР°СЃСЃС‹Р»РєРё
+  // �����: ���� ������ ��������
   if (awaitingBroadcastMessage.has(userId)) {
     awaitingBroadcastMessage.delete(userId);
     const config = await api.getPublicConfig();
     if (!config?.botAdminTelegramIds?.includes(String(userId))) {
-      await ctx.reply("Р”РѕСЃС‚СѓРї Р·Р°РїСЂРµС‰С�?РЅ.");
+      await ctx.reply("������ ��������?�.");
       return;
     }
     const text = ctx.message.text?.trim() ?? "";
     if (!text) {
-      await ctx.reply("Р’РІРµРґРёС‚Рµ РЅРµРїСѓСЃС‚РѕР№ С‚РµРєСЃС‚ СЃРѕРѕР±С‰РµРЅРёСЏ.");
+      await ctx.reply("������� �������� ����� ���������.");
       return;
     }
-    // РџР°СЂСЃРёР�? РєРЅРѕРїРєСѓ РІРёРґР° [РўРµРєСЃС‚ РєРЅРѕРїРєРё](URL) РёР· С‚РµРєСЃС‚Р°
+    // ������ ������ ���� [����� ������](URL) �� ������
     const btnMatch = text.match(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/);
     const buttonText = btnMatch?.[1];
     const buttonUrl = btnMatch?.[2];
     const cleanText = btnMatch ? text.replace(btnMatch[0], "").trim() : text;
     lastBroadcastMessage.set(userId, { text: cleanText || text, buttonText, buttonUrl });
-    await ctx.reply("РљРѕР�?Сѓ РѕС‚РїСЂР°РІРёС‚СЊ?", {
+    await ctx.reply("���� ���������?", {
       reply_markup: {
         inline_keyboard: [
           [
-            { text: "рџ“± РўРѕР»СЊРєРѕ Telegram", callback_data: "admin:bc:tg" },
-            { text: "рџ“§ РўРѕР»СЊРєРѕ Email", callback_data: "admin:bc:email" },
+            { text: "?? ������ Telegram", callback_data: "admin:bc:tg" },
+            { text: "?? ������ Email", callback_data: "admin:bc:email" },
           ],
-          [{ text: "рџ“±+рџ“§ Telegram Рё Email", callback_data: "admin:bc:both" }],
-          [{ text: "в—ЂпёЏ РћС‚Р�?РµРЅР°", callback_data: "admin:menu" }],
+          [{ text: "??+?? Telegram � Email", callback_data: "admin:bc:both" }],
+          [{ text: "?? ������", callback_data: "admin:menu" }],
         ],
       },
     });
     return;
   }
 
-  // РђРґР�?РёРЅ: РІРІРѕРґ СЃСѓР�?Р�?С‹ РїРѕРїРѕР»РЅРµРЅРёСЏ Р±Р°Р»Р°РЅСЃР°
+  // �����: ���� ����� ���������� �������
   if (awaitingAdminBalance.has(userId)) {
     const clientId = awaitingAdminBalance.get(userId);
     awaitingAdminBalance.delete(userId);
     const config = await api.getPublicConfig();
     if (!config?.botAdminTelegramIds?.includes(String(userId)) || !clientId) {
-      await ctx.reply("Р”РѕСЃС‚СѓРї Р·Р°РїСЂРµС‰С�?РЅ РёР»Рё СЃРµСЃСЃРёСЏ РёСЃС‚РµРєР»Р°.");
+      await ctx.reply("������ ��������?� ��� ������ �������.");
       return;
     }
     const num = Number(ctx.message.text?.replace(/,/, "."));
     if (!Number.isFinite(num) || num <= 0 || num > 1000000) {
-      await ctx.reply("Р’РІРµРґРёС‚Рµ РїРѕР»РѕР¶РёС‚РµР»СЊРЅРѕРµ С‡РёСЃР»Рѕ (РґРѕ 1 000 000).");
+      await ctx.reply("������� ������������� ����� (�� 1 000 000).");
       return;
     }
     try {
       const result = await api.patchBotAdminClientBalance(userId, clientId, num);
-      await ctx.reply(`вњ… Р�?Р°Р»Р°РЅСЃ РїРѕРїРѕР»РЅРµРЅ. РќРѕРІС‹Р№ Р±Р°Р»Р°РЅСЃ: ${result.newBalance}`);
+      await ctx.reply(`? ��?����� ��������. ����� ������: ${result.newBalance}`);
     } catch (e: unknown) {
-      await ctx.reply(`вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`);
+      await ctx.reply(`? ${e instanceof Error ? e.message : "������"}`);
     }
     return;
   }
 
-  // РђРґР�?РёРЅ: РІРІРѕРґ РїРѕРёСЃРєР° (Telegram ID, @username, email)
+  // �����: ���� ������ (Telegram ID, @username, email)
   if (awaitingAdminSearch.has(userId)) {
     awaitingAdminSearch.delete(userId);
     const config = await api.getPublicConfig();
     if (!config?.botAdminTelegramIds?.includes(String(userId))) {
-      await ctx.reply("Р”РѕСЃС‚СѓРї Р·Р°РїСЂРµС‰С�?РЅ.");
+      await ctx.reply("������ ��������?�.");
       return;
     }
     const searchQuery = ctx.message.text?.trim() ?? "";
@@ -3365,31 +3365,31 @@ bot.on("message:text", async (ctx) => {
       const { items, total, limit } = await api.getBotAdminClients(userId, 1, searchQuery || undefined);
       const totalPages = Math.max(1, Math.ceil(total / limit));
       const msg =
-        (searchQuery ? `рџ�?Ґ РџРѕРёСЃРє В«${searchQuery}В» (${total})\n\n` : `рџ�?Ґ РљР»РёРµРЅС‚С‹ (${total})\n\n`) +
+        (searchQuery ? `��?� ����� �${searchQuery}� (${total})\n\n` : `��?� ������� (${total})\n\n`) +
         items
           .map(
             (c, i) =>
-              `${i + 1}. ${c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8)} ${c.isBlocked ? "рџљ«" : ""}`
+              `${i + 1}. ${c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8)} ${c.isBlocked ? "??" : ""}`
           )
           .join("\n") +
-        `\n\nРЎС‚СЂ. 1/${totalPages}`;
+        `\n\n���. 1/${totalPages}`;
       const rows: InlineMarkup["inline_keyboard"] = items.map((c) => [
         {
-          text: `${c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8)} ${c.isBlocked ? "рџљ«" : ""}`,
+          text: `${c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8)} ${c.isBlocked ? "??" : ""}`,
           callback_data: `admin:client:${c.id}`,
         },
       ]);
       const nav: InlineMarkup["inline_keyboard"][0] = [
-        { text: "в—ЂпёЏ Р’ Р°РґР�?РёРЅРєСѓ", callback_data: "admin:menu" },
+        { text: "?? � �������", callback_data: "admin:menu" },
       ];
-      if (searchQuery) nav.push({ text: "вњ– РЎР±СЂРѕСЃРёС‚СЊ РїРѕРёСЃРє", callback_data: "admin:clients:clear" });
-      if (totalPages > 1) nav.push({ text: "Р’РїРµСЂС�?Рґ в–¶", callback_data: "admin:clients:2" });
+      if (searchQuery) nav.push({ text: "? �������� �����", callback_data: "admin:clients:clear" });
+      if (totalPages > 1) nav.push({ text: "������?� ?", callback_data: "admin:clients:2" });
       rows.push(nav);
       await ctx.reply(msg, { reply_markup: { inline_keyboard: rows } });
     } catch (e: unknown) {
       lastAdminSearch.delete(userId);
-      const errMsg = e instanceof Error ? e.message : "РћС€РёР±РєР° РїРѕРёСЃРєР°";
-      await ctx.reply(`вќЊ ${errMsg}`);
+      const errMsg = e instanceof Error ? e.message : "������ ������";
+      await ctx.reply(`? ${errMsg}`);
     }
     return;
   }
@@ -3399,40 +3399,40 @@ bot.on("message:text", async (ctx) => {
   const publicConfig = await api.getPublicConfig().catch(() => null);
   if (await enforceSubscription(ctx, publicConfig)) return;
 
-  // Р•СЃР»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РѕР¶РёРґР°РµС‚ РІРІРѕРґ РїРѕРґР°СЂРѕС‡РЅРѕРіРѕ РєРѕРґР°
+  // ���� ������������ ������� ���� ����������� ����
   if (awaitingGiftCode.has(userId)) {
     awaitingGiftCode.delete(userId);
     const code = ctx.message.text.trim().toUpperCase();
-    const menuKb = { reply_markup: { inline_keyboard: [[{ text: publicConfig?.botBackLabel ?? "в†ђ РќР°Р·Р°Рґ", callback_data: "menu:gift" }]] } };
+    const menuKb = { reply_markup: { inline_keyboard: [[{ text: publicConfig?.botBackLabel ?? "? �����", callback_data: "menu:gift" }]] } };
     if (!code) {
-      await ctx.reply("РљРѕРґ РЅРµ Р�?РѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Р�?.", menuKb);
+      await ctx.reply("��� �� ����� ���� ������.", menuKb);
       return;
     }
     try {
       const result = await api.redeemGiftCode(token, code);
-      let text = `вњ… РџРѕРґР°СЂРѕРє Р°РєС‚РёРІРёСЂРѕРІР°РЅ!\n\nРџРѕРґРїРёСЃРєР° #${result.subscriptionIndex} РґРѕР±Р°РІР»РµРЅР° РІ РІР°С€ Р°РєРєР°СѓРЅС‚!`;
+      let text = `? ������� �����������!\n\n�������� #${result.subscriptionIndex} ��������� � ��� �������!`;
       if (result.tariffName) {
-        text += `\nРўР°СЂРёС„: ${result.tariffName}`;
+        text += `\n�����: ${result.tariffName}`;
       }
       if (result.giftMessage) {
-        text += `\n\nрџ’Њ РЎРѕРѕР±С‰РµРЅРёРµ РѕС‚ РґР°СЂРёС‚РµР»СЏ:\nВ«${result.giftMessage}В»`;
+        text += `\n\n?? ��������� �� ��������:\n�${result.giftMessage}�`;
       }
       await ctx.reply(text, menuKb);
 
-      // РЈРІРµРґРѕР�?Р»СЏРµР�? РґР°СЂРёС‚РµР»СЏ Рѕ С‚РѕР�?, С‡С‚Рѕ РїРѕРґР°СЂРѕРє Р°РєС‚РёРІРёСЂРѕРІР°РЅ
+      // ���������� �������� � ���, ��� ������� �����������
       if (result.creatorTelegramId) {
-        const recipientName = ctx.from?.username ? `@${ctx.from.username}` : ctx.from?.first_name ?? "РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ";
-        const notifyText = `рџЋЃ Р’Р°С€ РїРѕРґР°СЂРѕРє Р°РєС‚РёРІРёСЂРѕРІР°РЅ!\n\n${recipientName} РїСЂРёРЅСЏР»(Р°) РІР°С€ РїРѕРґР°СЂРѕРє${result.tariffName ? ` (${result.tariffName})` : ""}.`;
+        const recipientName = ctx.from?.username ? `@${ctx.from.username}` : ctx.from?.first_name ?? "������������";
+        const notifyText = `?? ��� ������� �����������!\n\n${recipientName} ������(�) ��� �������${result.tariffName ? ` (${result.tariffName})` : ""}.`;
         bot.api.sendMessage(result.creatorTelegramId, notifyText).catch(() => {});
       }
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° Р°РєС‚РёРІР°С†РёРё РїРѕРґР°СЂРєР°";
-      await ctx.reply(`вќЊ ${msg}`, menuKb);
+      const msg = e instanceof Error ? e.message : "������ ��������� �������";
+      await ctx.reply(`? ${msg}`, menuKb);
     }
     return;
   }
 
-  // Р•СЃР»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РѕР¶РёРґР°РµС‚ РІРІРѕРґ РїСЂРѕР�?РѕРєРѕРґР°
+  // ���� ������������ ������� ���� ���������
   if (awaitingPromoCode.has(userId)) {
     awaitingPromoCode.delete(userId);
     const lang = getUserLang(userId);
@@ -3446,19 +3446,19 @@ bot.on("message:text", async (ctx) => {
       const checkResult = await api.checkPromoCode(token, code);
       if (checkResult.type === "FREE_DAYS") {
         const activateResult = await api.activatePromoCode(token, code);
-        await ctx.reply(`вњ… ${activateResult.message}`, menuKb);
+        await ctx.reply(`? ${activateResult.message}`, menuKb);
       } else if (checkResult.type === "DISCOUNT") {
         const desc = checkResult.discountPercent
-          ? `СЃРєРёРґРєР° ${checkResult.discountPercent}%`
+          ? `������ ${checkResult.discountPercent}%`
           : checkResult.discountFixed
-            ? `СЃРєРёРґРєР° ${checkResult.discountFixed}`
-            : "СЃРєРёРґРєР°";
+            ? `������ ${checkResult.discountFixed}`
+            : "������";
         activeDiscountCode.set(userId, { code, discountPercent: checkResult.discountPercent, discountFixed: checkResult.discountFixed });
-        await ctx.reply(`вњ… РџСЂРѕР�?РѕРєРѕРґ В«${checkResult.name}В» РїСЂРёРЅСЏС‚! ${desc}.\n\n${_t("promo.discount_applied", lang)}`, menuKb);
+        await ctx.reply(`? �������� �${checkResult.name}� ������! ${desc}.\n\n${_t("promo.discount_applied", lang)}`, menuKb);
       }
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : _t("error_generic", lang);
-      await ctx.reply(`вќЊ ${msg}`, menuKb);
+      await ctx.reply(`? ${msg}`, menuKb);
     }
     return;
   }
@@ -3473,7 +3473,7 @@ bot.on("message:text", async (ctx) => {
     const yookassaEnabledMsg = !!config?.yookassaEnabled;
     const cryptopayEnabledMsg = !!config?.cryptopayEnabled;
     if (!methods.length && !yooEnabled && !yookassaEnabledMsg && !cryptopayEnabledMsg) {
-      await ctx.reply("РџРѕРїРѕР»РЅРµРЅРёРµ РІСЂРµР�?РµРЅРЅРѕ РЅРµРґРѕСЃС‚СѓРїРЅРѕ.");
+      await ctx.reply("���������� �������� ����������.");
       return;
     }
     const client = await api.getMe(token);
@@ -3491,37 +3491,37 @@ bot.on("message:text", async (ctx) => {
         }
       : undefined;
     if (methods.length > 1 || (methods.length >= 1 && (yooEnabled || yookassaEnabledMsg || cryptopayEnabledMsg)) || (methods.length === 0 && ((yooEnabled && yookassaEnabledMsg) || (yooEnabled && cryptopayEnabledMsg) || (yookassaEnabledMsg && cryptopayEnabledMsg)))) {
-      const topupMsg1 = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(num, client.preferredCurrency)}\n\nР’С‹Р±РµСЂРёС‚Рµ СЃРїРѕСЃРѕР± РѕРїР»Р°С‚С‹:`, config?.botEmojis);
+      const topupMsg1 = titleWithEmoji("CARD", `���������� �� ${formatMoney(num, client.preferredCurrency)}\n\n�������� ������ ������:`, config?.botEmojis);
       await ctx.reply(topupMsg1.text, {
         entities: topupMsg1.entities.length ? topupMsg1.entities : undefined,
         reply_markup: topupPaymentMethodButtons(String(num), methods, config?.botBackLabel ?? null, backStyle, msgEmojiIds, yooEnabled, yookassaEnabledMsg, cryptopayEnabledMsg),
       });
       return;
     }
-    // Р•СЃР»Рё С‚РѕР»СЊРєРѕ Р®Money (РЅРµС‚ platega, РЅРµС‚ Р®Kassa) вЂ” СЃСЂР°Р·Сѓ СЃРѕР·РґР°С�?Р�?
+    // ���� ������ �Money (��� platega, ��� �Kassa) � ����� ������
     if (methods.length === 0 && yooEnabled) {
       const payment = await api.createYoomoneyPayment(token, { amount: num, paymentType: "AC" });
-      const topupMsgYoo = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(num, client.preferredCurrency)}\n\nРќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Money:`, config?.botEmojis);
+      const topupMsgYoo = titleWithEmoji("CARD", `���������� �� ${formatMoney(num, client.preferredCurrency)}\n\n������� ������ ���� ��� ������ ����� �Money:`, config?.botEmojis);
       await ctx.reply(topupMsgYoo.text, {
         entities: topupMsgYoo.entities.length ? topupMsgYoo.entities : undefined,
         reply_markup: payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, backStyle, msgEmojiIds),
       });
       return;
     }
-    // Р•СЃР»Рё С‚РѕР»СЊРєРѕ Р®Kassa
+    // ���� ������ �Kassa
     if (methods.length === 0 && yookassaEnabledMsg) {
       const payment = await api.createYookassaPayment(token, { amount: num, currency: "RUB" });
-      const topupMsgYoo = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(num, "RUB")}\n\nРќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Kassa:`, config?.botEmojis);
+      const topupMsgYoo = titleWithEmoji("CARD", `���������� �� ${formatMoney(num, "RUB")}\n\n������� ������ ���� ��� ������ ����� �Kassa:`, config?.botEmojis);
       await ctx.reply(topupMsgYoo.text, {
         entities: topupMsgYoo.entities.length ? topupMsgYoo.entities : undefined,
         reply_markup: payUrlMarkup(payment.confirmationUrl, config?.botBackLabel ?? null, backStyle, msgEmojiIds),
       });
       return;
     }
-    // Р•СЃР»Рё С‚РѕР»СЊРєРѕ Crypto Pay
+    // ���� ������ Crypto Pay
     if (methods.length === 0 && cryptopayEnabledMsg) {
       const payment = await api.createCryptopayPayment(token, { amount: num, currency: client.preferredCurrency });
-      const topupMsgCp = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(num, client.preferredCurrency)}\n\nРќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Crypto Bot:`, config?.botEmojis);
+      const topupMsgCp = titleWithEmoji("CARD", `���������� �� ${formatMoney(num, client.preferredCurrency)}\n\n������� ������ ���� ��� ������ ����� Crypto Bot:`, config?.botEmojis);
       await ctx.reply(topupMsgCp.text, {
         entities: topupMsgCp.entities.length ? topupMsgCp.entities : undefined,
         reply_markup: payUrlMarkup(payment.payUrl, config?.botBackLabel ?? null, backStyle, msgEmojiIds),
@@ -3532,15 +3532,15 @@ bot.on("message:text", async (ctx) => {
       amount: num,
       currency: client.preferredCurrency,
       paymentMethod: methods[0].id,
-      description: "РџРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР°",
+      description: "���������� �������",
     });
-    const topupMsg2 = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(num, client.preferredCurrency)}\n\nРќР°Р¶Р�?РёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹:`, config?.botEmojis);
+    const topupMsg2 = titleWithEmoji("CARD", `���������� �� ${formatMoney(num, client.preferredCurrency)}\n\n������� ������ ���� ��� ������:`, config?.botEmojis);
     await ctx.reply(topupMsg2.text, {
       entities: topupMsg2.entities.length ? topupMsg2.entities : undefined,
       reply_markup: payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, backStyle, msgEmojiIds),
     });
   } catch {
-    // РЅРµ С‡РёСЃР»Рѕ РёР»Рё РѕС€РёР±РєР° вЂ” РёРіРЅРѕСЂРёСЂСѓРµР�?
+    // �� ����� ��� ������ � ����������
   }
 });
 
