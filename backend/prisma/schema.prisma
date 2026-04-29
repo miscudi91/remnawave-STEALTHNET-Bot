@@ -660,6 +660,7 @@ model SecondarySubscription {
   ownerId             String    @map("owner_id")
   remnawaveUuid       String?   @map("remnawave_uuid")
   subscriptionIndex   Int       @map("subscription_index") // 1, 2, 3...
+  customName          String?   @map("custom_name")
   tariffId            String?   @map("tariff_id")
   giftStatus          String?   @map("gift_status") // null = owned | GIFT_RESERVED | GIFT_CODE_ACTIVE | GIFTED
   giftedToClientId    String?   @map("gifted_to_client_id") // если подарено — кому

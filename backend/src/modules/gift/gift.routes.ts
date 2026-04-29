@@ -23,6 +23,7 @@ import {
   getGiftHistory,
   getPublicGiftCodeInfo,
   renewAdditionalSubscription,
+  renameAdditionalSubscription,
 } from "./gift.service.js";
 import { requireClientAuth } from "../client/client.middleware.js";
 import { prisma } from "../../db.js";
@@ -81,6 +82,10 @@ const activateSelfSchema = z.object({
 });
 const renewSchema = z.object({
   subscriptionId: z.string().min(1, "subscriptionId обязателен"),
+});
+const renameSchema = z.object({
+  subscriptionId: z.string().min(1, "subscriptionId обязателен"),
+  customName: z.string().trim().min(1, "Название обязательно").max(64, "Максимум 64 символа"),
 });
 
 const historyQuerySchema = z.object({
@@ -234,6 +239,19 @@ giftRouter.post("/renew", async (req: Request, res: Response) => {
     return res.status(result.status).json({ message: result.error });
   }
   return res.json({ message: "Дополнительная подписка продлена", subscriptionId: result.data.subscriptionId });
+});
+
+giftRouter.post("/rename", async (req: Request, res: Response) => {
+  const clientId = (req as AuthedReq).clientId;
+  const body = renameSchema.safeParse(req.body);
+  if (!body.success) {
+    return res.status(400).json({ message: "Некорректные данные", errors: body.error.flatten() });
+  }
+  const result = await renameAdditionalSubscription(clientId, body.data.subscriptionId, body.data.customName);
+  if (!result.ok) {
+    return res.status(result.status).json({ message: result.error });
+  }
+  return res.json({ message: "Название подписки обновлено", ...result.data });
 });
 
 // ─── DELETE /subscription/:id — Удалить дополнительную подписку ──────────────

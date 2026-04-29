@@ -281,6 +281,7 @@ type DiscountInfo = { code: string; discountPercent?: number | null; discountFix
 const activeDiscountCode = new Map<number, DiscountInfo>();
 // Ожидание ввода подарочного кода
 const awaitingGiftCode = new Set<number>();
+const awaitingGiftRename = new Map<number, string>();
 
 // Админ: ожидание ввода поиска; последний поиск по userId для пагинации
 const awaitingAdminSearch = new Set<number>();
@@ -3024,7 +3025,10 @@ bot.on("callback_query:data", async (ctx) => {
           } else {
             rows.push([
               { text: label.slice(0, 50), callback_data: `sub:copy_uuid:${it.remnawaveUuid}` },
-              { text: "Продлить", callback_data: `gift:renew:${it.id}` },
+              { text: "✏️ Назвать", callback_data: `gift:rename_prompt:${it.id}` },
+            ]);
+            rows.push([
+              { text: "🔄 Продлить", callback_data: `gift:renew:${it.id}` },
             ]);
           }
         }
@@ -3196,17 +3200,43 @@ bot.on("callback_query:data", async (ctx) => {
 
     if (data.startsWith("gift:renew:")) {
       const subscriptionId = data.slice("gift:renew:".length);
+      await editMessageContent(
+        ctx,
+        "Подтвердите продление этой подписки?",
+        {
+          inline_keyboard: [
+            [{ text: "✅ Подтвердить продление", callback_data: `gift:renew_do:${subscriptionId}` }],
+            [{ text: "◀️ Назад", callback_data: "gift:subscriptions" }],
+          ],
+        },
+      );
+      return;
+    }
+
+    if (data.startsWith("gift:renew_do:")) {
+      const subscriptionId = data.slice("gift:renew_do:".length);
       try {
         const result = await api.renewGiftSubscription(token, subscriptionId);
         await editMessageContent(
           ctx,
-          `вњ… ${result.message}`,
+          `✅ ${result.message}`,
           { inline_keyboard: [[{ text: "📋 К моим подпискам", callback_data: "gift:subscriptions" }], [{ text: config?.botBackLabel ?? "◀️ В меню", callback_data: "menu:gift" }]] },
         );
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : "Ошибка продления";
-        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
+      return;
+    }
+
+    if (data.startsWith("gift:rename_prompt:")) {
+      const subscriptionId = data.slice("gift:rename_prompt:".length);
+      awaitingGiftRename.set(userId, subscriptionId);
+      await editMessageContent(
+        ctx,
+        "Введите новое название подписки (до 64 символов):",
+        { inline_keyboard: [[{ text: "◀️ Назад", callback_data: "gift:subscriptions" }]] },
+      );
       return;
     }
 
@@ -3432,6 +3462,29 @@ bot.on("message:text", async (ctx) => {
   if (!token) return;
   const publicConfig = await api.getPublicConfig().catch(() => null);
   if (await enforceSubscription(ctx, publicConfig)) return;
+
+  if (awaitingGiftRename.has(userId)) {
+    const subscriptionId = awaitingGiftRename.get(userId)!;
+    awaitingGiftRename.delete(userId);
+    const customName = (ctx.message.text ?? "").trim();
+    const menuKb = { reply_markup: { inline_keyboard: [[{ text: "◀️ К подпискам", callback_data: "gift:subscriptions" }]] } };
+    if (!customName) {
+      await ctx.reply("Название не может быть пустым.", menuKb);
+      return;
+    }
+    if (customName.length > 64) {
+      await ctx.reply("Название слишком длинное. Максимум 64 символа.", menuKb);
+      return;
+    }
+    try {
+      await api.renameGiftSubscription(token, subscriptionId, customName);
+      await ctx.reply("✅ Название подписки обновлено.", menuKb);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Ошибка переименования";
+      await ctx.reply(`❌ ${msg}`, menuKb);
+    }
+    return;
+  }
 
   // Если пользователь ожидает ввод подарочного кода
   if (awaitingGiftCode.has(userId)) {

@@ -1812,6 +1812,7 @@ clientRouter.get("/subscription/all", async (req, res) => {
     subscription: unknown;
     tariffDisplayName: string;
     remnawaveUuid: string | null;
+    customName: string | null;
   };
 
   const items: SubInfo[] = [];
@@ -1837,6 +1838,7 @@ clientRouter.get("/subscription/all", async (req, res) => {
       subscription: rootResult.data ?? null,
       tariffDisplayName: rootTariff,
       remnawaveUuid: client.remnawaveUuid,
+      customName: null,
     });
   }
 
@@ -1853,7 +1855,7 @@ clientRouter.get("/subscription/all", async (req, res) => {
         { giftedToClientId: clientId, giftStatus: "GIFTED" },
       ],
     },
-    select: { id: true, remnawaveUuid: true, subscriptionIndex: true },
+    select: { id: true, remnawaveUuid: true, subscriptionIndex: true, customName: true },
     orderBy: { subscriptionIndex: "asc" },
   });
 
@@ -1867,8 +1869,9 @@ clientRouter.get("/subscription/all", async (req, res) => {
       id: sec.id,
       subscriptionIndex: sec.subscriptionIndex,
       subscription: secResult.data ?? null,
-      tariffDisplayName: secTariff,
+      tariffDisplayName: sec.customName?.trim() || secTariff,
       remnawaveUuid: sec.remnawaveUuid,
+      customName: sec.customName ?? null,
     });
   }
 

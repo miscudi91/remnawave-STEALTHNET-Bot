@@ -217,6 +217,7 @@ export async function getAllSubscriptions(
     subscription: unknown;
     tariffDisplayName: string;
     remnawaveUuid: string | null;
+    customName?: string | null;
   }[];
 }> {
   return fetchJson("/api/client/subscription/all", { token });
@@ -803,6 +804,19 @@ export async function renewGiftSubscription(
   return fetchJson("/api/client/gift/renew", {
     method: "POST",
     body: { subscriptionId },
+    token,
+  });
+}
+
+/** Переименовать дополнительную подписку */
+export async function renameGiftSubscription(
+  token: string,
+  subscriptionId: string,
+  customName: string
+): Promise<{ message: string; subscriptionId: string; customName: string }> {
+  return fetchJson("/api/client/gift/rename", {
+    method: "POST",
+    body: { subscriptionId, customName },
     token,
   });
 }

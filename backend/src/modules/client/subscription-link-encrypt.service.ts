@@ -31,6 +31,14 @@ function readEncryptedLink(data: unknown): string | null {
   return null;
 }
 
+function normalizeEncryptedUrl(url: string): string {
+  const trimmed = url.trim();
+  if (/^happ:\/\/add\//i.test(trimmed)) {
+    return trimmed.replace(/^happ:\/\/add\//i, "");
+  }
+  return trimmed;
+}
+
 export async function encryptSubscriptionLink(url: string): Promise<string> {
   const clean = url.trim();
   if (!clean) return url;
@@ -53,13 +61,14 @@ export async function encryptSubscriptionLink(url: string): Promise<string> {
       if (typeof text === "string" && text.trim().length > 0) encrypted = text.trim();
     }
     if (encrypted) {
+      encrypted = normalizeEncryptedUrl(encrypted);
       setCached(clean, encrypted);
       return encrypted;
     }
   } catch {
     // fallback below
   }
-  return clean;
+  return normalizeEncryptedUrl(clean);
 }
 
 async function encryptField(obj: Record<string, unknown>, key: "subscriptionUrl" | "subscription_url"): Promise<void> {
@@ -100,4 +109,3 @@ export async function obfuscateSubscriptionUrl(payload: unknown): Promise<unknow
 
   return payload;
 }
-

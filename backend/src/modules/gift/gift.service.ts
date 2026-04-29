@@ -38,6 +38,7 @@ export type SecondarySubscriptionData = {
   ownerId: string;
   remnawaveUuid: string | null;
   subscriptionIndex: number;
+  customName: string | null;
   tariffId: string | null;
   giftStatus: string | null;
   giftedToClientId: string | null;
@@ -420,6 +421,38 @@ export async function renewAdditionalSubscription(
   });
 
   return { ok: true, data: { subscriptionId } };
+}
+
+export async function renameAdditionalSubscription(
+  rootClientId: string,
+  subscriptionId: string,
+  customName: string,
+): Promise<GiftResult<{ subscriptionId: string; customName: string }>> {
+  const sub = await prisma.secondarySubscription.findUnique({
+    where: { id: subscriptionId },
+    select: { id: true, ownerId: true, giftedToClientId: true },
+  });
+  if (!sub) {
+    return { ok: false, error: "Подписка не найдена", status: 404 };
+  }
+  if (sub.ownerId !== rootClientId && sub.giftedToClientId !== rootClientId) {
+    return { ok: false, error: "Нет доступа к подписке", status: 403 };
+  }
+
+  const nextName = customName.trim();
+  if (!nextName) {
+    return { ok: false, error: "Название не может быть пустым", status: 400 };
+  }
+  if (nextName.length > 64) {
+    return { ok: false, error: "Название слишком длинное (максимум 64 символа)", status: 400 };
+  }
+
+  await prisma.secondarySubscription.update({
+    where: { id: subscriptionId },
+    data: { customName: nextName },
+  });
+  await logGiftEvent(rootClientId, "RENAMED", subscriptionId, { customName: nextName });
+  return { ok: true, data: { subscriptionId, customName: nextName } };
 }
 
 /**
