@@ -22,6 +22,8 @@ import {
   extractRemnaUuid,
   isRemnaConfigured,
   remnaDeleteUser,
+  remnaGetUser,
+  remnaUpdateUser,
 } from "../remna/remna.client.js";
 import { getSystemConfig } from "../client/client.service.js";
 
@@ -101,6 +103,17 @@ async function logGiftEvent(
       metadata: (metadata as Prisma.InputJsonValue) ?? undefined,
     },
   });
+}
+
+function getFutureExpireAtFromRemna(data: unknown): Date | null {
+  if (!data || typeof data !== "object") return null;
+  const root = data as Record<string, unknown>;
+  const resp = (root.response ?? root.data ?? root) as Record<string, unknown>;
+  const raw = resp?.expireAt;
+  if (typeof raw !== "string") return null;
+  const d = new Date(raw);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.getTime() > Date.now() ? d : null;
 }
 
 // ─── Core Functions ──────────────────────────────────────────────────────────
@@ -328,6 +341,85 @@ export async function deleteSubscription(
   });
 
   return { ok: true, data: undefined };
+}
+
+export async function renewAdditionalSubscription(
+  rootClientId: string,
+  subscriptionId: string,
+): Promise<GiftResult<{ subscriptionId: string }>> {
+  const sub = await prisma.secondarySubscription.findUnique({
+    where: { id: subscriptionId },
+    include: { tariff: true },
+  });
+  if (!sub || sub.ownerId !== rootClientId) {
+    return { ok: false, error: "Подписка не найдена", status: 404 };
+  }
+  if (!sub.remnawaveUuid) {
+    return { ok: false, error: "У подписки нет UUID Remna", status: 400 };
+  }
+  if (!sub.tariff) {
+    return { ok: false, error: "Для подписки не найден тариф", status: 400 };
+  }
+
+  const client = await prisma.client.findUnique({
+    where: { id: rootClientId },
+    select: { balance: true },
+  });
+  if (!client) return { ok: false, error: "Клиент не найден", status: 404 };
+
+  const price = Number(sub.tariff.price ?? 0);
+  if (!Number.isFinite(price) || price < 0) {
+    return { ok: false, error: "Некорректная цена тарифа", status: 400 };
+  }
+  if (client.balance < price) {
+    return { ok: false, error: "Недостаточно средств на балансе", status: 400 };
+  }
+
+  const remnaUser = await remnaGetUser(sub.remnawaveUuid);
+  if (!remnaUser.ok) {
+    return { ok: false, error: remnaUser.error || "Не удалось получить пользователя Remna", status: remnaUser.status || 502 };
+  }
+
+  const currentExpire = getFutureExpireAtFromRemna(remnaUser.data);
+  const baseTs = currentExpire?.getTime() ?? Date.now();
+  const nextExpireAt = new Date(baseTs + sub.tariff.durationDays * 24 * 60 * 60 * 1000).toISOString();
+
+  const patchRes = await remnaUpdateUser({
+    uuid: sub.remnawaveUuid,
+    expireAt: nextExpireAt,
+  });
+  if (!patchRes.ok) {
+    return { ok: false, error: patchRes.error || "Не удалось продлить подписку", status: patchRes.status || 502 };
+  }
+
+  await prisma.$transaction([
+    prisma.client.update({
+      where: { id: rootClientId },
+      data: { balance: { decrement: price } },
+    }),
+    prisma.payment.create({
+      data: {
+        clientId: rootClientId,
+        orderId: `gift-renew-${subscriptionId}-${Date.now()}`,
+        tariffId: sub.tariff.id,
+        amount: price,
+        currency: sub.tariff.currency.toUpperCase(),
+        status: "COMPLETED",
+        provider: "BALANCE",
+        paidAt: new Date(),
+      },
+    }),
+  ]);
+
+  await logGiftEvent(rootClientId, "RENEWED", subscriptionId, {
+    tariffName: sub.tariff.name,
+    durationDays: sub.tariff.durationDays,
+    expireAt: nextExpireAt,
+    amount: price,
+    currency: sub.tariff.currency,
+  });
+
+  return { ok: true, data: { subscriptionId } };
 }
 
 /**

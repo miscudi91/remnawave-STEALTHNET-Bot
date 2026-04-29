@@ -1,6 +1,6 @@
-/**
- * Inline-клавиатуры с цветными кнопками (Telegram Bot API: style — primary, success, danger).
- * Эмодзи в тексте кнопок (Unicode).
+﻿/**
+ * Inline-РєР»Р°РІРёР°С‚СѓСЂС‹ СЃ С†РІРµС‚РЅС‹РјРё РєРЅРѕРїРєР°РјРё (Telegram Bot API: style вЂ” primary, success, danger).
+ * Р­РјРѕРґР·Рё РІ С‚РµРєСЃС‚Рµ РєРЅРѕРїРѕРє (Unicode).
  */
 import { t as _t } from "./i18n.js";
 
@@ -50,23 +50,23 @@ const MENU_IDS: Record<string, string> = {
 };
 
 const DEFAULT_BUTTONS: BotButtonConfig[] = [
-  { id: "tariffs", visible: true, label: "📦 Тарифы", order: 0, style: "success" },
-  { id: "proxy", visible: true, label: "🌐 Прокси", order: 0.5, style: "primary" },
-  { id: "my_proxy", visible: true, label: "📋 Мои прокси", order: 0.6, style: "primary" },
-  { id: "singbox", visible: true, label: "🔑 Доступы", order: 0.55, style: "primary" },
-  { id: "my_singbox", visible: true, label: "📋 Мои доступы", order: 0.65, style: "primary" },
-  { id: "profile", visible: true, label: "👤 Профиль", order: 1, style: "" },
-  { id: "devices", visible: true, label: "📱 Устройства", order: 1.5, style: "primary" },
-  { id: "topup", visible: true, label: "💳 Пополнить баланс", order: 2, style: "success" },
-  { id: "referral", visible: true, label: "🔗 Реферальная программа", order: 3, style: "primary" },
-  { id: "trial", visible: true, label: "🎁 Бесплатный тест", order: 4, style: "success" },
-  { id: "vpn", visible: true, label: "📋 Скопировать ссылку VPN", order: 5, style: "danger", onePerRow: true },
-  { id: "cabinet", visible: true, label: "🌐 Web Кабинет", order: 6, style: "primary" },
-  { id: "tickets", visible: true, label: "🎫 Тикеты", order: 6.5, style: "primary" },
-  { id: "support", visible: true, label: "🆘 Поддержка", order: 7, style: "primary" },
-  { id: "promocode", visible: true, label: "🎟️ Промокод", order: 8, style: "primary" },
-  { id: "gift", visible: true, label: "🎁 Подарки", order: 8.5, style: "primary" },
-  { id: "extra_options", visible: true, label: "➕ Доп. опции", order: 9, style: "primary" },
+  { id: "tariffs", visible: true, label: "рџ“¦ РўР°СЂРёС„С‹", order: 0, style: "success" },
+  { id: "proxy", visible: true, label: "рџЊђ РџСЂРѕРєСЃРё", order: 0.5, style: "primary" },
+  { id: "my_proxy", visible: true, label: "рџ“‹ РњРѕРё РїСЂРѕРєСЃРё", order: 0.6, style: "primary" },
+  { id: "singbox", visible: true, label: "рџ”‘ Р”РѕСЃС‚СѓРїС‹", order: 0.55, style: "primary" },
+  { id: "my_singbox", visible: true, label: "рџ“‹ РњРѕРё РґРѕСЃС‚СѓРїС‹", order: 0.65, style: "primary" },
+  { id: "profile", visible: true, label: "рџ‘¤ РџСЂРѕС„РёР»СЊ", order: 1, style: "" },
+  { id: "devices", visible: true, label: "рџ“± РЈСЃС‚СЂРѕР№СЃС‚РІР°", order: 1.5, style: "primary" },
+  { id: "topup", visible: true, label: "рџ’і РџРѕРїРѕР»РЅРёС‚СЊ Р±Р°Р»Р°РЅСЃ", order: 2, style: "success" },
+  { id: "referral", visible: true, label: "рџ”— Р РµС„РµСЂР°Р»СЊРЅР°СЏ РїСЂРѕРіСЂР°РјРјР°", order: 3, style: "primary" },
+  { id: "trial", visible: true, label: "рџЋЃ Р‘РµСЃРїР»Р°С‚РЅС‹Р№ С‚РµСЃС‚", order: 4, style: "success" },
+  { id: "vpn", visible: true, label: "рџ“‹ РЎРєРѕРїРёСЂРѕРІР°С‚СЊ СЃСЃС‹Р»РєСѓ VPN", order: 5, style: "danger", onePerRow: true },
+  { id: "cabinet", visible: true, label: "рџЊђ Web РљР°Р±РёРЅРµС‚", order: 6, style: "primary" },
+  { id: "tickets", visible: true, label: "рџЋ« РўРёРєРµС‚С‹", order: 6.5, style: "primary" },
+  { id: "support", visible: true, label: "рџ† РџРѕРґРґРµСЂР¶РєР°", order: 7, style: "primary" },
+  { id: "promocode", visible: true, label: "рџЋџпёЏ РџСЂРѕРјРѕРєРѕРґ", order: 8, style: "primary" },
+  { id: "gift", visible: true, label: "рџЋЃ РџРѕРґР°СЂРєРё", order: 8.5, style: "primary" },
+  { id: "extra_options", visible: true, label: "вћ• Р”РѕРї. РѕРїС†РёРё", order: 9, style: "primary" },
 ];
 
 function toStyle(s: string | undefined): ButtonStyle | undefined | null {
@@ -85,7 +85,7 @@ export type InnerButtonStyles = {
   currency?: string;
 };
 
-/** ID премиум-эмодзи для внутренних кнопок (из botEmojis: BACK, CARD, PACKAGE, TRIAL, PUZZLE, SERVERS) */
+/** ID РїСЂРµРјРёСѓРј-СЌРјРѕРґР·Рё РґР»СЏ РІРЅСѓС‚СЂРµРЅРЅРёС… РєРЅРѕРїРѕРє (РёР· botEmojis: BACK, CARD, PACKAGE, TRIAL, PUZZLE, SERVERS) */
 export type InnerEmojiIds = {
   back?: string;
   card?: string;
@@ -95,7 +95,7 @@ export type InnerEmojiIds = {
   connect?: string;
 };
 
-/** Главное меню: кнопки из конфига. Эмодзи в label (Unicode) и/или icon_custom_emoji_id (премиум). Поддержка показывается только если задана хотя бы одна ссылка. Тикеты — Web App при включённой тикет-системе. buttonsPerRow: 1 или 2. */
+/** Р“Р»Р°РІРЅРѕРµ РјРµРЅСЋ: РєРЅРѕРїРєРё РёР· РєРѕРЅС„РёРіР°. Р­РјРѕРґР·Рё РІ label (Unicode) Рё/РёР»Рё icon_custom_emoji_id (РїСЂРµРјРёСѓРј). РџРѕРґРґРµСЂР¶РєР° РїРѕРєР°Р·С‹РІР°РµС‚СЃСЏ С‚РѕР»СЊРєРѕ РµСЃР»Рё Р·Р°РґР°РЅР° С…РѕС‚СЏ Р±С‹ РѕРґРЅР° СЃСЃС‹Р»РєР°. РўРёРєРµС‚С‹ вЂ” Web App РїСЂРё РІРєР»СЋС‡С‘РЅРЅРѕР№ С‚РёРєРµС‚-СЃРёСЃС‚РµРјРµ. buttonsPerRow: 1 РёР»Рё 2. */
 export function mainMenu(opts: {
   showTrial: boolean;
   showVpn: boolean;
@@ -108,19 +108,19 @@ export function mainMenu(opts: {
   showTickets?: boolean;
   showExtraOptions?: boolean;
   showGift?: boolean;
-  /** Кнопок в ряд: 1 или 2 (по умолчанию 1) */
+  /** РљРЅРѕРїРѕРє РІ СЂСЏРґ: 1 РёР»Рё 2 (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ 1) */
   buttonsPerRow?: 1 | 2;
-  /** URL страницы подписки Remna (если задан — кнопка VPN ведёт туда) */
+  /** URL СЃС‚СЂР°РЅРёС†С‹ РїРѕРґРїРёСЃРєРё Remna (РµСЃР»Рё Р·Р°РґР°РЅ вЂ” РєРЅРѕРїРєР° VPN РІРµРґС‘С‚ С‚СѓРґР°) */
   remnaSubscriptionUrl?: string | null;
 }): InlineMarkup {
   const configButtons = opts.botButtons ?? [];
   const fromConfig = configButtons.length > 0;
   let list = fromConfig ? [...configButtons] : [...DEFAULT_BUTTONS];
   if (fromConfig && !list.some((b) => b.id === "devices")) {
-    list.push({ id: "devices", visible: true, label: "📱 Устройства", order: 1.5, style: "primary" });
+    list.push({ id: "devices", visible: true, label: "рџ“± РЈСЃС‚СЂРѕР№СЃС‚РІР°", order: 1.5, style: "primary" });
   }
   if (fromConfig && opts.showGift === true && !list.some((b) => b.id === "gift")) {
-    list.push({ id: "gift", visible: true, label: "🎁 Подарки", order: 8.5, style: "primary" });
+    list.push({ id: "gift", visible: true, label: "рџЋЃ РџРѕРґР°СЂРєРё", order: 8.5, style: "primary" });
   }
   list = list
     .filter((b) => b.visible)
@@ -188,9 +188,9 @@ export function mainMenu(opts: {
   return { inline_keyboard: rows };
 }
 
-const DEFAULT_BACK_LABEL = "◀️ В меню";
+const DEFAULT_BACK_LABEL = "в—ЂпёЏ Р’ РјРµРЅСЋ";
 
-/** Меню «Поддержка»: 4 кнопки-ссылки (только с заданным URL) + «В меню». */
+/** РњРµРЅСЋ В«РџРѕРґРґРµСЂР¶РєР°В»: 4 РєРЅРѕРїРєРё-СЃСЃС‹Р»РєРё (С‚РѕР»СЊРєРѕ СЃ Р·Р°РґР°РЅРЅС‹Рј URL) + В«Р’ РјРµРЅСЋВ». */
 export function supportSubMenu(
   links: { support?: string | null; agreement?: string | null; offer?: string | null; instructions?: string | null; hasVideoInstructions?: boolean },
   backLabel?: string | null,
@@ -223,7 +223,7 @@ export function backToMenu(backLabel?: string | null, backStyle?: string, emojiI
   return { inline_keyboard: [[btn(text, "menu:main", resolveStyle(toStyle(backStyle), "danger"), emojiIds?.back)]] };
 }
 
-/** Кнопка «Оплатить» (открывает paymentUrl) + «В меню» */
+/** РљРЅРѕРїРєР° В«РћРїР»Р°С‚РёС‚СЊВ» (РѕС‚РєСЂС‹РІР°РµС‚ paymentUrl) + В«Р’ РјРµРЅСЋВ» */
 export function payUrlMarkup(
   paymentUrl: string,
   backLabel?: string | null,
@@ -232,7 +232,7 @@ export function payUrlMarkup(
 ): InlineMarkup {
   const back = (backLabel && backLabel.trim()) || DEFAULT_BACK_LABEL;
   const backSty = undefined;
-  const payBtn: UrlButton = { text: "💳 Оплатить", url: paymentUrl };
+  const payBtn: UrlButton = { text: "рџ’і РћРїР»Р°С‚РёС‚СЊ", url: paymentUrl };
   if (emojiIds?.card) payBtn.icon_custom_emoji_id = emojiIds.card;
   return {
     inline_keyboard: [
@@ -246,7 +246,7 @@ export function openSubscribePageMarkup(appUrl: string, backLabel?: string | nul
   const base = appUrl.replace(/\/$/, "");
   const back = (backLabel && backLabel.trim()) || DEFAULT_BACK_LABEL;
   if (remnaSubscriptionUrl) {
-    const connectBtn: UrlButton = { text: "📲 Открыть страницу подключения", url: remnaSubscriptionUrl };
+    const connectBtn: UrlButton = { text: "рџ“І РћС‚РєСЂС‹С‚СЊ СЃС‚СЂР°РЅРёС†Сѓ РїРѕРґРєР»СЋС‡РµРЅРёСЏ", url: remnaSubscriptionUrl };
     if (emojiIds?.connect) connectBtn.icon_custom_emoji_id = emojiIds.connect;
     return {
       inline_keyboard: [
@@ -255,7 +255,7 @@ export function openSubscribePageMarkup(appUrl: string, backLabel?: string | nul
       ],
     };
   }
-  const connectBtn: WebAppButton = { text: "📲 Открыть страницу подключения", web_app: { url: `${base}/cabinet/subscribe` } };
+  const connectBtn: WebAppButton = { text: "рџ“І РћС‚РєСЂС‹С‚СЊ СЃС‚СЂР°РЅРёС†Сѓ РїРѕРґРєР»СЋС‡РµРЅРёСЏ", web_app: { url: `${base}/cabinet/subscribe` } };
   if (emojiIds?.connect) connectBtn.icon_custom_emoji_id = emojiIds.connect;
   return {
     inline_keyboard: [
@@ -266,7 +266,7 @@ export function openSubscribePageMarkup(appUrl: string, backLabel?: string | nul
 }
 
 export function topUpPresets(currency: string, backLabel?: string | null, innerStyles?: InnerButtonStyles, emojiIds?: InnerEmojiIds): InlineMarkup {
-  const sym = currency.toUpperCase() === "RUB" ? "₽" : currency.toUpperCase() === "USD" ? "$" : "₴";
+  const sym = currency.toUpperCase() === "RUB" ? "в‚Ѕ" : currency.toUpperCase() === "USD" ? "$" : "в‚ґ";
   const back = (backLabel && backLabel.trim()) || DEFAULT_BACK_LABEL;
   const topup = resolveStyle(toStyle(innerStyles?.topup), "primary");
   const backSty = resolveStyle(toStyle(innerStyles?.back), "danger");
@@ -287,7 +287,7 @@ export function topUpPresets(currency: string, backLabel?: string | null, innerS
   };
 }
 
-/** Кнопки категорий тарифов (первый экран при нескольких категориях). Только эмодзи категории (ordinary/premium), без общего эмодзи «Тарифы». */
+/** РљРЅРѕРїРєРё РєР°С‚РµРіРѕСЂРёР№ С‚Р°СЂРёС„РѕРІ (РїРµСЂРІС‹Р№ СЌРєСЂР°РЅ РїСЂРё РЅРµСЃРєРѕР»СЊРєРёС… РєР°С‚РµРіРѕСЂРёСЏС…). РўРѕР»СЊРєРѕ СЌРјРѕРґР·Рё РєР°С‚РµРіРѕСЂРёРё (ordinary/premium), Р±РµР· РѕР±С‰РµРіРѕ СЌРјРѕРґР·Рё В«РўР°СЂРёС„С‹В». */
 export function tariffCategoryButtons(
   categories: { id: string; name: string; emoji?: string }[],
   backLabel?: string | null,
@@ -307,7 +307,7 @@ export function tariffCategoryButtons(
   return { inline_keyboard: rows };
 }
 
-/** Кнопки тарифов одной категории. Только эмодзи категории (ordinary/premium), без общего эмодзи «Тарифы». */
+/** РљРЅРѕРїРєРё С‚Р°СЂРёС„РѕРІ РѕРґРЅРѕР№ РєР°С‚РµРіРѕСЂРёРё. РўРѕР»СЊРєРѕ СЌРјРѕРґР·Рё РєР°С‚РµРіРѕСЂРёРё (ordinary/premium), Р±РµР· РѕР±С‰РµРіРѕ СЌРјРѕРґР·Рё В«РўР°СЂРёС„С‹В». */
 export function tariffsOfCategoryButtons(
   category: { name: string; emoji?: string; tariffs: { id: string; name: string; price: number; currency: string }[] },
   backLabel?: string | null,
@@ -323,14 +323,14 @@ export function tariffsOfCategoryButtons(
   const prefix = (category.emoji && category.emoji.trim()) ? `${category.emoji} ` : "";
   const tariffId = emojiIds?.tariff;
   for (const t of category.tariffs) {
-    const label = `${prefix}${t.name} — ${t.price} ${t.currency}`.slice(0, 64);
+    const label = `${prefix}${t.name} вЂ” ${t.price} ${t.currency}`.slice(0, 64);
     rows.push([btn(label, `pay_tariff:${t.id}`, tariffPay, tariffId)]);
   }
   rows.push([btn(back, backData, backSty, emojiIds?.back)]);
   return { inline_keyboard: rows };
 }
 
-/** Все тарифы списком (одна категория — без экрана выбора категории) */
+/** Р’СЃРµ С‚Р°СЂРёС„С‹ СЃРїРёСЃРєРѕРј (РѕРґРЅР° РєР°С‚РµРіРѕСЂРёСЏ вЂ” Р±РµР· СЌРєСЂР°РЅР° РІС‹Р±РѕСЂР° РєР°С‚РµРіРѕСЂРёРё) */
 export function tariffPayButtons(
   categories: {
     id: string;
@@ -354,7 +354,7 @@ export function tariffPayButtons(
   return tariffCategoryButtons(categories, backLabel, innerStyles, emojiIds, prefixEmoji);
 }
 
-/** Кнопки выбора способа оплаты (СПБ, Карты и т.д. из админки) для тарифа + баланс + ЮMoney */
+/** РљРЅРѕРїРєРё РІС‹Р±РѕСЂР° СЃРїРѕСЃРѕР±Р° РѕРїР»Р°С‚С‹ (РЎРџР‘, РљР°СЂС‚С‹ Рё С‚.Рґ. РёР· Р°РґРјРёРЅРєРё) РґР»СЏ С‚Р°СЂРёС„Р° + Р±Р°Р»Р°РЅСЃ + Р®Money */
 export function tariffPaymentMethodButtons(
   tariffId: string,
   methods: { id: number; label: string }[],
@@ -371,20 +371,20 @@ export function tariffPaymentMethodButtons(
   const backSty = undefined;
   const cardId = emojiIds?.card;
   const rows: InlineButton[][] = [];
-  // Кнопка оплаты балансом (первая)
+  // РљРЅРѕРїРєР° РѕРїР»Р°С‚С‹ Р±Р°Р»Р°РЅСЃРѕРј (РїРµСЂРІР°СЏ)
   if (balanceLabel) {
     rows.push([btn(balanceLabel, `pay_tariff_balance:${tariffId}`, undefined, cardId)]);
   }
-  // ЮMoney — только для рублёвых тарифов
+  // Р®Money вЂ” С‚РѕР»СЊРєРѕ РґР»СЏ СЂСѓР±Р»С‘РІС‹С… С‚Р°СЂРёС„РѕРІ
   if (yoomoneyEnabled && (!tariffCurrency || tariffCurrency.toUpperCase() === "RUB")) {
-    rows.push([btn("💳 ЮMoney — оплата картой", `pay_tariff_yoomoney:${tariffId}`, undefined, cardId)]);
+    rows.push([btn("рџ’і Р®Money вЂ” РѕРїР»Р°С‚Р° РєР°СЂС‚РѕР№", `pay_tariff_yoomoney:${tariffId}`, undefined, cardId)]);
   }
-  // ЮKassa — только RUB
+  // Р®Kassa вЂ” С‚РѕР»СЊРєРѕ RUB
   if (yookassaEnabled && (!tariffCurrency || tariffCurrency.toUpperCase() === "RUB")) {
-    rows.push([btn("💳 ЮKassa — карта / СБП", `pay_tariff_yookassa:${tariffId}`, undefined, cardId)]);
+    rows.push([btn("рџ’і Р®Kassa вЂ” РєР°СЂС‚Р° / РЎР‘Рџ", `pay_tariff_yookassa:${tariffId}`, undefined, cardId)]);
   }
   if (cryptopayEnabled) {
-    rows.push([btn("💳 Crypto Bot — криптовалюта", `pay_tariff_cryptopay:${tariffId}`, undefined, cardId)]);
+    rows.push([btn("рџ’і Crypto Bot вЂ” РєСЂРёРїС‚РѕРІР°Р»СЋС‚Р°", `pay_tariff_cryptopay:${tariffId}`, undefined, cardId)]);
   }
   for (const m of methods) {
     rows.push([btn(m.label, `pay_tariff:${tariffId}:${m.id}`, undefined, cardId)]);
@@ -393,7 +393,7 @@ export function tariffPaymentMethodButtons(
   return { inline_keyboard: rows };
 }
 
-/** Кнопки категорий прокси (аналогично тарифам) */
+/** РљРЅРѕРїРєРё РєР°С‚РµРіРѕСЂРёР№ РїСЂРѕРєСЃРё (Р°РЅР°Р»РѕРіРёС‡РЅРѕ С‚Р°СЂРёС„Р°Рј) */
 export function proxyCategoryButtons(
   categories: { id: string; name: string; tariffs: { id: string; name: string; price: number; currency: string }[] }[],
   backLabel?: string | null,
@@ -412,7 +412,7 @@ export function proxyCategoryButtons(
   return { inline_keyboard: rows };
 }
 
-/** Кнопки тарифов прокси одной категории */
+/** РљРЅРѕРїРєРё С‚Р°СЂРёС„РѕРІ РїСЂРѕРєСЃРё РѕРґРЅРѕР№ РєР°С‚РµРіРѕСЂРёРё */
 export function proxyTariffsOfCategoryButtons(
   category: { name: string; tariffs: { id: string; name: string; price: number; currency: string }[] },
   backLabel?: string | null,
@@ -426,13 +426,13 @@ export function proxyTariffsOfCategoryButtons(
   const backSty = resolveStyle(toStyle(innerStyles?.back), "danger");
   const tariffId = emojiIds?.tariff;
   for (const t of category.tariffs) {
-    rows.push([btn(`${t.name} — ${t.price} ${t.currency}`.slice(0, 64), `pay_proxy:${t.id}`, tariffPay, tariffId)]);
+    rows.push([btn(`${t.name} вЂ” ${t.price} ${t.currency}`.slice(0, 64), `pay_proxy:${t.id}`, tariffPay, tariffId)]);
   }
   rows.push([btn(back, backData, backSty, emojiIds?.back)]);
   return { inline_keyboard: rows };
 }
 
-/** Кнопки прокси-тарифов (категории или список тарифов) */
+/** РљРЅРѕРїРєРё РїСЂРѕРєСЃРё-С‚Р°СЂРёС„РѕРІ (РєР°С‚РµРіРѕСЂРёРё РёР»Рё СЃРїРёСЃРѕРє С‚Р°СЂРёС„РѕРІ) */
 export function proxyTariffPayButtons(
   categories: { id: string; name: string; tariffs: { id: string; name: string; price: number; currency: string }[] }[],
   backLabel?: string | null,
@@ -448,7 +448,7 @@ export function proxyTariffPayButtons(
   return proxyCategoryButtons(categories, backLabel, innerStyles, emojiIds);
 }
 
-/** Кнопки способа оплаты для прокси-тарифа */
+/** РљРЅРѕРїРєРё СЃРїРѕСЃРѕР±Р° РѕРїР»Р°С‚С‹ РґР»СЏ РїСЂРѕРєСЃРё-С‚Р°СЂРёС„Р° */
 export function proxyPaymentMethodButtons(
   proxyTariffId: string,
   methods: { id: number; label: string }[],
@@ -467,12 +467,12 @@ export function proxyPaymentMethodButtons(
   const rows: InlineButton[][] = [];
   if (balanceLabel) rows.push([btn(balanceLabel, `pay_proxy_balance:${proxyTariffId}`, undefined, cardId)]);
   if (yoomoneyEnabled && (!currency || currency.toUpperCase() === "RUB")) {
-    rows.push([btn("💳 ЮMoney — карта", `pay_proxy_yoomoney:${proxyTariffId}`, undefined, cardId)]);
+    rows.push([btn("рџ’і Р®Money вЂ” РєР°СЂС‚Р°", `pay_proxy_yoomoney:${proxyTariffId}`, undefined, cardId)]);
   }
   if (yookassaEnabled && (!currency || currency.toUpperCase() === "RUB")) {
-    rows.push([btn("💳 ЮKassa — карта / СБП", `pay_proxy_yookassa:${proxyTariffId}`, undefined, cardId)]);
+    rows.push([btn("рџ’і Р®Kassa вЂ” РєР°СЂС‚Р° / РЎР‘Рџ", `pay_proxy_yookassa:${proxyTariffId}`, undefined, cardId)]);
   }
-  if (cryptopayEnabled) rows.push([btn("💳 Crypto Bot — криптовалюта", `pay_proxy_cryptopay:${proxyTariffId}`, undefined, cardId)]);
+  if (cryptopayEnabled) rows.push([btn("рџ’і Crypto Bot вЂ” РєСЂРёРїС‚РѕРІР°Р»СЋС‚Р°", `pay_proxy_cryptopay:${proxyTariffId}`, undefined, cardId)]);
   for (const m of methods) {
     rows.push([btn(m.label, `pay_proxy:${proxyTariffId}:${m.id}`, undefined, cardId)]);
   }
@@ -480,7 +480,7 @@ export function proxyPaymentMethodButtons(
   return { inline_keyboard: rows };
 }
 
-/** Кнопки категорий Sing-box (доступы) */
+/** РљРЅРѕРїРєРё РєР°С‚РµРіРѕСЂРёР№ Sing-box (РґРѕСЃС‚СѓРїС‹) */
 export function singboxCategoryButtons(
   categories: { id: string; name: string; tariffs: { id: string; name: string; price: number; currency: string }[] }[],
   backLabel?: string | null,
@@ -499,7 +499,7 @@ export function singboxCategoryButtons(
   return { inline_keyboard: rows };
 }
 
-/** Кнопки тарифов Sing-box одной категории */
+/** РљРЅРѕРїРєРё С‚Р°СЂРёС„РѕРІ Sing-box РѕРґРЅРѕР№ РєР°С‚РµРіРѕСЂРёРё */
 export function singboxTariffsOfCategoryButtons(
   category: { name: string; tariffs: { id: string; name: string; price: number; currency: string }[] },
   backLabel?: string | null,
@@ -513,13 +513,13 @@ export function singboxTariffsOfCategoryButtons(
   const backSty = resolveStyle(toStyle(innerStyles?.back), "danger");
   const tariffId = emojiIds?.tariff;
   for (const t of category.tariffs) {
-    rows.push([btn(`${t.name} — ${t.price} ${t.currency}`.slice(0, 64), `pay_singbox:${t.id}`, tariffPay, tariffId)]);
+    rows.push([btn(`${t.name} вЂ” ${t.price} ${t.currency}`.slice(0, 64), `pay_singbox:${t.id}`, tariffPay, tariffId)]);
   }
   rows.push([btn(back, backData, backSty, emojiIds?.back)]);
   return { inline_keyboard: rows };
 }
 
-/** Кнопки тарифов Sing-box (категории или список) */
+/** РљРЅРѕРїРєРё С‚Р°СЂРёС„РѕРІ Sing-box (РєР°С‚РµРіРѕСЂРёРё РёР»Рё СЃРїРёСЃРѕРє) */
 export function singboxTariffPayButtons(
   categories: { id: string; name: string; tariffs: { id: string; name: string; price: number; currency: string }[] }[],
   backLabel?: string | null,
@@ -535,7 +535,7 @@ export function singboxTariffPayButtons(
   return singboxCategoryButtons(categories, backLabel, innerStyles, emojiIds);
 }
 
-/** Кнопки способа оплаты для тарифа Sing-box */
+/** РљРЅРѕРїРєРё СЃРїРѕСЃРѕР±Р° РѕРїР»Р°С‚С‹ РґР»СЏ С‚Р°СЂРёС„Р° Sing-box */
 export function singboxPaymentMethodButtons(
   singboxTariffId: string,
   methods: { id: number; label: string }[],
@@ -554,12 +554,12 @@ export function singboxPaymentMethodButtons(
   const rows: InlineButton[][] = [];
   if (balanceLabel) rows.push([btn(balanceLabel, `pay_singbox_balance:${singboxTariffId}`, undefined, cardId)]);
   if (yoomoneyEnabled && (!currency || currency.toUpperCase() === "RUB")) {
-    rows.push([btn("💳 ЮMoney — карта", `pay_singbox_yoomoney:${singboxTariffId}`, undefined, cardId)]);
+    rows.push([btn("рџ’і Р®Money вЂ” РєР°СЂС‚Р°", `pay_singbox_yoomoney:${singboxTariffId}`, undefined, cardId)]);
   }
   if (yookassaEnabled && (!currency || currency.toUpperCase() === "RUB")) {
-    rows.push([btn("💳 ЮKassa — карта / СБП", `pay_singbox_yookassa:${singboxTariffId}`, undefined, cardId)]);
+    rows.push([btn("рџ’і Р®Kassa вЂ” РєР°СЂС‚Р° / РЎР‘Рџ", `pay_singbox_yookassa:${singboxTariffId}`, undefined, cardId)]);
   }
-  if (cryptopayEnabled) rows.push([btn("💳 Crypto Bot — криптовалюта", `pay_singbox_cryptopay:${singboxTariffId}`, undefined, cardId)]);
+  if (cryptopayEnabled) rows.push([btn("рџ’і Crypto Bot вЂ” РєСЂРёРїС‚РѕРІР°Р»СЋС‚Р°", `pay_singbox_cryptopay:${singboxTariffId}`, undefined, cardId)]);
   for (const m of methods) {
     rows.push([btn(m.label, `pay_singbox:${singboxTariffId}:${m.id}`, undefined, cardId)]);
   }
@@ -567,7 +567,7 @@ export function singboxPaymentMethodButtons(
   return { inline_keyboard: rows };
 }
 
-/** Кнопки выбора способа оплаты для пополнения на сумму + ЮMoney */
+/** РљРЅРѕРїРєРё РІС‹Р±РѕСЂР° СЃРїРѕСЃРѕР±Р° РѕРїР»Р°С‚С‹ РґР»СЏ РїРѕРїРѕР»РЅРµРЅРёСЏ РЅР° СЃСѓРјРјСѓ + Р®Money */
 export function topupPaymentMethodButtons(
   amount: string,
   methods: { id: number; label: string }[],
@@ -583,13 +583,13 @@ export function topupPaymentMethodButtons(
   const cardId = emojiIds?.card;
   const rows: InlineButton[][] = [];
   if (yoomoneyEnabled) {
-    rows.push([btn("💳 ЮMoney — оплата картой", `topup_yoomoney:${amount}`, "primary", cardId)]);
+    rows.push([btn("рџ’і Р®Money вЂ” РѕРїР»Р°С‚Р° РєР°СЂС‚РѕР№", `topup_yoomoney:${amount}`, "primary", cardId)]);
   }
   if (yookassaEnabled) {
-    rows.push([btn("💳 ЮKassa — карта / СБП", `topup_yookassa:${amount}`, "primary", cardId)]);
+    rows.push([btn("рџ’і Р®Kassa вЂ” РєР°СЂС‚Р° / РЎР‘Рџ", `topup_yookassa:${amount}`, "primary", cardId)]);
   }
   if (cryptopayEnabled) {
-    rows.push([btn("💳 Crypto Bot — криптовалюта", `topup_cryptopay:${amount}`, "primary", cardId)]);
+    rows.push([btn("рџ’і Crypto Bot вЂ” РєСЂРёРїС‚РѕРІР°Р»СЋС‚Р°", `topup_cryptopay:${amount}`, "primary", cardId)]);
   }
   for (const m of methods) {
     rows.push([btn(m.label, `topup:${amount}:${m.id}`, "primary", cardId)]);
@@ -603,7 +603,7 @@ type SellOptionItem =
   | { kind: "devices"; id: string; name: string; deviceCount: number; price: number; currency: string }
   | { kind: "servers"; id: string; name: string; squadUuid: string; trafficGb?: number; price: number; currency: string };
 
-/** Кнопки списка доп. опций (трафик, устройства, серверы). */
+/** РљРЅРѕРїРєРё СЃРїРёСЃРєР° РґРѕРї. РѕРїС†РёР№ (С‚СЂР°С„РёРє, СѓСЃС‚СЂРѕР№СЃС‚РІР°, СЃРµСЂРІРµСЂС‹). */
 export function extraOptionsButtons(
   options: SellOptionItem[],
   backLabel?: string | null,
@@ -614,15 +614,15 @@ export function extraOptionsButtons(
   const backSty = resolveStyle(toStyle(innerStyles?.back), "danger");
   const cardId = emojiIds?.card;
   const rows: InlineButton[][] = options.map((o) => {
-    const extra = o.kind === "servers" && (o.trafficGb ?? 0) > 0 ? ` + ${o.trafficGb} ГБ` : "";
-    const label = `${o.name || o.kind}${extra} — ${o.price} ${o.currency}`.slice(0, 64);
+    const extra = o.kind === "servers" && (o.trafficGb ?? 0) > 0 ? ` + ${o.trafficGb} Р“Р‘` : "";
+    const label = `${o.name || o.kind}${extra} вЂ” ${o.price} ${o.currency}`.slice(0, 64);
     return [btn(label, `pay_option:${o.kind}:${o.id}`, "success", cardId)];
   });
   rows.push([btn(back, "menu:main", backSty, emojiIds?.back)]);
   return { inline_keyboard: rows };
 }
 
-/** Кнопки выбора способа оплаты опции: баланс, ЮMoney, ЮKassa, Platega. */
+/** РљРЅРѕРїРєРё РІС‹Р±РѕСЂР° СЃРїРѕСЃРѕР±Р° РѕРїР»Р°С‚С‹ РѕРїС†РёРё: Р±Р°Р»Р°РЅСЃ, Р®Money, Р®Kassa, Platega. */
 export function optionPaymentMethodButtons(
   option: SellOptionItem,
   balance: number,
@@ -639,22 +639,22 @@ export function optionPaymentMethodButtons(
   const cardId = emojiIds?.card;
   const rows: InlineButton[][] = [];
   if (balance >= option.price) {
-    rows.push([btn(`💰 Оплатить балансом (${option.price} ₽)`, `pay_option_balance:${option.kind}:${option.id}`, undefined, cardId)]);
+    rows.push([btn(`рџ’° РћРїР»Р°С‚РёС‚СЊ Р±Р°Р»Р°РЅСЃРѕРј (${option.price} в‚Ѕ)`, `pay_option_balance:${option.kind}:${option.id}`, undefined, cardId)]);
   }
   if (yoomoneyEnabled) {
-    rows.push([btn("💳 ЮMoney — карта", `pay_option_yoomoney:${option.kind}:${option.id}`, undefined, cardId)]);
+    rows.push([btn("рџ’і Р®Money вЂ” РєР°СЂС‚Р°", `pay_option_yoomoney:${option.kind}:${option.id}`, undefined, cardId)]);
   }
   if (yookassaEnabled !== false) {
-    rows.push([btn("💳 ЮKassa — карта / СБП", `pay_option_yookassa:${option.kind}:${option.id}`, undefined, cardId)]);
+    rows.push([btn("рџ’і Р®Kassa вЂ” РєР°СЂС‚Р° / РЎР‘Рџ", `pay_option_yookassa:${option.kind}:${option.id}`, undefined, cardId)]);
   }
   if (cryptopayEnabled) {
-    rows.push([btn("💳 Crypto Bot — криптовалюта", `pay_option_cryptopay:${option.kind}:${option.id}`, undefined, cardId)]);
+    rows.push([btn("рџ’і Crypto Bot вЂ” РєСЂРёРїС‚РѕРІР°Р»СЋС‚Р°", `pay_option_cryptopay:${option.kind}:${option.id}`, undefined, cardId)]);
   }
   for (const m of plategaMethods) {
     rows.push([btn(m.label, `pay_option_platega:${option.kind}:${option.id}:${m.id}`, undefined, cardId)]);
   }
   if (rows.length === 0) {
-    rows.push([btn("💳 Оплата (ЮKassa)", `pay_option_yookassa:${option.kind}:${option.id}`, undefined, cardId)]);
+    rows.push([btn("рџ’і РћРїР»Р°С‚Р° (Р®Kassa)", `pay_option_yookassa:${option.kind}:${option.id}`, undefined, cardId)]);
   }
   rows.push([btn(back, "menu:extra_options", backSty, emojiIds?.back)]);
   return { inline_keyboard: rows };
@@ -700,9 +700,9 @@ export function trialConfirmButton(innerStyles?: InnerButtonStyles, emojiIds?: I
   };
 }
 
-// ——— Gift / Secondary Subscriptions keyboards ———
+// --- Gift / Secondary Subscriptions keyboards ---
 
-/** Меню подарков: доп. подписки, активация, список подарков */
+/** Меню подарков: только покупка доп. подписки и список подписок */
 export function giftMenuButtons(
   backLabel?: string | null,
   innerStyles?: InnerButtonStyles,
@@ -715,14 +715,12 @@ export function giftMenuButtons(
     inline_keyboard: [
       [btn("🛒 Купить доп. подписку", "gift:buy", tariffPay, emojiIds?.tariff)],
       [btn("📋 Мои подписки", "gift:subscriptions", "primary", emojiIds?.connect)],
-      [btn("🎁 Активировать подарок", "gift:redeem", "primary", emojiIds?.trial)],
-      [btn("🎟️ Мои подарки", "gift:codes", "primary", emojiIds?.card)],
       [btn(back, "menu:main", backSty, emojiIds?.back)],
     ],
   };
 }
 
-/** Список вторичных подписок с кнопками «Подключить» и «Подарить» */
+/** Список вторичных подписок: подключить, скопировать, продлить, удалить */
 export function giftSubscriptionButtons(
   subscriptions: { id: string; subscriptionIndex: number | null; giftStatus: string | null }[],
   backLabel?: string | null,
@@ -735,31 +733,25 @@ export function giftSubscriptionButtons(
   for (const sub of subscriptions) {
     const idx = sub.subscriptionIndex ?? 0;
     const statusLabel =
-      sub.giftStatus === "GIFTED"
-        ? " (подарена)"
-        : sub.giftStatus === "GIFT_RESERVED"
-          ? " (код создан)"
-          : sub.giftStatus === "ACTIVATED_SELF"
-            ? " (для себя)"
-            : "";
-    // Кнопка «Подключить» нужна и для ACTIVATED_SELF — иначе при нескольких таких подписках
-    // остаётся только «Назад», без страницы подписки / Remna.
+      sub.giftStatus === "GIFTED" ? " (подарена)"
+      : sub.giftStatus === "GIFT_RESERVED" ? " (код создан)"
+      : sub.giftStatus === "ACTIVATED_SELF" ? " (для себя)"
+      : "";
+
     rows.push([
-      btn(`📲 Подписка #${idx}${statusLabel}`, `gift:connect:${sub.id}`, "primary", emojiIds?.connect),
+      btn(`📱 Подписка #${idx}${statusLabel}`, `gift:connect:${sub.id}`, "primary", emojiIds?.connect),
       btn("📋 Скопировать", `gift:copy:${sub.id}`, "primary"),
     ]);
-    if (!sub.giftStatus) {
-      rows.push([
-        btn(`🎁 Подарить #${idx}`, `gift:give:${sub.id}`, "success", emojiIds?.trial),
-        btn(`🗑 Удалить #${idx}`, `gift:delete:${sub.id}`, "danger"),
-      ]);
-    }
+    rows.push([
+      btn(`🔄 Продлить #${idx}`, `gift:renew:${sub.id}`, "success"),
+      btn(`🗑 Удалить #${idx}`, `gift:delete:${sub.id}`, "danger"),
+    ]);
   }
   rows.push([btn(back, "menu:gift", backSty, emojiIds?.back)]);
   return { inline_keyboard: rows };
 }
 
-/** После покупки доп. подписки — «Активировать себе» или «Подарить» */
+/** После покупки доп. подписки — только «Активировать себе» */
 export function giftPostPurchaseButtons(
   subscriptionId: string,
   subscriptionIndex: number,
@@ -772,13 +764,10 @@ export function giftPostPurchaseButtons(
   return {
     inline_keyboard: [
       [btn(`✅ Активировать себе`, `gift:connect:${subscriptionId}`, "primary", emojiIds?.connect)],
-      [btn(`🎁 Подарить`, `gift:give:${subscriptionId}`, "success", emojiIds?.trial)],
       [btn(back, "menu:gift", backSty, emojiIds?.back)],
     ],
   };
 }
-
-/** Результат создания подарочного кода — только кнопка назад */
 export function giftCodeResultButtons(
   backLabel?: string | null,
   innerStyles?: InnerButtonStyles,
@@ -793,7 +782,7 @@ export function giftCodeResultButtons(
   };
 }
 
-/** Список подарочных кодов с кнопкой отмены для активных */
+/** РЎРїРёСЃРѕРє РїРѕРґР°СЂРѕС‡РЅС‹С… РєРѕРґРѕРІ СЃ РєРЅРѕРїРєРѕР№ РѕС‚РјРµРЅС‹ РґР»СЏ Р°РєС‚РёРІРЅС‹С… */
 export function giftCodesListButtons(
   codes: { id: string; code: string; status: string }[],
   backLabel?: string | null,
@@ -805,14 +794,14 @@ export function giftCodesListButtons(
   const rows: InlineButton[][] = [];
   for (const c of codes) {
     if (c.status === "ACTIVE") {
-      rows.push([btn(`❌ Отменить ${c.code}`, `gift:cancel_code:${c.id}`, "danger")]);
+      rows.push([btn(`вќЊ РћС‚РјРµРЅРёС‚СЊ ${c.code}`, `gift:cancel_code:${c.id}`, "danger")]);
     }
   }
   rows.push([btn(back, "menu:gift", backSty, emojiIds?.back)]);
   return { inline_keyboard: rows };
 }
 
-/** Тарифы для покупки подарочной подписки (с gift_tariff: префиксом) */
+/** РўР°СЂРёС„С‹ РґР»СЏ РїРѕРєСѓРїРєРё РїРѕРґР°СЂРѕС‡РЅРѕР№ РїРѕРґРїРёСЃРєРё (СЃ gift_tariff: РїСЂРµС„РёРєСЃРѕРј) */
 export function giftTariffButtons(
   categories: {
     id: string;
@@ -832,7 +821,7 @@ export function giftTariffButtons(
   for (const cat of categories) {
     const prefix = (cat.emoji && cat.emoji.trim()) ? `${cat.emoji} ` : "";
     for (const t of cat.tariffs) {
-      const label = `${prefix}${t.name} — ${t.price} ${t.currency}`.slice(0, 64);
+      const label = `${prefix}${t.name} вЂ” ${t.price} ${t.currency}`.slice(0, 64);
       rows.push([btn(label, `gift_tariff:${t.id}`, tariffPay, tariffId)]);
     }
   }
@@ -840,7 +829,7 @@ export function giftTariffButtons(
   return { inline_keyboard: rows };
 }
 
-/** Кнопки подтверждения покупки подарочной подписки (баланс) */
+/** РљРЅРѕРїРєРё РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ РїРѕРєСѓРїРєРё РїРѕРґР°СЂРѕС‡РЅРѕР№ РїРѕРґРїРёСЃРєРё (Р±Р°Р»Р°РЅСЃ) */
 export function giftPaymentButtons(
   tariffId: string,
   balanceLabel: string,
@@ -858,4 +847,6 @@ export function giftPaymentButtons(
     ],
   };
 }
+
+
 

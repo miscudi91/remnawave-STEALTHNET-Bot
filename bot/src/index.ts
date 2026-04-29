@@ -1,7 +1,7 @@
-/**
- * STEALTHNET 3.2.7 — Telegram-бот
- * Полный функционал кабинета: главная, тарифы, профиль, пополнение, триал, реферальная ссылка, VPN.
- * Цветные кнопки: style primary / success / danger (Telegram Bot API).
+﻿/**
+ * STEALTHNET 3.2.7 вЂ” Telegram-Р±РѕС‚
+ * РџРѕР»РЅС‹Р№ С„СѓРЅРєС†РёРѕРЅР°Р» РєР°Р±РёРЅРµС‚Р°: РіР»Р°РІРЅР°СЏ, С‚Р°СЂРёС„С‹, РїСЂРѕС„РёР»СЊ, РїРѕРїРѕР»РЅРµРЅРёРµ, С‚СЂРёР°Р», СЂРµС„РµСЂР°Р»СЊРЅР°СЏ СЃСЃС‹Р»РєР°, VPN.
+ * Р¦РІРµС‚РЅС‹Рµ РєРЅРѕРїРєРё: style primary / success / danger (Telegram Bot API).
  */
 
 import "dotenv/config";
@@ -70,7 +70,7 @@ async function waitForApi(maxRetries = 10, delayMs = 3000): Promise<Awaited<Retu
       return await api.getPublicConfig();
     } catch {
       if (i < maxRetries) {
-        console.log(`[Bot] API недоступен, повтор через ${delayMs / 1000}с (${i}/${maxRetries})…`);
+        console.log(`[Bot] API РЅРµРґРѕСЃС‚СѓРїРµРЅ, РїРѕРІС‚РѕСЂ С‡РµСЂРµР· ${delayMs / 1000}СЃ (${i}/${maxRetries})вЂ¦`);
         await new Promise((r) => setTimeout(r, delayMs));
       }
     }
@@ -85,22 +85,22 @@ async function createBotWithProxy(token: string): Promise<Bot> {
       const url = cfg.proxyUrl.trim();
       const lower = url.toLowerCase();
       if (lower.startsWith("http://") || lower.startsWith("https://")) {
-        console.log("[Proxy] Telegram Bot API через HTTP прокси");
+        console.log("[Proxy] Telegram Bot API С‡РµСЂРµР· HTTP РїСЂРѕРєСЃРё");
         return new Bot(token, {
           client: { baseFetchConfig: { dispatcher: new UndiciProxyAgent(url) } as any },
         });
       }
       if (lower.startsWith("socks5://") || lower.startsWith("socks4://") || lower.startsWith("socks://")) {
-        console.log("[Proxy] Telegram Bot API через SOCKS прокси");
+        console.log("[Proxy] Telegram Bot API С‡РµСЂРµР· SOCKS РїСЂРѕРєСЃРё");
         const agent = new SocksProxyAgent(url);
         return new Bot(token, {
           client: { baseFetchConfig: { agent } as any },
         });
       }
-      console.warn(`[Proxy] Неизвестный протокол прокси: ${url}, запуск без прокси`);
+      console.warn(`[Proxy] РќРµРёР·РІРµСЃС‚РЅС‹Р№ РїСЂРѕС‚РѕРєРѕР» РїСЂРѕРєСЃРё: ${url}, Р·Р°РїСѓСЃРє Р±РµР· РїСЂРѕРєСЃРё`);
     }
   } catch {
-    console.warn("[Bot] Не удалось получить конфиг, запуск без прокси");
+    console.warn("[Bot] РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РєРѕРЅС„РёРі, Р·Р°РїСѓСЃРє Р±РµР· РїСЂРѕРєСЃРё");
   }
   return new Bot(token);
 }
@@ -109,7 +109,7 @@ const bot = await createBotWithProxy(BOT_TOKEN);
 
 let BOT_USERNAME = "";
 
-// ——— Принудительная подписка на канал ———
+// вЂ”вЂ”вЂ” РџСЂРёРЅСѓРґРёС‚РµР»СЊРЅР°СЏ РїРѕРґРїРёСЃРєР° РЅР° РєР°РЅР°Р» вЂ”вЂ”вЂ”
 
 type SubscriptionCheckState = "subscribed" | "not_subscribed" | "cannot_verify";
 
@@ -168,7 +168,7 @@ function parseForceChannelTarget(channelInput: string): ForceChannelTarget {
   return { chatId: null, joinUrl: null };
 }
 
-/** Проверяет, подписан ли пользователь на указанный канал/группу. */
+/** РџСЂРѕРІРµСЂСЏРµС‚, РїРѕРґРїРёСЃР°РЅ Р»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅР° СѓРєР°Р·Р°РЅРЅС‹Р№ РєР°РЅР°Р»/РіСЂСѓРїРїСѓ. */
 async function checkUserSubscription(userId: number, channelInput: string): Promise<{ state: SubscriptionCheckState; target: ForceChannelTarget; error?: string }> {
   const target = parseForceChannelTarget(channelInput);
   if (!target.chatId) {
@@ -196,8 +196,8 @@ function subscribeKeyboard(channelInput: string, lang = "ru"): InlineMarkup {
 }
 
 /**
- * Проверяет подписку и, если не подписан, отправляет/редактирует сообщение.
- * Возвращает true если НЕ подписан (нужно прервать обработку).
+ * РџСЂРѕРІРµСЂСЏРµС‚ РїРѕРґРїРёСЃРєСѓ Рё, РµСЃР»Рё РЅРµ РїРѕРґРїРёСЃР°РЅ, РѕС‚РїСЂР°РІР»СЏРµС‚/СЂРµРґР°РєС‚РёСЂСѓРµС‚ СЃРѕРѕР±С‰РµРЅРёРµ.
+ * Р’РѕР·РІСЂР°С‰Р°РµС‚ true РµСЃР»Рё РќР• РїРѕРґРїРёСЃР°РЅ (РЅСѓР¶РЅРѕ РїСЂРµСЂРІР°С‚СЊ РѕР±СЂР°Р±РѕС‚РєСѓ).
  */
 async function enforceSubscription(
   ctx: {
@@ -217,12 +217,12 @@ async function enforceSubscription(
   const msg = config.forceSubscribeMessage?.trim() || _t("subscribe.default_message", lang);
   if (result.state === "cannot_verify") {
     await ctx.reply(
-      `⚠️ ${msg}\n\n${_t("subscribe.cannot_verify", lang)}`,
+      `вљ пёЏ ${msg}\n\n${_t("subscribe.cannot_verify", lang)}`,
       { reply_markup: subscribeKeyboard(channelId, lang) }
     );
     return true;
   }
-  await ctx.reply(`⚠️ ${msg}`, { reply_markup: subscribeKeyboard(channelId, lang) });
+  await ctx.reply(`вљ пёЏ ${msg}`, { reply_markup: subscribeKeyboard(channelId, lang) });
   return true;
 }
 
@@ -239,7 +239,7 @@ type TariffItem = {
 };
 type TariffCategory = { id: string; name: string; emoji?: string; emojiKey?: string | null; tariffs: TariffItem[] };
 
-// Токены по telegram_id (в памяти; автоматическая переавторизация при потере)
+// РўРѕРєРµРЅС‹ РїРѕ telegram_id (РІ РїР°РјСЏС‚Рё; Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєР°СЏ РїРµСЂРµР°РІС‚РѕСЂРёР·Р°С†РёСЏ РїСЂРё РїРѕС‚РµСЂРµ)
 const tokenStore = new Map<number, string>();
 
 function getToken(userId: number): string | undefined {
@@ -251,8 +251,8 @@ function setToken(userId: number, token: string): void {
 }
 
 /**
- * Получить токен пользователя. Если токен отсутствует (рестарт бота, протух и т.д.),
- * автоматически переавторизует через registerByTelegram и возвращает свежий токен.
+ * РџРѕР»СѓС‡РёС‚СЊ С‚РѕРєРµРЅ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ. Р•СЃР»Рё С‚РѕРєРµРЅ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ (СЂРµСЃС‚Р°СЂС‚ Р±РѕС‚Р°, РїСЂРѕС‚СѓС… Рё С‚.Рґ.),
+ * Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РїРµСЂРµР°РІС‚РѕСЂРёР·СѓРµС‚ С‡РµСЂРµР· registerByTelegram Рё РІРѕР·РІСЂР°С‰Р°РµС‚ СЃРІРµР¶РёР№ С‚РѕРєРµРЅ.
  */
 async function getOrRestoreToken(userId: number, username?: string): Promise<string | null> {
   const existing = tokenStore.get(userId);
@@ -274,30 +274,30 @@ async function getOrRestoreToken(userId: number, username?: string): Promise<str
   }
 }
 
-// Пользователи, ожидающие ввода промокода
+// РџРѕР»СЊР·РѕРІР°С‚РµР»Рё, РѕР¶РёРґР°СЋС‰РёРµ РІРІРѕРґР° РїСЂРѕРјРѕРєРѕРґР°
 const awaitingPromoCode = new Set<number>();
-// Активный промокод на скидку (хранится до оплаты)
+// РђРєС‚РёРІРЅС‹Р№ РїСЂРѕРјРѕРєРѕРґ РЅР° СЃРєРёРґРєСѓ (С…СЂР°РЅРёС‚СЃСЏ РґРѕ РѕРїР»Р°С‚С‹)
 type DiscountInfo = { code: string; discountPercent?: number | null; discountFixed?: number | null };
 const activeDiscountCode = new Map<number, DiscountInfo>();
-// Ожидание ввода подарочного кода
+// РћР¶РёРґР°РЅРёРµ РІРІРѕРґР° РїРѕРґР°СЂРѕС‡РЅРѕРіРѕ РєРѕРґР°
 const awaitingGiftCode = new Set<number>();
 
-// Админ: ожидание ввода поиска; последний поиск по userId для пагинации
+// РђРґРјРёРЅ: РѕР¶РёРґР°РЅРёРµ РІРІРѕРґР° РїРѕРёСЃРєР°; РїРѕСЃР»РµРґРЅРёР№ РїРѕРёСЃРє РїРѕ userId РґР»СЏ РїР°РіРёРЅР°С†РёРё
 const awaitingAdminSearch = new Set<number>();
 const lastAdminSearch = new Map<number, string>();
-// Админ: пополнение баланса клиента — ожидаем число
+// РђРґРјРёРЅ: РїРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР° РєР»РёРµРЅС‚Р° вЂ” РѕР¶РёРґР°РµРј С‡РёСЃР»Рѕ
 const awaitingAdminBalance = new Map<number, string>();
-// Админ: рассылка — ожидаем текст или фото+подпись, затем канал
+// РђРґРјРёРЅ: СЂР°СЃСЃС‹Р»РєР° вЂ” РѕР¶РёРґР°РµРј С‚РµРєСЃС‚ РёР»Рё С„РѕС‚Рѕ+РїРѕРґРїРёСЃСЊ, Р·Р°С‚РµРј РєР°РЅР°Р»
 const awaitingBroadcastMessage = new Set<number>();
 type BroadcastPayload = { text: string; photoFileId?: string; buttonText?: string; buttonUrl?: string };
 const lastBroadcastMessage = new Map<number, string | BroadcastPayload>();
-// Админ: сквады — список для добавления/удаления (clientId + items с uuid/name)
+// РђРґРјРёРЅ: СЃРєРІР°РґС‹ вЂ” СЃРїРёСЃРѕРє РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ/СѓРґР°Р»РµРЅРёСЏ (clientId + items СЃ uuid/name)
 const lastSquadsForAdd = new Map<number, { clientId: string; items: { uuid: string; name: string }[] }>();
 const lastSquadsForRemove = new Map<number, { clientId: string; items: { uuid: string; name: string }[] }>();
-// Устройства (HWID): список для экрана «Удалить устройство» (индекс в callback)
+// РЈСЃС‚СЂРѕР№СЃС‚РІР° (HWID): СЃРїРёСЃРѕРє РґР»СЏ СЌРєСЂР°РЅР° В«РЈРґР°Р»РёС‚СЊ СѓСЃС‚СЂРѕР№СЃС‚РІРѕВ» (РёРЅРґРµРєСЃ РІ callback)
 const lastDevicesList = new Map<number, { devices: { hwid: string; platform?: string; deviceModel?: string }[] }>();
 
-/** ДостаСвЂ?м subscriptionUrl из ответа Remna */
+/** Р”РѕСЃС‚Р°РЎРІР‚?Рј subscriptionUrl РёР· РѕС‚РІРµС‚Р° Remna */
 function getSubscriptionUrl(sub: unknown): string | null {
   if (!sub || typeof sub !== "object") return null;
   const o = sub as Record<string, unknown>;
@@ -311,7 +311,7 @@ function getSubscriptionUrl(sub: unknown): string | null {
   return null;
 }
 
-/** ДостаСвЂ?м объект пользователя из ответа Remna (response или data или сам объект) */
+/** Р”РѕСЃС‚Р°РЎРІР‚?Рј РѕР±СЉРµРєС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР· РѕС‚РІРµС‚Р° Remna (response РёР»Рё data РёР»Рё СЃР°Рј РѕР±СЉРµРєС‚) */
 function getSubUser(sub: unknown): Record<string, unknown> | null {
   if (!sub || typeof sub !== "object") return null;
   const o = sub as Record<string, unknown>;
@@ -328,34 +328,34 @@ function bytesToGb(bytes: number): string {
   return (bytes / (1024 * 1024 * 1024)).toFixed(2);
 }
 
-/** Прогресс-бар из символов (0..1), длина barLen */
+/** РџСЂРѕРіСЂРµСЃСЃ-Р±Р°СЂ РёР· СЃРёРјРІРѕР»РѕРІ (0..1), РґР»РёРЅР° barLen */
 function progressBar(pct: number, barLen: number): string {
   const filled = Math.round(Math.max(0, Math.min(1, pct)) * barLen);
-  return "█".repeat(filled) + "█".repeat(barLen - filled);
+  return "в–€".repeat(filled) + "в–€".repeat(barLen - filled);
 }
 
 const DEFAULT_MENU_TEXTS: Record<string, string> = {
-  welcomeTitlePrefix: "🛡 ",
-  welcomeGreeting: "рџвЂ?‹ Добро пожаловать в ",
-  balancePrefix: "💰 РвЂ?аланс: ",
-  tariffPrefix: "💎 Ваш тариф : ",
-  subscriptionPrefix: "{{CHART}} Статус подписки — ",
-  statusInactive: "{{STATUS_INACTIVE}} Истекла",
-  statusActive: "{{STATUS_ACTIVE}} Активна",
-  statusExpired: "{{STATUS_EXPIRED}} Истекла",
-  statusLimited: "{{STATUS_LIMITED}} Ограничена",
-  statusDisabled: "{{STATUS_DISABLED}} Отключена",
-  expirePrefix: "📅 до ",
-  daysLeftPrefix: "⏰ осталось ",
-  devicesLabel: "📱 Устройств: ",
-  devicesAvailable: " доступно",
-  trafficPrefix: "📈 Трафик — ",
-  linkLabel: "🔗 Ссылка подключения:",
-  chooseAction: "Выберите действие:",
+  welcomeTitlePrefix: "рџ›Ў ",
+  welcomeGreeting: "СЂСџРІР‚?вЂ№ Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ РІ ",
+  balancePrefix: "рџ’° Р РІР‚?Р°Р»Р°РЅСЃ: ",
+  tariffPrefix: "рџ’Ћ Р’Р°С€ С‚Р°СЂРёС„ : ",
+  subscriptionPrefix: "{{CHART}} РЎС‚Р°С‚СѓСЃ РїРѕРґРїРёСЃРєРё вЂ” ",
+  statusInactive: "{{STATUS_INACTIVE}} РСЃС‚РµРєР»Р°",
+  statusActive: "{{STATUS_ACTIVE}} РђРєС‚РёРІРЅР°",
+  statusExpired: "{{STATUS_EXPIRED}} РСЃС‚РµРєР»Р°",
+  statusLimited: "{{STATUS_LIMITED}} РћРіСЂР°РЅРёС‡РµРЅР°",
+  statusDisabled: "{{STATUS_DISABLED}} РћС‚РєР»СЋС‡РµРЅР°",
+  expirePrefix: "рџ“… РґРѕ ",
+  daysLeftPrefix: "вЏ° РѕСЃС‚Р°Р»РѕСЃСЊ ",
+  devicesLabel: "рџ“± РЈСЃС‚СЂРѕР№СЃС‚РІ: ",
+  devicesAvailable: " РґРѕСЃС‚СѓРїРЅРѕ",
+  trafficPrefix: "рџ“€ РўСЂР°С„РёРє вЂ” ",
+  linkLabel: "рџ”— РЎСЃС‹Р»РєР° РїРѕРґРєР»СЋС‡РµРЅРёСЏ:",
+  chooseAction: "Р’С‹Р±РµСЂРёС‚Рµ РґРµР№СЃС‚РІРёРµ:",
 };
 
-const DEFAULT_TARIFFS_TEXT = "Тарифы\n\n{{CATEGORY}}\n{{TARIFFS}}\n\nВыберите тариф для оплаты:";
-const DEFAULT_PAYMENT_TEXT = "Оплата: {{NAME}} — {{PRICE}}\n\n{{ACTION}}";
+const DEFAULT_TARIFFS_TEXT = "РўР°СЂРёС„С‹\n\n{{CATEGORY}}\n{{TARIFFS}}\n\nР’С‹Р±РµСЂРёС‚Рµ С‚Р°СЂРёС„ РґР»СЏ РѕРїР»Р°С‚С‹:";
+const DEFAULT_PAYMENT_TEXT = "РћРїР»Р°С‚Р°: {{NAME}} вЂ” {{PRICE}}\n\n{{ACTION}}";
 
 type BotTariffLineFields = {
   name?: boolean;
@@ -384,9 +384,9 @@ function formatDaysRu(days: number): string {
 
 const RESET_MODE_LABELS: Record<string, string> = {
   no_reset: "",
-  on_purchase: "сброс при покупке",
-  monthly: "сброс ежемесячно",
-  monthly_rolling: "скользящий месяц",
+  on_purchase: "СЃР±СЂРѕСЃ РїСЂРё РїРѕРєСѓРїРєРµ",
+  monthly: "СЃР±СЂРѕСЃ РµР¶РµРјРµСЃСЏС‡РЅРѕ",
+  monthly_rolling: "СЃРєРѕР»СЊР·СЏС‰РёР№ РјРµСЃСЏС†",
 };
 
 function formatTariffLine(tariff: TariffItem, fields: Required<BotTariffLineFields>): string {
@@ -401,7 +401,7 @@ function formatTariffLine(tariff: TariffItem, fields: Required<BotTariffLineFiel
   }
   if (fields.trafficLimit) {
     const limit = tariff.trafficLimitBytes;
-    parts.push(limit == null ? "трафик без лимита" : `трафик ${bytesToGb(limit)} GB`);
+    parts.push(limit == null ? "С‚СЂР°С„РёРє Р±РµР· Р»РёРјРёС‚Р°" : `С‚СЂР°С„РёРє ${bytesToGb(limit)} GB`);
   }
   if (fields.trafficResetMode) {
     const label = RESET_MODE_LABELS[tariff.trafficResetMode ?? "no_reset"];
@@ -409,10 +409,10 @@ function formatTariffLine(tariff: TariffItem, fields: Required<BotTariffLineFiel
   }
   if (fields.deviceLimit) {
     const limit = tariff.deviceLimit;
-    parts.push(limit == null ? "устройства без лимита" : `устройства ${limit}`);
+    parts.push(limit == null ? "СѓСЃС‚СЂРѕР№СЃС‚РІР° Р±РµР· Р»РёРјРёС‚Р°" : `СѓСЃС‚СЂРѕР№СЃС‚РІР° ${limit}`);
   }
-  if (!parts.length) return `• ${tariff.name}`;
-  return `• ${parts.join(" — ")}`;
+  if (!parts.length) return `вЂў ${tariff.name}`;
+  return `вЂў ${parts.join(" вЂ” ")}`;
 }
 
 function renderTariffsText(template: string, category: string, tariffLines: string): string {
@@ -439,7 +439,7 @@ function buildPaymentMessage(
   discount?: { originalPrice: string; discountedPrice: string }
 ): { text: string; entities: CustomEmojiEntity[] } {
   const priceDisplay = discount
-    ? `${discount.originalPrice} → ${discount.discountedPrice}`
+    ? `${discount.originalPrice} в†’ ${discount.discountedPrice}`
     : vars.price;
   const template = (config?.botPaymentText ?? "").trim() || DEFAULT_PAYMENT_TEXT;
   const base = renderPaymentText(template, { ...vars, price: priceDisplay });
@@ -465,7 +465,7 @@ type CustomEmojiEntity =
   | { type: "strikethrough"; offset: number; length: number }
   | { type: "bold"; offset: number; length: number };
 
-/** Длина первого символа в UTF-16 (для entity) */
+/** Р”Р»РёРЅР° РїРµСЂРІРѕРіРѕ СЃРёРјРІРѕР»Р° РІ UTF-16 (РґР»СЏ entity) */
 function firstCharLengthUtf16(s: string): number {
   if (!s.length) return 0;
   const cp = s.codePointAt(0);
@@ -473,13 +473,13 @@ function firstCharLengthUtf16(s: string): number {
 }
 
 const DEFAULT_EMOJI_UNICODE: Record<string, string> = {
-  PACKAGE: "📦", TARIFFS: "📦", CARD: "💳", LINK: "🔗", PUZZLE: "рџвЂ?¤", PROFILE: "рџвЂ?¤",
-  TRIAL: "🎁", SERVERS: "🌐", CONNECT: "🌐",
-  CHART: "📊",
-  STATUS_ACTIVE: "🟡", STATUS_EXPIRED: "🔴", STATUS_INACTIVE: "🔴",
-  STATUS_LIMITED: "🟡", STATUS_DISABLED: "🔴",
+  PACKAGE: "рџ“¦", TARIFFS: "рџ“¦", CARD: "рџ’і", LINK: "рџ”—", PUZZLE: "СЂСџРІР‚?В¤", PROFILE: "СЂСџРІР‚?В¤",
+  TRIAL: "рџЋЃ", SERVERS: "рџЊђ", CONNECT: "рџЊђ",
+  CHART: "рџ“Љ",
+  STATUS_ACTIVE: "рџџЎ", STATUS_EXPIRED: "рџ”ґ", STATUS_INACTIVE: "рџ”ґ",
+  STATUS_LIMITED: "рџџЎ", STATUS_DISABLED: "рџ”ґ",
 };
-const DEFAULT_CUSTOM_EMOJI_CHAR = "🙂";
+const DEFAULT_CUSTOM_EMOJI_CHAR = "рџ™‚";
 
 const DEFAULT_MENU_EMOJI_KEY_BY_ID: Record<string, string> = {
   tariffs: "PACKAGE",
@@ -509,14 +509,14 @@ function getMenuEmojiKey(
   return btn?.emojiKey || DEFAULT_MENU_EMOJI_KEY_BY_ID[menuId];
 }
 
-/** Заголовок с эмодзи: если в botEmojis есть tgEmojiId для ключа — добавляем entity (премиум-эмодзи в тексте). */
+/** Р—Р°РіРѕР»РѕРІРѕРє СЃ СЌРјРѕРґР·Рё: РµСЃР»Рё РІ botEmojis РµСЃС‚СЊ tgEmojiId РґР»СЏ РєР»СЋС‡Р° вЂ” РґРѕР±Р°РІР»СЏРµРј entity (РїСЂРµРјРёСѓРј-СЌРјРѕРґР·Рё РІ С‚РµРєСЃС‚Рµ). */
 function titleWithEmoji(
   emojiKey: string,
   rest: string,
   botEmojis?: Record<string, { unicode?: string; tgEmojiId?: string }> | null
 ): { text: string; entities: CustomEmojiEntity[] } {
   const entry = botEmojis?.[emojiKey];
-  const unicode = entry?.unicode?.trim() || DEFAULT_EMOJI_UNICODE[emojiKey] || "•";
+  const unicode = entry?.unicode?.trim() || DEFAULT_EMOJI_UNICODE[emojiKey] || "вЂў";
   const space = rest.startsWith("\n") ? "" : " ";
   const text = unicode + space + rest;
   const entities: CustomEmojiEntity[] = [];
@@ -564,7 +564,7 @@ function titleWithEmojiAndCustomEmojis(
   botEmojis?: Record<string, { unicode?: string; tgEmojiId?: string }> | null
 ): { text: string; entities: CustomEmojiEntity[] } {
   const entry = botEmojis?.[emojiKey];
-  const unicode = entry?.unicode?.trim() || DEFAULT_EMOJI_UNICODE[emojiKey] || "•";
+  const unicode = entry?.unicode?.trim() || DEFAULT_EMOJI_UNICODE[emojiKey] || "вЂў";
   const space = rest.startsWith("\n") ? "" : " ";
   const leading = unicode + space;
   const { text: restText, entities: restEntities } = applyCustomEmojiPlaceholders(rest, botEmojis);
@@ -588,13 +588,13 @@ function titleWithOptionalEmoji(
   return titleWithEmojiAndCustomEmojis(emojiKey, rest, botEmojis);
 }
 
-/** Полный текст главного меню + entities для премиум-эмодзи в тексте (владелец бота должен иметь Telegram Premium). */
+/** РџРѕР»РЅС‹Р№ С‚РµРєСЃС‚ РіР»Р°РІРЅРѕРіРѕ РјРµРЅСЋ + entities РґР»СЏ РїСЂРµРјРёСѓРј-СЌРјРѕРґР·Рё РІ С‚РµРєСЃС‚Рµ (РІР»Р°РґРµР»РµС† Р±РѕС‚Р° РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ Telegram Premium). */
 function buildMainMenuText(opts: {
   serviceName: string;
   balance: number;
   currency: string;
   subscription: unknown;
-  /** Отображаемое имя тарифа с бэкенда: Триал, название с сайта или «Тариф не выбран» */
+  /** РћС‚РѕР±СЂР°Р¶Р°РµРјРѕРµ РёРјСЏ С‚Р°СЂРёС„Р° СЃ Р±СЌРєРµРЅРґР°: РўСЂРёР°Р», РЅР°Р·РІР°РЅРёРµ СЃ СЃР°Р№С‚Р° РёР»Рё В«РўР°СЂРёС„ РЅРµ РІС‹Р±СЂР°РЅВ» */
   tariffDisplayName?: string | null;
   menuTexts?: Record<string, string> | null;
   menuLineVisibility?: Record<string, boolean> | null;
@@ -602,7 +602,7 @@ function buildMainMenuText(opts: {
   botEmojis?: Record<string, { unicode?: string; tgEmojiId?: string }> | null;
 }): { text: string; entities: CustomEmojiEntity[] } {
   const { serviceName, balance, currency, subscription, tariffDisplayName, menuTexts, menuLineVisibility, menuTextCustomEmojiIds, botEmojis } = opts;
-  const name = serviceName.trim() || "Кабинет";
+  const name = serviceName.trim() || "РљР°Р±РёРЅРµС‚";
   const balanceStr = formatMoney(balance, currency);
   const lines: string[] = [];
   const lineStartKeys: (string | null)[] = [];
@@ -622,7 +622,7 @@ function buildMainMenuText(opts: {
 
   const user = getSubUser(subscription);
   const url = getSubscriptionUrl(subscription);
-  const tariffName = (tariffDisplayName && tariffDisplayName.trim()) || "Тариф не выбран";
+  const tariffName = (tariffDisplayName && tariffDisplayName.trim()) || "РўР°СЂРёС„ РЅРµ РІС‹Р±СЂР°РЅ";
   pushLine("tariffPrefix", t(menuTexts, "tariffPrefix") + tariffName);
 
   if (!user && !url) {
@@ -642,10 +642,10 @@ function buildMainMenuText(opts: {
       : status === "EXPIRED" ? t(menuTexts, "statusExpired")
       : status === "LIMITED" ? t(menuTexts, "statusLimited")
       : status === "DISABLED" ? t(menuTexts, "statusDisabled")
-      : `🟡 ${status}`;
+      : `рџџЎ ${status}`;
     const expireStr = expireDate
       ? expireDate.toLocaleString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })
-      : "—";
+      : "вЂ”";
     const daysLeft =
       expireDate && expireDate > new Date()
         ? Math.max(0, Math.ceil((expireDate.getTime() - Date.now()) / (24 * 60 * 60 * 1000)))
@@ -654,7 +654,7 @@ function buildMainMenuText(opts: {
     pushLine("subscriptionPrefix", t(menuTexts, "subscriptionPrefix") + statusLabel);
     pushLine("expirePrefix", t(menuTexts, "expirePrefix") + expireStr);
     if (daysLeft != null) {
-      pushLine("daysLeftPrefix", t(menuTexts, "daysLeftPrefix") + `${daysLeft} ${daysLeft === 1 ? "день" : daysLeft < 5 ? "дня" : "дней"}`);
+      pushLine("daysLeftPrefix", t(menuTexts, "daysLeftPrefix") + `${daysLeft} ${daysLeft === 1 ? "РґРµРЅСЊ" : daysLeft < 5 ? "РґРЅСЏ" : "РґРЅРµР№"}`);
     }
     const deviceLimit = user?.hwidDeviceLimit ?? user?.deviceLimit ?? user?.device_limit;
     const devicesUsed = user?.devicesUsed ?? user?.devices_used;
@@ -675,7 +675,7 @@ function buildMainMenuText(opts: {
       const usedGb = bytesToGb(usedNum);
       const limitGb = bytesToGb(limitNum);
       const pctInt = Math.round(Math.min(100, pct * 100));
-      pushLine("trafficPrefix", t(menuTexts, "trafficPrefix") + `🟢 ${progressBar(pct, 14)} ${pctInt}% (${usedGb} / ${limitGb} GB)`);
+      pushLine("trafficPrefix", t(menuTexts, "trafficPrefix") + `рџџў ${progressBar(pct, 14)} ${pctInt}% (${usedGb} / ${limitGb} GB)`);
     } else if (Number.isFinite(usedNum)) {
       pushLine("trafficPrefix", t(menuTexts, "trafficPrefix") + ` ${bytesToGb(usedNum)} GB`);
     } else {
@@ -713,7 +713,7 @@ function buildMainMenuText(opts: {
 
 const TELEGRAM_CAPTION_MAX = 1024;
 
-/** Логотип из настроек: data URL или URL → источник для sendPhoto/sendAnimation и признак GIF */
+/** Р›РѕРіРѕС‚РёРї РёР· РЅР°СЃС‚СЂРѕРµРє: data URL РёР»Рё URL в†’ РёСЃС‚РѕС‡РЅРёРє РґР»СЏ sendPhoto/sendAnimation Рё РїСЂРёР·РЅР°Рє GIF */
 function logoToMediaSource(logo: string | null | undefined): { source: InputFile | string; isGif: boolean } | null {
   if (!logo || !logo.trim()) return null;
   const s = logo.trim();
@@ -744,7 +744,7 @@ function logoToMediaSource(logo: string | null | undefined): { source: InputFile
   return null;
 }
 
-/** Редактировать сообщение: текст и клавиатура (если с фото/анимацией — caption, иначе text) */
+/** Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ: С‚РµРєСЃС‚ Рё РєР»Р°РІРёР°С‚СѓСЂР° (РµСЃР»Рё СЃ С„РѕС‚Рѕ/Р°РЅРёРјР°С†РёРµР№ вЂ” caption, РёРЅР°С‡Рµ text) */
 async function editMessageContent(ctx: {
   editMessageCaption: (opts: { caption: string; caption_entities?: CustomEmojiEntity[]; reply_markup?: InlineMarkup }) => Promise<unknown>;
   editMessageText: (text: string, opts?: { entities?: CustomEmojiEntity[]; reply_markup?: InlineMarkup }) => Promise<unknown>;
@@ -769,7 +769,7 @@ async function editMessageContent(ctx: {
 
 function formatMoney(amount: number, currency: string): string {
   const c = currency.toUpperCase();
-  const sym = c === "RUB" ? "₽" : c === "USD" ? "$" : "₴";
+  const sym = c === "RUB" ? "в‚Ѕ" : c === "USD" ? "$" : "в‚ґ";
   return `${amount} ${sym}`;
 }
 
@@ -780,7 +780,7 @@ function escapeHtml(text: string): string {
     .replaceAll(">", "&gt;");
 }
 
-/** Рассчитать цену со скидкой */
+/** Р Р°СЃСЃС‡РёС‚Р°С‚СЊ С†РµРЅСѓ СЃРѕ СЃРєРёРґРєРѕР№ */
 function getDiscountedPrice(price: number, discount: DiscountInfo): number {
   let final = price;
   if (discount.discountPercent && discount.discountPercent > 0) final -= final * discount.discountPercent / 100;
@@ -789,9 +789,9 @@ function getDiscountedPrice(price: number, discount: DiscountInfo): number {
 }
 
 /**
- * Парсинг start-параметра.
- * Новый формат (через __): ref_CODE__s_SOURCE__m_MEDIUM__k_CAMPAIGN__n_CONTENT__t_TERM
- * Старый формат (через _c_): ref_CODE_c_SOURCE_CAMPAIGN
+ * РџР°СЂСЃРёРЅРі start-РїР°СЂР°РјРµС‚СЂР°.
+ * РќРѕРІС‹Р№ С„РѕСЂРјР°С‚ (С‡РµСЂРµР· __): ref_CODE__s_SOURCE__m_MEDIUM__k_CAMPAIGN__n_CONTENT__t_TERM
+ * РЎС‚Р°СЂС‹Р№ С„РѕСЂРјР°С‚ (С‡РµСЂРµР· _c_): ref_CODE_c_SOURCE_CAMPAIGN
  */
 function parseStartPayload(payload: string): {
   refCode?: string;
@@ -834,7 +834,7 @@ function parseStartPayload(payload: string): {
   return out;
 }
 
-// ——— /start с реферальным кодом (например /start ref_ABC123) или промо (/start promo_XXXX) или кампания (/start c_facebook_summer)
+// вЂ”вЂ”вЂ” /start СЃ СЂРµС„РµСЂР°Р»СЊРЅС‹Рј РєРѕРґРѕРј (РЅР°РїСЂРёРјРµСЂ /start ref_ABC123) РёР»Рё РїСЂРѕРјРѕ (/start promo_XXXX) РёР»Рё РєР°РјРїР°РЅРёСЏ (/start c_facebook_summer)
 bot.command("start", async (ctx) => {
   const from = ctx.from;
   if (!from) return;
@@ -842,11 +842,11 @@ bot.command("start", async (ctx) => {
   const telegramUsername = from.username ?? undefined;
   const payload = ctx.match?.trim() || "";
 
-  // Сбрасываем состояние рассылки, чтобы баннер/фото не «залипало»
+  // РЎР±СЂР°СЃС‹РІР°РµРј СЃРѕСЃС‚РѕСЏРЅРёРµ СЂР°СЃСЃС‹Р»РєРё, С‡С‚РѕР±С‹ Р±Р°РЅРЅРµСЂ/С„РѕС‚Рѕ РЅРµ В«Р·Р°Р»РёРїР°Р»РѕВ»
   lastBroadcastMessage.delete(from.id);
   awaitingBroadcastMessage.delete(from.id);
 
-  // Deep-link авторизация на сайте: /start auth_TOKEN
+  // Deep-link Р°РІС‚РѕСЂРёР·Р°С†РёСЏ РЅР° СЃР°Р№С‚Рµ: /start auth_TOKEN
   if (/^auth_/i.test(payload)) {
     const lang = getUserLang(from.id);
     const authToken = payload.replace(/^auth_/i, "");
@@ -871,7 +871,7 @@ bot.command("start", async (ctx) => {
     return;
   }
 
-  // Определяем тип deeplink
+  // РћРїСЂРµРґРµР»СЏРµРј С‚РёРї deeplink
   const isPromo = /^promo_/i.test(payload);
   const promoCode = isPromo ? payload.replace(/^promo_/i, "") : undefined;
   const parsed = parseStartPayload(payload);
@@ -880,7 +880,7 @@ bot.command("start", async (ctx) => {
   try {
     const config = await api.getPublicConfig();
     if (config?.translations) setTranslations(config.translations);
-    const name = config?.serviceName?.trim() || "Кабинет";
+    const name = config?.serviceName?.trim() || "РљР°Р±РёРЅРµС‚";
 
     const auth = await api.registerByTelegram({
       telegramId,
@@ -899,20 +899,20 @@ bot.command("start", async (ctx) => {
     const client = auth.client;
     if (client?.preferredLang) setUserLang(from.id, client.preferredLang);
 
-    // Если это промо-ссылка — активируем промокод
+    // Р•СЃР»Рё СЌС‚Рѕ РїСЂРѕРјРѕ-СЃСЃС‹Р»РєР° вЂ” Р°РєС‚РёРІРёСЂСѓРµРј РїСЂРѕРјРѕРєРѕРґ
     if (promoCode) {
       try {
         const result = await api.activatePromo(auth.token, promoCode);
-        await ctx.reply(`✅ ${result.message}\n\nНажмите /start чтобы открыть меню.`);
+        await ctx.reply(`вњ… ${result.message}\n\nРќР°Р¶РјРёС‚Рµ /start С‡С‚РѕР±С‹ РѕС‚РєСЂС‹С‚СЊ РјРµРЅСЋ.`);
         return;
       } catch (promoErr: unknown) {
-        const promoMsg = promoErr instanceof Error ? promoErr.message : "Ошибка активации промокода";
-        await ctx.reply(`❌ ${promoMsg}\n\nНажмите /start чтобы открыть меню.`);
+        const promoMsg = promoErr instanceof Error ? promoErr.message : "РћС€РёР±РєР° Р°РєС‚РёРІР°С†РёРё РїСЂРѕРјРѕРєРѕРґР°";
+        await ctx.reply(`вќЊ ${promoMsg}\n\nРќР°Р¶РјРёС‚Рµ /start С‡С‚РѕР±С‹ РѕС‚РєСЂС‹С‚СЊ РјРµРЅСЋ.`);
         return;
       }
     }
 
-    // Проверка подписки на канал
+    // РџСЂРѕРІРµСЂРєР° РїРѕРґРїРёСЃРєРё РЅР° РєР°РЅР°Р»
     if (await enforceSubscription(ctx, config)) return;
 
     const [subRes, proxyRes, singboxRes] = await Promise.all([
@@ -958,7 +958,7 @@ bot.command("start", async (ctx) => {
     });
     const isBotAdmin = config?.botAdminTelegramIds?.includes(String(from.id)) ?? false;
     if (isBotAdmin) {
-      markup.inline_keyboard.push([{ text: "⚙️ Панель админа", callback_data: "admin:menu" }]);
+      markup.inline_keyboard.push([{ text: "вљ™пёЏ РџР°РЅРµР»СЊ Р°РґРјРёРЅР°", callback_data: "admin:menu" }]);
     }
 
     const media = logoToMediaSource(config?.logoBot);
@@ -973,12 +973,12 @@ bot.command("start", async (ctx) => {
       await ctx.reply(text, { entities: entities.length ? entities : undefined, reply_markup: markup });
     }
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : "Ошибка входа";
-    await ctx.reply(`❌ ${msg}`);
+    const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РІС…РѕРґР°";
+    await ctx.reply(`вќЊ ${msg}`);
   }
 });
 
-// ——— /link КОД — привязка Telegram к аккаунту (код из кабинета на сайте)
+// вЂ”вЂ”вЂ” /link РљРћР” вЂ” РїСЂРёРІСЏР·РєР° Telegram Рє Р°РєРєР°СѓРЅС‚Сѓ (РєРѕРґ РёР· РєР°Р±РёРЅРµС‚Р° РЅР° СЃР°Р№С‚Рµ)
 bot.command("link", async (ctx) => {
   const from = ctx.from;
   if (!from) return;
@@ -993,22 +993,22 @@ bot.command("link", async (ctx) => {
     await ctx.reply(_t("link.success", lang));
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : _t("error_generic", lang);
-    await ctx.reply(`❌ ${msg}`);
+    await ctx.reply(`вќЊ ${msg}`);
   }
 });
 
-// ——— Callback: меню и действия
+// вЂ”вЂ”вЂ” Callback: РјРµРЅСЋ Рё РґРµР№СЃС‚РІРёСЏ
 bot.on("callback_query:data", async (ctx) => {
   const data = ctx.callbackQuery.data;
   const userId = ctx.from?.id;
   if (!userId) return;
   await ctx.answerCallbackQuery().catch(() => {});
 
-  // Админ-панель в боте (не требует токена пользователя)
+  // РђРґРјРёРЅ-РїР°РЅРµР»СЊ РІ Р±РѕС‚Рµ (РЅРµ С‚СЂРµР±СѓРµС‚ С‚РѕРєРµРЅР° РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ)
   if (data.startsWith("admin:")) {
     const config = await api.getPublicConfig();
     if (!config?.botAdminTelegramIds?.includes(String(userId))) {
-      await ctx.answerCallbackQuery({ text: "Доступ запрещСвЂ?н", show_alert: true }).catch(() => {});
+      await ctx.answerCallbackQuery({ text: "Р”РѕСЃС‚СѓРї Р·Р°РїСЂРµС‰РЎРІР‚?РЅ", show_alert: true }).catch(() => {});
       return;
     }
     if (data === "admin:menu") {
@@ -1021,39 +1021,39 @@ bot.on("callback_query:data", async (ctx) => {
       lastSquadsForRemove.delete(userId);
       const markup: InlineMarkup = {
         inline_keyboard: [
-          [{ text: "📊 Статистика", callback_data: "admin:stats" }],
-          [{ text: "🔔 Уведомления", callback_data: "admin:notifications" }],
-          [{ text: "рџвЂ?Ґ Клиенты", callback_data: "admin:clients:1" }],
-          [{ text: "🔍 Поиск пользователя", callback_data: "admin:search" }],
+          [{ text: "рџ“Љ РЎС‚Р°С‚РёСЃС‚РёРєР°", callback_data: "admin:stats" }],
+          [{ text: "рџ”” РЈРІРµРґРѕРјР»РµРЅРёСЏ", callback_data: "admin:notifications" }],
+          [{ text: "СЂСџРІР‚?Тђ РљР»РёРµРЅС‚С‹", callback_data: "admin:clients:1" }],
+          [{ text: "рџ”Ќ РџРѕРёСЃРє РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ", callback_data: "admin:search" }],
           [
-            { text: "💳 Ожидают оплаты", callback_data: "admin:payments:pending:1" },
-            { text: "💰 Последние платежи", callback_data: "admin:payments:paid:1" },
+            { text: "рџ’і РћР¶РёРґР°СЋС‚ РѕРїР»Р°С‚С‹", callback_data: "admin:payments:pending:1" },
+            { text: "рџ’° РџРѕСЃР»РµРґРЅРёРµ РїР»Р°С‚РµР¶Рё", callback_data: "admin:payments:paid:1" },
           ],
-          [{ text: "📢 Рассылка", callback_data: "admin:broadcast" }],
-          [{ text: "◀️ В меню", callback_data: "menu:main" }],
+          [{ text: "рџ“ў Р Р°СЃСЃС‹Р»РєР°", callback_data: "admin:broadcast" }],
+          [{ text: "в—ЂпёЏ Р’ РјРµРЅСЋ", callback_data: "menu:main" }],
         ],
       };
-      await editMessageContent(ctx, "⚙️ Панель админа\n\nВыберите раздел:", markup);
+      await editMessageContent(ctx, "вљ™пёЏ РџР°РЅРµР»СЊ Р°РґРјРёРЅР°\n\nР’С‹Р±РµСЂРёС‚Рµ СЂР°Р·РґРµР»:", markup);
       return;
     }
     if (data === "admin:notifications") {
       const settings = await api.getBotAdminNotificationSettings(userId);
       const s = settings;
-      const yesNo = (v: boolean) => (v ? "Вкл" : "Выкл");
+      const yesNo = (v: boolean) => (v ? "Р’РєР»" : "Р’С‹РєР»");
       const text =
-        "🔔 Настройки уведомлений\n\n" +
-        `Пополнение баланса: ${yesNo(s.notifyBalanceTopup)}\n` +
-        `Оплата тарифов: ${yesNo(s.notifyTariffPayment)}\n` +
-        `Новые клиенты: ${yesNo(s.notifyNewClient)}\n` +
-        `Новые тикеты: ${yesNo(s.notifyNewTicket)}\n\n` +
-        "Нажмите на пункт ниже, чтобы переключить.";
+        "рџ”” РќР°СЃС‚СЂРѕР№РєРё СѓРІРµРґРѕРјР»РµРЅРёР№\n\n" +
+        `РџРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР°: ${yesNo(s.notifyBalanceTopup)}\n` +
+        `РћРїР»Р°С‚Р° С‚Р°СЂРёС„РѕРІ: ${yesNo(s.notifyTariffPayment)}\n` +
+        `РќРѕРІС‹Рµ РєР»РёРµРЅС‚С‹: ${yesNo(s.notifyNewClient)}\n` +
+        `РќРѕРІС‹Рµ С‚РёРєРµС‚С‹: ${yesNo(s.notifyNewTicket)}\n\n` +
+        "РќР°Р¶РјРёС‚Рµ РЅР° РїСѓРЅРєС‚ РЅРёР¶Рµ, С‡С‚РѕР±С‹ РїРµСЂРµРєР»СЋС‡РёС‚СЊ.";
       const markup: InlineMarkup = {
         inline_keyboard: [
-          [{ text: `💰 Пополнение баланса: ${yesNo(s.notifyBalanceTopup)}`, callback_data: "admin:notif:balance" }],
-          [{ text: `📦 Оплата тарифов: ${yesNo(s.notifyTariffPayment)}`, callback_data: "admin:notif:tariff" }],
-          [{ text: `рџвЂ?¤ Новые клиенты: ${yesNo(s.notifyNewClient)}`, callback_data: "admin:notif:newclient" }],
-          [{ text: `🎫 Новые тикеты: ${yesNo(s.notifyNewTicket)}`, callback_data: "admin:notif:newticket" }],
-          [{ text: "◀️ В админку", callback_data: "admin:menu" }],
+          [{ text: `рџ’° РџРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР°: ${yesNo(s.notifyBalanceTopup)}`, callback_data: "admin:notif:balance" }],
+          [{ text: `рџ“¦ РћРїР»Р°С‚Р° С‚Р°СЂРёС„РѕРІ: ${yesNo(s.notifyTariffPayment)}`, callback_data: "admin:notif:tariff" }],
+          [{ text: `СЂСџРІР‚?В¤ РќРѕРІС‹Рµ РєР»РёРµРЅС‚С‹: ${yesNo(s.notifyNewClient)}`, callback_data: "admin:notif:newclient" }],
+          [{ text: `рџЋ« РќРѕРІС‹Рµ С‚РёРєРµС‚С‹: ${yesNo(s.notifyNewTicket)}`, callback_data: "admin:notif:newticket" }],
+          [{ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" }],
         ],
       };
       await editMessageContent(ctx, text, markup);
@@ -1074,21 +1074,21 @@ bot.on("callback_query:data", async (ctx) => {
       }
       const updated = await api.patchBotAdminNotificationSettings(userId, payload);
       const s = updated;
-      const yesNo = (v: boolean) => (v ? "Вкл" : "Выкл");
+      const yesNo = (v: boolean) => (v ? "Р’РєР»" : "Р’С‹РєР»");
       const text =
-        "🔔 Настройки уведомлений\n\n" +
-        `Пополнение баланса: ${yesNo(s.notifyBalanceTopup)}\n` +
-        `Оплата тарифов: ${yesNo(s.notifyTariffPayment)}\n` +
-        `Новые клиенты: ${yesNo(s.notifyNewClient)}\n` +
-        `Новые тикеты: ${yesNo(s.notifyNewTicket)}\n\n` +
-        "Нажмите на пункт ниже, чтобы переключить.";
+        "рџ”” РќР°СЃС‚СЂРѕР№РєРё СѓРІРµРґРѕРјР»РµРЅРёР№\n\n" +
+        `РџРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР°: ${yesNo(s.notifyBalanceTopup)}\n` +
+        `РћРїР»Р°С‚Р° С‚Р°СЂРёС„РѕРІ: ${yesNo(s.notifyTariffPayment)}\n` +
+        `РќРѕРІС‹Рµ РєР»РёРµРЅС‚С‹: ${yesNo(s.notifyNewClient)}\n` +
+        `РќРѕРІС‹Рµ С‚РёРєРµС‚С‹: ${yesNo(s.notifyNewTicket)}\n\n` +
+        "РќР°Р¶РјРёС‚Рµ РЅР° РїСѓРЅРєС‚ РЅРёР¶Рµ, С‡С‚РѕР±С‹ РїРµСЂРµРєР»СЋС‡РёС‚СЊ.";
       const markup: InlineMarkup = {
         inline_keyboard: [
-          [{ text: `💰 Пополнение баланса: ${yesNo(s.notifyBalanceTopup)}`, callback_data: "admin:notif:balance" }],
-          [{ text: `📦 Оплата тарифов: ${yesNo(s.notifyTariffPayment)}`, callback_data: "admin:notif:tariff" }],
-          [{ text: `рџвЂ?¤ Новые клиенты: ${yesNo(s.notifyNewClient)}`, callback_data: "admin:notif:newclient" }],
-          [{ text: `🎫 Новые тикеты: ${yesNo(s.notifyNewTicket)}`, callback_data: "admin:notif:newticket" }],
-          [{ text: "◀️ В админку", callback_data: "admin:menu" }],
+          [{ text: `рџ’° РџРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР°: ${yesNo(s.notifyBalanceTopup)}`, callback_data: "admin:notif:balance" }],
+          [{ text: `рџ“¦ РћРїР»Р°С‚Р° С‚Р°СЂРёС„РѕРІ: ${yesNo(s.notifyTariffPayment)}`, callback_data: "admin:notif:tariff" }],
+          [{ text: `СЂСџРІР‚?В¤ РќРѕРІС‹Рµ РєР»РёРµРЅС‚С‹: ${yesNo(s.notifyNewClient)}`, callback_data: "admin:notif:newclient" }],
+          [{ text: `рџЋ« РќРѕРІС‹Рµ С‚РёРєРµС‚С‹: ${yesNo(s.notifyNewTicket)}`, callback_data: "admin:notif:newticket" }],
+          [{ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" }],
         ],
       };
       await editMessageContent(ctx, text, markup);
@@ -1098,8 +1098,8 @@ bot.on("callback_query:data", async (ctx) => {
       awaitingAdminSearch.add(userId);
       await editMessageContent(
         ctx,
-        "🔍 Поиск пользователя\n\nВведите Telegram ID, @username или email:",
-        { inline_keyboard: [[{ text: "◀️ Отмена", callback_data: "admin:menu" }]] }
+        "рџ”Ќ РџРѕРёСЃРє РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ\n\nР’РІРµРґРёС‚Рµ Telegram ID, @username РёР»Рё email:",
+        { inline_keyboard: [[{ text: "в—ЂпёЏ РћС‚РјРµРЅР°", callback_data: "admin:menu" }]] }
       );
       return;
     }
@@ -1108,9 +1108,9 @@ bot.on("callback_query:data", async (ctx) => {
       const u = stats.users;
       const s = stats.sales;
       const text =
-        `📊 Статистика\n\nрџвЂ?Ґ Пользователи: ${u.total}\nС Remna: ${u.withRemna}\nНовых за 7 дн.: ${u.newLast7Days}\nНовых за 30 дн.: ${u.newLast30Days}\n\n` +
-        `💰 Продажи (всего): ${s.totalAmount} ₽ (${s.totalCount})\nЗа 7 дн.: ${s.last7DaysAmount} ₽ (${s.last7DaysCount})\nЗа 30 дн.: ${s.last30DaysAmount} ₽ (${s.last30DaysCount})`;
-      const back: InlineMarkup = { inline_keyboard: [[{ text: "◀️ В админку", callback_data: "admin:menu" }]] };
+        `рџ“Љ РЎС‚Р°С‚РёСЃС‚РёРєР°\n\nСЂСџРІР‚?Тђ РџРѕР»СЊР·РѕРІР°С‚РµР»Рё: ${u.total}\nРЎ Remna: ${u.withRemna}\nРќРѕРІС‹С… Р·Р° 7 РґРЅ.: ${u.newLast7Days}\nРќРѕРІС‹С… Р·Р° 30 РґРЅ.: ${u.newLast30Days}\n\n` +
+        `рџ’° РџСЂРѕРґР°Р¶Рё (РІСЃРµРіРѕ): ${s.totalAmount} в‚Ѕ (${s.totalCount})\nР—Р° 7 РґРЅ.: ${s.last7DaysAmount} в‚Ѕ (${s.last7DaysCount})\nР—Р° 30 РґРЅ.: ${s.last30DaysAmount} в‚Ѕ (${s.last30DaysCount})`;
+      const back: InlineMarkup = { inline_keyboard: [[{ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" }]] };
       await editMessageContent(ctx, text, back);
       return;
     }
@@ -1118,27 +1118,27 @@ bot.on("callback_query:data", async (ctx) => {
       const suffix = data.slice("admin:clients:".length);
       if (suffix === "clear") {
         lastAdminSearch.delete(userId);
-        // Показать первую страницу без поиска
+        // РџРѕРєР°Р·Р°С‚СЊ РїРµСЂРІСѓСЋ СЃС‚СЂР°РЅРёС†Сѓ Р±РµР· РїРѕРёСЃРєР°
         const { items, total, limit } = await api.getBotAdminClients(userId, 1);
         const totalPages = Math.max(1, Math.ceil(total / limit));
-        let msg = `рџвЂ?Ґ Клиенты (${total})\n\n`;
+        let msg = `СЂСџРІР‚?Тђ РљР»РёРµРЅС‚С‹ (${total})\n\n`;
         items.forEach((c, i) => {
           const label = c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8);
-          msg += `${i + 1}. ${label} ${c.isBlocked ? "🚫" : ""}\n`;
+          msg += `${i + 1}. ${label} ${c.isBlocked ? "рџљ«" : ""}\n`;
         });
-        msg += `\nСтр. 1/${totalPages}`;
+        msg += `\nРЎС‚СЂ. 1/${totalPages}`;
         const rows: InlineMarkup["inline_keyboard"] = [];
         items.forEach((c) => {
           rows.push([
             {
-              text: `${c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8)} ${c.isBlocked ? "🚫" : ""}`,
+              text: `${c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8)} ${c.isBlocked ? "рџљ«" : ""}`,
               callback_data: `admin:client:${c.id}`,
             },
           ]);
         });
         const nav: InlineMarkup["inline_keyboard"][0] = [];
-        nav.push({ text: "◀️ В админку", callback_data: "admin:menu" });
-        if (totalPages > 1) nav.push({ text: "ВперСвЂ?д ▶", callback_data: "admin:clients:2" });
+        nav.push({ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" });
+        if (totalPages > 1) nav.push({ text: "Р’РїРµСЂРЎРІР‚?Рґ в–¶", callback_data: "admin:clients:2" });
         rows.push(nav);
         await editMessageContent(ctx, msg, { inline_keyboard: rows });
         return;
@@ -1147,26 +1147,26 @@ bot.on("callback_query:data", async (ctx) => {
       const search = lastAdminSearch.get(userId);
       const { items, total, limit } = await api.getBotAdminClients(userId, page, search);
       const totalPages = Math.max(1, Math.ceil(total / limit));
-      let msg = search ? `рџвЂ?Ґ Поиск «${search}» (${total})\n\n` : `рџвЂ?Ґ Клиенты (${total})\n\n`;
+      let msg = search ? `СЂСџРІР‚?Тђ РџРѕРёСЃРє В«${search}В» (${total})\n\n` : `СЂСџРІР‚?Тђ РљР»РёРµРЅС‚С‹ (${total})\n\n`;
       items.forEach((c, i) => {
         const label = c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8);
-        msg += `${(page - 1) * limit + i + 1}. ${label} ${c.isBlocked ? "🚫" : ""}\n`;
+        msg += `${(page - 1) * limit + i + 1}. ${label} ${c.isBlocked ? "рџљ«" : ""}\n`;
       });
-      msg += `\nСтр. ${page}/${totalPages}`;
+      msg += `\nРЎС‚СЂ. ${page}/${totalPages}`;
       const rows: InlineMarkup["inline_keyboard"] = [];
       items.forEach((c) => {
         rows.push([
           {
-            text: `${c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8)} ${c.isBlocked ? "🚫" : ""}`,
+            text: `${c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8)} ${c.isBlocked ? "рџљ«" : ""}`,
             callback_data: `admin:client:${c.id}`,
           },
         ]);
       });
       const nav: InlineMarkup["inline_keyboard"][0] = [];
-      if (page > 1) nav.push({ text: "◀ Назад", callback_data: `admin:clients:${page - 1}` });
-      nav.push({ text: "◀️ В админку", callback_data: "admin:menu" });
-      if (search) nav.push({ text: "✖ Сбросить поиск", callback_data: "admin:clients:clear" });
-      if (page < totalPages) nav.push({ text: "ВперСвЂ?д ▶", callback_data: `admin:clients:${page + 1}` });
+      if (page > 1) nav.push({ text: "в—Ђ РќР°Р·Р°Рґ", callback_data: `admin:clients:${page - 1}` });
+      nav.push({ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" });
+      if (search) nav.push({ text: "вњ– РЎР±СЂРѕСЃРёС‚СЊ РїРѕРёСЃРє", callback_data: "admin:clients:clear" });
+      if (page < totalPages) nav.push({ text: "Р’РїРµСЂРЎРІР‚?Рґ в–¶", callback_data: `admin:clients:${page + 1}` });
       rows.push(nav);
       await editMessageContent(ctx, msg, { inline_keyboard: rows });
       return;
@@ -1175,34 +1175,34 @@ bot.on("callback_query:data", async (ctx) => {
       const clientId = data.slice("admin:client:".length);
       if (!clientId) return;
       const client = await api.getBotAdminClient(userId, clientId);
-      const created = client.createdAt ? new Date(client.createdAt).toLocaleString("ru-RU") : "—";
-      let text = `рџвЂ?¤ ${client.email || client.telegramUsername || client.telegramId || client.id}\n\n`;
-      text += `ID: ${client.id}\nРвЂ?аланс: ${client.balance}\nРефералов: ${client._count?.referrals ?? 0}\nСоздан: ${created}\n`;
-      if (client.isBlocked) text += `\n🚫 Заблокирован${client.blockReason ? `: ${client.blockReason}` : ""}`;
+      const created = client.createdAt ? new Date(client.createdAt).toLocaleString("ru-RU") : "вЂ”";
+      let text = `СЂСџРІР‚?В¤ ${client.email || client.telegramUsername || client.telegramId || client.id}\n\n`;
+      text += `ID: ${client.id}\nР РІР‚?Р°Р»Р°РЅСЃ: ${client.balance}\nР РµС„РµСЂР°Р»РѕРІ: ${client._count?.referrals ?? 0}\nРЎРѕР·РґР°РЅ: ${created}\n`;
+      if (client.isBlocked) text += `\nрџљ« Р—Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ${client.blockReason ? `: ${client.blockReason}` : ""}`;
       const kb: InlineMarkup["inline_keyboard"] = [];
       if (client.isBlocked) {
-        kb.push([{ text: "✅ Разблокировать", callback_data: `admin:unblock:${client.id}` }]);
+        kb.push([{ text: "вњ… Р Р°Р·Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ", callback_data: `admin:unblock:${client.id}` }]);
       } else {
-        kb.push([{ text: "🚫 Заблокировать", callback_data: `admin:block:${client.id}` }]);
+        kb.push([{ text: "рџљ« Р—Р°Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ", callback_data: `admin:block:${client.id}` }]);
       }
-      kb.push([{ text: "💵 Пополнить баланс", callback_data: `admin:balance:${client.id}` }]);
+      kb.push([{ text: "рџ’µ РџРѕРїРѕР»РЅРёС‚СЊ Р±Р°Р»Р°РЅСЃ", callback_data: `admin:balance:${client.id}` }]);
       if (client.remnawaveUuid) {
         kb.push(
           [
-            { text: "🔄 Отозвать подписку", callback_data: `admin:remna:revoke:${client.id}` },
-            { text: "⏸ Отключить Remna", callback_data: `admin:remna:disable:${client.id}` },
+            { text: "рџ”„ РћС‚РѕР·РІР°С‚СЊ РїРѕРґРїРёСЃРєСѓ", callback_data: `admin:remna:revoke:${client.id}` },
+            { text: "вЏё РћС‚РєР»СЋС‡РёС‚СЊ Remna", callback_data: `admin:remna:disable:${client.id}` },
           ],
           [
-            { text: "▶ Включить Remna", callback_data: `admin:remna:enable:${client.id}` },
-            { text: "📊 Сбросить трафик", callback_data: `admin:remna:reset:${client.id}` },
+            { text: "в–¶ Р’РєР»СЋС‡РёС‚СЊ Remna", callback_data: `admin:remna:enable:${client.id}` },
+            { text: "рџ“Љ РЎР±СЂРѕСЃРёС‚СЊ С‚СЂР°С„РёРє", callback_data: `admin:remna:reset:${client.id}` },
           ],
           [
-            { text: "➕ Добавить сквад", callback_data: `admin:squad:add:${client.id}` },
-            { text: "➖ Убрать сквад", callback_data: `admin:squad:remove:${client.id}` },
+            { text: "вћ• Р”РѕР±Р°РІРёС‚СЊ СЃРєРІР°Рґ", callback_data: `admin:squad:add:${client.id}` },
+            { text: "вћ– РЈР±СЂР°С‚СЊ СЃРєРІР°Рґ", callback_data: `admin:squad:remove:${client.id}` },
           ]
         );
       }
-      kb.push([{ text: "◀️ К списку", callback_data: "admin:clients:1" }]);
+      kb.push([{ text: "в—ЂпёЏ Рљ СЃРїРёСЃРєСѓ", callback_data: "admin:clients:1" }]);
       await editMessageContent(ctx, text, { inline_keyboard: kb });
       return;
     }
@@ -1212,8 +1212,8 @@ bot.on("callback_query:data", async (ctx) => {
       awaitingAdminBalance.set(userId, clientId);
       await editMessageContent(
         ctx,
-        "💵 Пополнение баланса\n\nВведите сумму (число):",
-        { inline_keyboard: [[{ text: "◀️ Отмена", callback_data: "admin:menu" }]] }
+        "рџ’µ РџРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР°\n\nР’РІРµРґРёС‚Рµ СЃСѓРјРјСѓ (С‡РёСЃР»Рѕ):",
+        { inline_keyboard: [[{ text: "в—ЂпёЏ РћС‚РјРµРЅР°", callback_data: "admin:menu" }]] }
       );
       return;
     }
@@ -1222,12 +1222,12 @@ bot.on("callback_query:data", async (ctx) => {
       if (!clientId) return;
       try {
         await api.postBotAdminClientRemnaRevoke(userId, clientId);
-        await editMessageContent(ctx, `✅ Подписка Remna отозвана для клиента.`, {
-          inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, `вњ… РџРѕРґРїРёСЃРєР° Remna РѕС‚РѕР·РІР°РЅР° РґР»СЏ РєР»РёРµРЅС‚Р°.`, {
+          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
         });
       } catch (e: unknown) {
-        await editMessageContent(ctx, `❌ ${e instanceof Error ? e.message : "Ошибка"}`, {
-          inline_keyboard: [[{ text: "◀️ Назад", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
+          inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1237,12 +1237,12 @@ bot.on("callback_query:data", async (ctx) => {
       if (!clientId) return;
       try {
         await api.postBotAdminClientRemnaDisable(userId, clientId);
-        await editMessageContent(ctx, "✅ Пользователь отключСвЂ?н в Remna.", {
-          inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, "вњ… РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РѕС‚РєР»СЋС‡РЎРІР‚?РЅ РІ Remna.", {
+          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
         });
       } catch (e: unknown) {
-        await editMessageContent(ctx, `❌ ${e instanceof Error ? e.message : "Ошибка"}`, {
-          inline_keyboard: [[{ text: "◀️ Назад", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
+          inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1252,12 +1252,12 @@ bot.on("callback_query:data", async (ctx) => {
       if (!clientId) return;
       try {
         await api.postBotAdminClientRemnaEnable(userId, clientId);
-        await editMessageContent(ctx, "✅ Пользователь включСвЂ?н в Remna.", {
-          inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, "вњ… РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РІРєР»СЋС‡РЎРІР‚?РЅ РІ Remna.", {
+          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
         });
       } catch (e: unknown) {
-        await editMessageContent(ctx, `❌ ${e instanceof Error ? e.message : "Ошибка"}`, {
-          inline_keyboard: [[{ text: "◀️ Назад", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
+          inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1267,12 +1267,12 @@ bot.on("callback_query:data", async (ctx) => {
       if (!clientId) return;
       try {
         await api.postBotAdminClientRemnaResetTraffic(userId, clientId);
-        await editMessageContent(ctx, "✅ Трафик сброшен.", {
-          inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, "вњ… РўСЂР°С„РёРє СЃР±СЂРѕС€РµРЅ.", {
+          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
         });
       } catch (e: unknown) {
-        await editMessageContent(ctx, `❌ ${e instanceof Error ? e.message : "Ошибка"}`, {
-          inline_keyboard: [[{ text: "◀️ Назад", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
+          inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1287,8 +1287,8 @@ bot.on("callback_query:data", async (ctx) => {
         const index = parseInt(indexStr, 10);
         const stored = lastSquadsForAdd.get(userId);
         if (!stored || index < 0 || index >= stored.items.length) {
-          await editMessageContent(ctx, "Сессия истекла или сквад не найден. Вернитесь к клиенту.", {
-            inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
+          await editMessageContent(ctx, "РЎРµСЃСЃРёСЏ РёСЃС‚РµРєР»Р° РёР»Рё СЃРєРІР°Рґ РЅРµ РЅР°Р№РґРµРЅ. Р’РµСЂРЅРёС‚РµСЃСЊ Рє РєР»РёРµРЅС‚Сѓ.", {
+            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
           });
           return;
         }
@@ -1296,12 +1296,12 @@ bot.on("callback_query:data", async (ctx) => {
         try {
           await api.postBotAdminClientRemnaSquadAdd(userId, clientId, squadUuid);
           lastSquadsForAdd.delete(userId);
-          await editMessageContent(ctx, `✅ Сквад «${stored.items[index]!.name}» добавлен.`, {
-            inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
+          await editMessageContent(ctx, `вњ… РЎРєРІР°Рґ В«${stored.items[index]!.name}В» РґРѕР±Р°РІР»РµРЅ.`, {
+            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
           });
         } catch (e: unknown) {
-          await editMessageContent(ctx, `❌ ${e instanceof Error ? e.message : "Ошибка"}`, {
-            inline_keyboard: [[{ text: "◀️ Назад", callback_data: `admin:squad:add:${clientId}` }]],
+          await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
+            inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:squad:add:${clientId}` }]],
           });
         }
         return;
@@ -1309,20 +1309,20 @@ bot.on("callback_query:data", async (ctx) => {
       try {
         const { items } = await api.getBotAdminRemnaSquadsInternal(userId);
         if (!items.length) {
-          await editMessageContent(ctx, "Нет доступных сквадов в Remna.", {
-            inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
+          await editMessageContent(ctx, "РќРµС‚ РґРѕСЃС‚СѓРїРЅС‹С… СЃРєРІР°РґРѕРІ РІ Remna.", {
+            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
           });
           return;
         }
         lastSquadsForAdd.set(userId, { clientId, items });
         const rows: InlineMarkup["inline_keyboard"] = items.slice(0, 15).map((s, i) => [
-          { text: `➕ ${s.name || s.uuid.slice(0, 8)}`, callback_data: `admin:squad:add:${clientId}:${i}` },
+          { text: `вћ• ${s.name || s.uuid.slice(0, 8)}`, callback_data: `admin:squad:add:${clientId}:${i}` },
         ]);
-        rows.push([{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]);
-        await editMessageContent(ctx, "Выберите сквад для добавления:", { inline_keyboard: rows });
+        rows.push([{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]);
+        await editMessageContent(ctx, "Р’С‹Р±РµСЂРёС‚Рµ СЃРєРІР°Рґ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ:", { inline_keyboard: rows });
       } catch (e: unknown) {
-        await editMessageContent(ctx, `❌ ${e instanceof Error ? e.message : "Ошибка"}`, {
-          inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
+          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1337,8 +1337,8 @@ bot.on("callback_query:data", async (ctx) => {
         const index = parseInt(indexStr, 10);
         const stored = lastSquadsForRemove.get(userId);
         if (!stored || index < 0 || index >= stored.items.length) {
-          await editMessageContent(ctx, "Сессия истекла или сквад не найден. Вернитесь к клиенту.", {
-            inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
+          await editMessageContent(ctx, "РЎРµСЃСЃРёСЏ РёСЃС‚РµРєР»Р° РёР»Рё СЃРєРІР°Рґ РЅРµ РЅР°Р№РґРµРЅ. Р’РµСЂРЅРёС‚РµСЃСЊ Рє РєР»РёРµРЅС‚Сѓ.", {
+            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
           });
           return;
         }
@@ -1346,12 +1346,12 @@ bot.on("callback_query:data", async (ctx) => {
         try {
           await api.postBotAdminClientRemnaSquadRemove(userId, clientId, squadUuid);
           lastSquadsForRemove.delete(userId);
-          await editMessageContent(ctx, `✅ Сквад «${stored.items[index]!.name}» убран.`, {
-            inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
+          await editMessageContent(ctx, `вњ… РЎРєРІР°Рґ В«${stored.items[index]!.name}В» СѓР±СЂР°РЅ.`, {
+            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
           });
         } catch (e: unknown) {
-          await editMessageContent(ctx, `❌ ${e instanceof Error ? e.message : "Ошибка"}`, {
-            inline_keyboard: [[{ text: "◀️ Назад", callback_data: `admin:squad:remove:${clientId}` }]],
+          await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
+            inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:squad:remove:${clientId}` }]],
           });
         }
         return;
@@ -1362,20 +1362,20 @@ bot.on("callback_query:data", async (ctx) => {
         const uuidToName = new Map(allSquads.items.map((s) => [s.uuid, s.name || s.uuid.slice(0, 8)]));
         const current = remna.activeInternalSquads.map((uuid) => ({ uuid, name: uuidToName.get(uuid) ?? uuid.slice(0, 8) }));
         if (!current.length) {
-          await editMessageContent(ctx, "У пользователя нет сквадов.", {
-            inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
+          await editMessageContent(ctx, "РЈ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РЅРµС‚ СЃРєРІР°РґРѕРІ.", {
+            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
           });
           return;
         }
         lastSquadsForRemove.set(userId, { clientId, items: current });
         const rows: InlineMarkup["inline_keyboard"] = current.slice(0, 15).map((s, i) => [
-          { text: `➖ ${s.name}`, callback_data: `admin:squad:remove:${clientId}:${i}` },
+          { text: `вћ– ${s.name}`, callback_data: `admin:squad:remove:${clientId}:${i}` },
         ]);
-        rows.push([{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]);
-        await editMessageContent(ctx, "Выберите сквад для удаления у пользователя:", { inline_keyboard: rows });
+        rows.push([{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]);
+        await editMessageContent(ctx, "Р’С‹Р±РµСЂРёС‚Рµ СЃРєРІР°Рґ РґР»СЏ СѓРґР°Р»РµРЅРёСЏ Сѓ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ:", { inline_keyboard: rows });
       } catch (e: unknown) {
-        await editMessageContent(ctx, `❌ ${e instanceof Error ? e.message : "Ошибка"}`, {
-          inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
+          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1387,21 +1387,21 @@ bot.on("callback_query:data", async (ctx) => {
       const isPending = status === "pending";
       const { items, total, limit } = await api.getBotAdminPayments(userId, isPending ? "PENDING" : "PAID", page);
       const totalPages = Math.max(1, Math.ceil(total / limit));
-      const title = isPending ? `💳 Ожидают оплаты (${total})` : `💰 Последние платежи (${total})`;
+      const title = isPending ? `рџ’і РћР¶РёРґР°СЋС‚ РѕРїР»Р°С‚С‹ (${total})` : `рџ’° РџРѕСЃР»РµРґРЅРёРµ РїР»Р°С‚РµР¶Рё (${total})`;
       let msg = `${title}\n\n`;
       const rows: InlineMarkup["inline_keyboard"] = [];
       items.forEach((p, i) => {
-        const label = `${p.amount} ${p.currency} — ${p.clientTelegramUsername || p.clientEmail || p.clientTelegramId || "—"}`;
+        const label = `${p.amount} ${p.currency} вЂ” ${p.clientTelegramUsername || p.clientEmail || p.clientTelegramId || "вЂ”"}`;
         msg += `${(page - 1) * limit + i + 1}. ${label}\n`;
         if (isPending) {
-          rows.push([{ text: `✅ ${p.amount} ${p.currency} — отметить оплаченным`, callback_data: `admin:pay:${p.id}` }]);
+          rows.push([{ text: `вњ… ${p.amount} ${p.currency} вЂ” РѕС‚РјРµС‚РёС‚СЊ РѕРїР»Р°С‡РµРЅРЅС‹Рј`, callback_data: `admin:pay:${p.id}` }]);
         }
       });
-      msg += `\nСтр. ${page}/${totalPages}`;
+      msg += `\nРЎС‚СЂ. ${page}/${totalPages}`;
       const nav: InlineMarkup["inline_keyboard"][0] = [];
-      if (page > 1) nav.push({ text: "◀ Назад", callback_data: `admin:payments:${status}:${page - 1}` });
-      nav.push({ text: "◀️ В админку", callback_data: "admin:menu" });
-      if (page < totalPages) nav.push({ text: "ВперСвЂ?д ▶", callback_data: `admin:payments:${status}:${page + 1}` });
+      if (page > 1) nav.push({ text: "в—Ђ РќР°Р·Р°Рґ", callback_data: `admin:payments:${status}:${page - 1}` });
+      nav.push({ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" });
+      if (page < totalPages) nav.push({ text: "Р’РїРµСЂРЎРІР‚?Рґ в–¶", callback_data: `admin:payments:${status}:${page + 1}` });
       rows.push(nav);
       await editMessageContent(ctx, msg, { inline_keyboard: rows });
       return;
@@ -1411,12 +1411,12 @@ bot.on("callback_query:data", async (ctx) => {
       if (!paymentId) return;
       try {
         await api.patchBotAdminPaymentMarkPaid(userId, paymentId);
-        await editMessageContent(ctx, "✅ Платёж отмечен как оплаченный.", {
-          inline_keyboard: [[{ text: "◀️ К платежам", callback_data: "admin:payments:pending:1" }]],
+        await editMessageContent(ctx, "вњ… РџР»Р°С‚С‘Р¶ РѕС‚РјРµС‡РµРЅ РєР°Рє РѕРїР»Р°С‡РµРЅРЅС‹Р№.", {
+          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РїР»Р°С‚РµР¶Р°Рј", callback_data: "admin:payments:pending:1" }]],
         });
       } catch (e: unknown) {
-        await editMessageContent(ctx, `❌ ${e instanceof Error ? e.message : "Ошибка"}`, {
-          inline_keyboard: [[{ text: "◀️ Назад", callback_data: "admin:payments:pending:1" }]],
+        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
+          inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: "admin:payments:pending:1" }]],
         });
       }
       return;
@@ -1426,8 +1426,8 @@ bot.on("callback_query:data", async (ctx) => {
       awaitingBroadcastMessage.add(userId);
       await editMessageContent(
         ctx,
-        `📢 Рассылка\n\nСейчас: Telegram ${counts.withTelegram}, Email ${counts.withEmail}\n\nОтправьте текст сообщения или фото с подписью (caption):`,
-        { inline_keyboard: [[{ text: "◀️ Отмена", callback_data: "admin:menu" }]] }
+        `рџ“ў Р Р°СЃСЃС‹Р»РєР°\n\nРЎРµР№С‡Р°СЃ: Telegram ${counts.withTelegram}, Email ${counts.withEmail}\n\nРћС‚РїСЂР°РІСЊС‚Рµ С‚РµРєСЃС‚ СЃРѕРѕР±С‰РµРЅРёСЏ РёР»Рё С„РѕС‚Рѕ СЃ РїРѕРґРїРёСЃСЊСЋ (caption):`,
+        { inline_keyboard: [[{ text: "в—ЂпёЏ РћС‚РјРµРЅР°", callback_data: "admin:menu" }]] }
       );
       return;
     }
@@ -1435,28 +1435,28 @@ bot.on("callback_query:data", async (ctx) => {
       const channel = data.slice("admin:bc:".length) as "tg" | "email" | "both";
       const raw = lastBroadcastMessage.get(userId);
       if (raw == null) {
-        await editMessageContent(ctx, "Текст рассылки не найден. Начните заново.", {
-          inline_keyboard: [[{ text: "◀️ В админку", callback_data: "admin:menu" }]],
+        await editMessageContent(ctx, "РўРµРєСЃС‚ СЂР°СЃСЃС‹Р»РєРё РЅРµ РЅР°Р№РґРµРЅ. РќР°С‡РЅРёС‚Рµ Р·Р°РЅРѕРІРѕ.", {
+          inline_keyboard: [[{ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" }]],
         });
         return;
       }
       const msg: BroadcastPayload = typeof raw === "string" ? { text: raw } : raw;
       const ch: "telegram" | "email" | "both" = channel === "tg" ? "telegram" : channel === "email" ? "email" : "both";
-      const channelLabel = ch === "telegram" ? "Telegram" : ch === "email" ? "Email" : "Telegram и Email";
-      // Сразу показываем, что рассылка запущена, чтобы было понятно и не нажимали повторно
-      await editMessageContent(ctx, `📢 Рассылка по каналу «${channelLabel}» запущена, подождите…`, {
-        inline_keyboard: [[{ text: "◀️ В админку", callback_data: "admin:menu" }]],
+      const channelLabel = ch === "telegram" ? "Telegram" : ch === "email" ? "Email" : "Telegram Рё Email";
+      // РЎСЂР°Р·Сѓ РїРѕРєР°Р·С‹РІР°РµРј, С‡С‚Рѕ СЂР°СЃСЃС‹Р»РєР° Р·Р°РїСѓС‰РµРЅР°, С‡С‚РѕР±С‹ Р±С‹Р»Рѕ РїРѕРЅСЏС‚РЅРѕ Рё РЅРµ РЅР°Р¶РёРјР°Р»Рё РїРѕРІС‚РѕСЂРЅРѕ
+      await editMessageContent(ctx, `рџ“ў Р Р°СЃСЃС‹Р»РєР° РїРѕ РєР°РЅР°Р»Сѓ В«${channelLabel}В» Р·Р°РїСѓС‰РµРЅР°, РїРѕРґРѕР¶РґРёС‚РµвЂ¦`, {
+        inline_keyboard: [[{ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" }]],
       });
       lastBroadcastMessage.delete(userId);
       try {
         const result = await api.postBotAdminBroadcast(userId, msg.text, ch, msg.photoFileId, msg.buttonText, msg.buttonUrl);
-        const text = `✅ Рассылка завершена.\n\nTelegram: отправлено ${result.sentTelegram}, ошибок ${result.failedTelegram}\nEmail: отправлено ${result.sentEmail}, ошибок ${result.failedEmail}${result.errors?.length ? "\n\nОшибки: " + result.errors.slice(0, 3).join("; ") : ""}`;
+        const text = `вњ… Р Р°СЃСЃС‹Р»РєР° Р·Р°РІРµСЂС€РµРЅР°.\n\nTelegram: РѕС‚РїСЂР°РІР»РµРЅРѕ ${result.sentTelegram}, РѕС€РёР±РѕРє ${result.failedTelegram}\nEmail: РѕС‚РїСЂР°РІР»РµРЅРѕ ${result.sentEmail}, РѕС€РёР±РѕРє ${result.failedEmail}${result.errors?.length ? "\n\nРћС€РёР±РєРё: " + result.errors.slice(0, 3).join("; ") : ""}`;
         await editMessageContent(ctx, text, {
-          inline_keyboard: [[{ text: "◀️ В админку", callback_data: "admin:menu" }]],
+          inline_keyboard: [[{ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" }]],
         });
       } catch (e: unknown) {
-        await editMessageContent(ctx, `❌ ${e instanceof Error ? e.message : "Ошибка"}`, {
-          inline_keyboard: [[{ text: "◀️ В админку", callback_data: "admin:menu" }]],
+        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
+          inline_keyboard: [[{ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" }]],
         });
       }
       return;
@@ -1466,11 +1466,11 @@ bot.on("callback_query:data", async (ctx) => {
       if (!clientId) return;
       await api.patchBotAdminClientBlock(userId, clientId, true);
       const client = await api.getBotAdminClient(userId, clientId);
-      const created = client.createdAt ? new Date(client.createdAt).toLocaleString("ru-RU") : "—";
-      let text = `рџвЂ?¤ ${client.email || client.telegramUsername || client.telegramId || client.id}\n\nID: ${client.id}\nРвЂ?аланс: ${client.balance}\nРефералов: ${client._count?.referrals ?? 0}\nСоздан: ${created}\n\n🚫 Заблокирован`;
+      const created = client.createdAt ? new Date(client.createdAt).toLocaleString("ru-RU") : "вЂ”";
+      let text = `СЂСџРІР‚?В¤ ${client.email || client.telegramUsername || client.telegramId || client.id}\n\nID: ${client.id}\nР РІР‚?Р°Р»Р°РЅСЃ: ${client.balance}\nР РµС„РµСЂР°Р»РѕРІ: ${client._count?.referrals ?? 0}\nРЎРѕР·РґР°РЅ: ${created}\n\nрџљ« Р—Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ`;
       const kb: InlineMarkup["inline_keyboard"] = [
-        [{ text: "✅ Разблокировать", callback_data: `admin:unblock:${client.id}` }],
-        [{ text: "◀️ К списку", callback_data: "admin:clients:1" }],
+        [{ text: "вњ… Р Р°Р·Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ", callback_data: `admin:unblock:${client.id}` }],
+        [{ text: "в—ЂпёЏ Рљ СЃРїРёСЃРєСѓ", callback_data: "admin:clients:1" }],
       ];
       await editMessageContent(ctx, text, { inline_keyboard: kb });
       return;
@@ -1480,11 +1480,11 @@ bot.on("callback_query:data", async (ctx) => {
       if (!clientId) return;
       await api.patchBotAdminClientBlock(userId, clientId, false);
       const client = await api.getBotAdminClient(userId, clientId);
-      const created = client.createdAt ? new Date(client.createdAt).toLocaleString("ru-RU") : "—";
-      let text = `рџвЂ?¤ ${client.email || client.telegramUsername || client.telegramId || client.id}\n\nID: ${client.id}\nРвЂ?аланс: ${client.balance}\nРефералов: ${client._count?.referrals ?? 0}\nСоздан: ${created}`;
+      const created = client.createdAt ? new Date(client.createdAt).toLocaleString("ru-RU") : "вЂ”";
+      let text = `СЂСџРІР‚?В¤ ${client.email || client.telegramUsername || client.telegramId || client.id}\n\nID: ${client.id}\nР РІР‚?Р°Р»Р°РЅСЃ: ${client.balance}\nР РµС„РµСЂР°Р»РѕРІ: ${client._count?.referrals ?? 0}\nРЎРѕР·РґР°РЅ: ${created}`;
       const kb: InlineMarkup["inline_keyboard"] = [
-        [{ text: "🚫 Заблокировать", callback_data: `admin:block:${client.id}` }],
-        [{ text: "◀️ К списку", callback_data: "admin:clients:1" }],
+        [{ text: "рџљ« Р—Р°Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ", callback_data: `admin:block:${client.id}` }],
+        [{ text: "в—ЂпёЏ Рљ СЃРїРёСЃРєСѓ", callback_data: "admin:clients:1" }],
       ];
       await editMessageContent(ctx, text, { inline_keyboard: kb });
       return;
@@ -1502,7 +1502,7 @@ bot.on("callback_query:data", async (ctx) => {
     const config = await api.getPublicConfig();
     if (config?.translations) setTranslations(config.translations);
 
-    // Обработка кнопки «Я подписался»
+    // РћР±СЂР°Р±РѕС‚РєР° РєРЅРѕРїРєРё В«РЇ РїРѕРґРїРёСЃР°Р»СЃСЏВ»
     if (data === "check_subscribe") {
       const lang = getUserLang(userId);
       const channelId = config?.forceSubscribeChannelId?.trim();
@@ -1515,7 +1515,7 @@ bot.on("callback_query:data", async (ctx) => {
           }).catch(() => {});
           await editMessageContent(
             ctx,
-            `⚠️ ${_t("subscribe.cannot_verify", lang)}`,
+            `вљ пёЏ ${_t("subscribe.cannot_verify", lang)}`,
             subscribeKeyboard(channelId, lang)
           );
           return;
@@ -1530,7 +1530,7 @@ bot.on("callback_query:data", async (ctx) => {
       return;
     }
 
-    // Проверка подписки на канал для всех действий
+    // РџСЂРѕРІРµСЂРєР° РїРѕРґРїРёСЃРєРё РЅР° РєР°РЅР°Р» РґР»СЏ РІСЃРµС… РґРµР№СЃС‚РІРёР№
     if (config?.forceSubscribeEnabled && config.forceSubscribeChannelId?.trim()) {
       const lang = getUserLang(userId);
       const channelId = config.forceSubscribeChannelId.trim();
@@ -1540,7 +1540,7 @@ bot.on("callback_query:data", async (ctx) => {
         const details = result.state === "cannot_verify"
           ? `\n\n${_t("subscribe.cannot_verify", lang)}`
           : "";
-        await editMessageContent(ctx, `⚠️ ${msg}${details}`, subscribeKeyboard(channelId, lang));
+        await editMessageContent(ctx, `вљ пёЏ ${msg}${details}`, subscribeKeyboard(channelId, lang));
         return;
       }
     }
@@ -1580,7 +1580,7 @@ bot.on("callback_query:data", async (ctx) => {
       const showTrial = Boolean(config?.trialEnabled && !client?.trialUsed);
       const showProxy = proxyRes.items?.some((c: { tariffs: unknown[] }) => c.tariffs?.length > 0) ?? false;
       const showSingbox = singboxRes.items?.some((c: { tariffs: unknown[] }) => c.tariffs?.length > 0) ?? false;
-      const name = config?.serviceName?.trim() || "Кабинет";
+      const name = config?.serviceName?.trim() || "РљР°Р±РёРЅРµС‚";
       const { text, entities } = buildMainMenuText({
         serviceName: name,
         balance: client?.balance ?? 0,
@@ -1610,7 +1610,7 @@ bot.on("callback_query:data", async (ctx) => {
         remnaSubscriptionUrl: config?.useRemnaSubscriptionPage ? vpnUrl : null,
       });
       if (config?.botAdminTelegramIds?.includes(String(userId))) {
-        backMarkup.inline_keyboard.push([{ text: "⚙️ Панель админа", callback_data: "admin:menu" }]);
+        backMarkup.inline_keyboard.push([{ text: "вљ™пёЏ РџР°РЅРµР»СЊ Р°РґРјРёРЅР°", callback_data: "admin:menu" }]);
       }
       await editMessageContent(ctx, text, backMarkup, entities);
       return;
@@ -1647,15 +1647,15 @@ bot.on("callback_query:data", async (ctx) => {
     if (data === "menu:video_instructions") {
       const vItems = config?.videoInstructions ?? [];
       if (!vItems.length) {
-        await editMessageContent(ctx, "Инструкции пока не добавлены.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РРЅСЃС‚СЂСѓРєС†РёРё РїРѕРєР° РЅРµ РґРѕР±Р°РІР»РµРЅС‹.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
-      const backLabel = (config?.botBackLabel && config.botBackLabel.trim()) || "« Назад";
+      const backLabel = (config?.botBackLabel && config.botBackLabel.trim()) || "В« РќР°Р·Р°Рґ";
       const rows: { text: string; callback_data: string }[][] = vItems
         .sort((a, b) => a.sortOrder - b.sortOrder)
-        .map((v) => [{ text: `📹 ${v.title}`, callback_data: `vinstr:${v.id}` }]);
+        .map((v) => [{ text: `рџ“№ ${v.title}`, callback_data: `vinstr:${v.id}` }]);
       rows.push([{ text: backLabel, callback_data: "menu:support" }]);
-      await editMessageContent(ctx, "📹 Видео-инструкции\n\nВыберите инструкцию:", { inline_keyboard: rows });
+      await editMessageContent(ctx, "рџ“№ Р’РёРґРµРѕ-РёРЅСЃС‚СЂСѓРєС†РёРё\n\nР’С‹Р±РµСЂРёС‚Рµ РёРЅСЃС‚СЂСѓРєС†РёСЋ:", { inline_keyboard: rows });
       return;
     }
 
@@ -1664,10 +1664,10 @@ bot.on("callback_query:data", async (ctx) => {
       const vItems = config?.videoInstructions ?? [];
       const instr = vItems.find((v) => v.id === instrId);
       if (!instr) {
-        await editMessageContent(ctx, "Инструкция не найдена.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РРЅСЃС‚СЂСѓРєС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
-      const backLabel = (config?.botBackLabel && config.botBackLabel.trim()) || "« Назад";
+      const backLabel = (config?.botBackLabel && config.botBackLabel.trim()) || "В« РќР°Р·Р°Рґ";
       const chatId = ctx.chat?.id;
       if (!chatId) return;
       try {
@@ -1675,20 +1675,20 @@ bot.on("callback_query:data", async (ctx) => {
       } catch { /* ignore */ }
       try {
         await ctx.api.sendVideo(chatId, instr.telegramFileId, {
-          caption: `📹 ${instr.title}`,
+          caption: `рџ“№ ${instr.title}`,
           reply_markup: {
             inline_keyboard: [
-              [{ text: "« Назад к инструкциям", callback_data: "menu:video_instructions_fresh" }],
-              [{ text: "🏠 Главное меню", callback_data: "menu:main" }],
+              [{ text: "В« РќР°Р·Р°Рґ Рє РёРЅСЃС‚СЂСѓРєС†РёСЏРј", callback_data: "menu:video_instructions_fresh" }],
+              [{ text: "рџЏ  Р“Р»Р°РІРЅРѕРµ РјРµРЅСЋ", callback_data: "menu:main" }],
             ],
           },
         });
       } catch (e) {
-        await ctx.api.sendMessage(chatId, "Не удалось отправить видео. Попробуйте позже.", {
+        await ctx.api.sendMessage(chatId, "РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РїСЂР°РІРёС‚СЊ РІРёРґРµРѕ. РџРѕРїСЂРѕР±СѓР№С‚Рµ РїРѕР·Р¶Рµ.", {
           reply_markup: {
             inline_keyboard: [
-              [{ text: "« Назад к инструкциям", callback_data: "menu:video_instructions_fresh" }],
-              [{ text: "🏠 Главное меню", callback_data: "menu:main" }],
+              [{ text: "В« РќР°Р·Р°Рґ Рє РёРЅСЃС‚СЂСѓРєС†РёСЏРј", callback_data: "menu:video_instructions_fresh" }],
+              [{ text: "рџЏ  Р“Р»Р°РІРЅРѕРµ РјРµРЅСЋ", callback_data: "menu:main" }],
             ],
           },
         });
@@ -1699,20 +1699,20 @@ bot.on("callback_query:data", async (ctx) => {
     if (data === "menu:video_instructions_fresh") {
       const vItems = config?.videoInstructions ?? [];
       if (!vItems.length) {
-        await ctx.api.sendMessage(ctx.chat!.id, "Инструкции пока не добавлены.", {
+        await ctx.api.sendMessage(ctx.chat!.id, "РРЅСЃС‚СЂСѓРєС†РёРё РїРѕРєР° РЅРµ РґРѕР±Р°РІР»РµРЅС‹.", {
           reply_markup: backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds),
         });
         return;
       }
-      const backLabel = (config?.botBackLabel && config.botBackLabel.trim()) || "« Назад";
+      const backLabel = (config?.botBackLabel && config.botBackLabel.trim()) || "В« РќР°Р·Р°Рґ";
       const rows: { text: string; callback_data: string }[][] = vItems
         .sort((a, b) => a.sortOrder - b.sortOrder)
-        .map((v) => [{ text: `📹 ${v.title}`, callback_data: `vinstr:${v.id}` }]);
+        .map((v) => [{ text: `рџ“№ ${v.title}`, callback_data: `vinstr:${v.id}` }]);
       rows.push([{ text: backLabel, callback_data: "menu:support" }]);
       try {
         await ctx.deleteMessage().catch(() => {});
       } catch { /* ignore */ }
-      await ctx.api.sendMessage(ctx.chat!.id, "📹 Видео-инструкции\n\nВыберите инструкцию:", {
+      await ctx.api.sendMessage(ctx.chat!.id, "рџ“№ Р’РёРґРµРѕ-РёРЅСЃС‚СЂСѓРєС†РёРё\n\nР’С‹Р±РµСЂРёС‚Рµ РёРЅСЃС‚СЂСѓРєС†РёСЋ:", {
         reply_markup: { inline_keyboard: rows },
       });
       return;
@@ -1733,7 +1733,7 @@ bot.on("callback_query:data", async (ctx) => {
         ? { ...innerEmojiIds, tariff: tariffsEmojiEntry.tgEmojiId }
         : innerEmojiIds;
       if (items.length > 1) {
-        const { text, entities } = titleWithOptionalEmoji(tariffsEmojiKey, "Тарифы\n\nВыберите категорию:", config?.botEmojis);
+        const { text, entities } = titleWithOptionalEmoji(tariffsEmojiKey, "РўР°СЂРёС„С‹\n\nР’С‹Р±РµСЂРёС‚Рµ РєР°С‚РµРіРѕСЂРёСЋ:", config?.botEmojis);
         await editMessageContent(ctx, text, tariffPayButtons(items, config?.botBackLabel ?? null, innerStyles, tariffsEmojiIds, tariffsEmojiUnicode), entities);
         return;
       }
@@ -1754,7 +1754,7 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicTariffs();
       const category = items?.find((c: TariffCategory) => c.id === categoryId);
       if (!category?.tariffs?.length) {
-        await editMessageContent(ctx, "Категория не найдена.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РљР°С‚РµРіРѕСЂРёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const nameOnly = (category.name || "").replace(/^\p{Extended_Pictographic}\uFE0F?\s*/u, "").trim() || category.name || "";
@@ -1779,16 +1779,16 @@ bot.on("callback_query:data", async (ctx) => {
     if (data === "menu:proxy") {
       const { items } = await api.getPublicProxyTariffs();
       if (!items?.length || items.every((c: { tariffs: unknown[] }) => !c.tariffs?.length)) {
-        await editMessageContent(ctx, "Тарифы прокси пока не настроены.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РўР°СЂРёС„С‹ РїСЂРѕРєСЃРё РїРѕРєР° РЅРµ РЅР°СЃС‚СЂРѕРµРЅС‹.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const cats = items.filter((c: { tariffs: unknown[] }) => c.tariffs?.length > 0);
       if (cats.length === 1 && cats[0]!.tariffs.length <= 5) {
         const head = cats[0]!.name;
-        const lines = cats[0]!.tariffs.map((t: { name: string; price: number; currency: string }) => `• ${t.name} — ${t.price} ${t.currency}`).join("\n");
-        await editMessageContent(ctx, `🌐 Прокси\n\n${head}\n${lines}\n\nВыберите тариф:`, proxyTariffPayButtons(cats, config?.botBackLabel ?? null, innerStyles, innerEmojiIds));
+        const lines = cats[0]!.tariffs.map((t: { name: string; price: number; currency: string }) => `вЂў ${t.name} вЂ” ${t.price} ${t.currency}`).join("\n");
+        await editMessageContent(ctx, `рџЊђ РџСЂРѕРєСЃРё\n\n${head}\n${lines}\n\nР’С‹Р±РµСЂРёС‚Рµ С‚Р°СЂРёС„:`, proxyTariffPayButtons(cats, config?.botBackLabel ?? null, innerStyles, innerEmojiIds));
       } else {
-        await editMessageContent(ctx, "🌐 Прокси\n\nВыберите категорию:", proxyTariffPayButtons(cats, config?.botBackLabel ?? null, innerStyles, innerEmojiIds));
+        await editMessageContent(ctx, "рџЊђ РџСЂРѕРєСЃРё\n\nР’С‹Р±РµСЂРёС‚Рµ РєР°С‚РµРіРѕСЂРёСЋ:", proxyTariffPayButtons(cats, config?.botBackLabel ?? null, innerStyles, innerEmojiIds));
       }
       return;
     }
@@ -1798,28 +1798,28 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicProxyTariffs();
       const category = items?.find((c: { id: string }) => c.id === categoryId);
       if (!category?.tariffs?.length) {
-        await editMessageContent(ctx, "Категория не найдена.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РљР°С‚РµРіРѕСЂРёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const head = category.name;
-      const lines = category.tariffs.map((t: { name: string; price: number; currency: string }) => `• ${t.name} — ${t.price} ${t.currency}`).join("\n");
-      await editMessageContent(ctx, `🌐 ${head}\n\n${lines}\n\nВыберите тариф:`, proxyTariffsOfCategoryButtons(category, config?.botBackLabel ?? null, innerStyles, "menu:proxy", innerEmojiIds));
+      const lines = category.tariffs.map((t: { name: string; price: number; currency: string }) => `вЂў ${t.name} вЂ” ${t.price} ${t.currency}`).join("\n");
+      await editMessageContent(ctx, `рџЊђ ${head}\n\n${lines}\n\nР’С‹Р±РµСЂРёС‚Рµ С‚Р°СЂРёС„:`, proxyTariffsOfCategoryButtons(category, config?.botBackLabel ?? null, innerStyles, "menu:proxy", innerEmojiIds));
       return;
     }
 
     if (data === "menu:singbox") {
       const { items } = await api.getPublicSingboxTariffs();
       if (!items?.length || items.every((c: { tariffs: unknown[] }) => !c.tariffs?.length)) {
-        await editMessageContent(ctx, "Тарифы доступов пока не настроены.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РўР°СЂРёС„С‹ РґРѕСЃС‚СѓРїРѕРІ РїРѕРєР° РЅРµ РЅР°СЃС‚СЂРѕРµРЅС‹.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const cats = items.filter((c: { tariffs: unknown[] }) => c.tariffs?.length > 0);
       if (cats.length === 1 && cats[0]!.tariffs.length <= 5) {
         const head = cats[0]!.name;
-        const lines = cats[0]!.tariffs.map((t: { name: string; price: number; currency: string }) => `• ${t.name} — ${t.price} ${t.currency}`).join("\n");
-        await editMessageContent(ctx, `рџ”вЂ? Доступы\n\n${head}\n${lines}\n\nВыберите тариф:`, singboxTariffPayButtons(cats, config?.botBackLabel ?? null, innerStyles, innerEmojiIds));
+        const lines = cats[0]!.tariffs.map((t: { name: string; price: number; currency: string }) => `вЂў ${t.name} вЂ” ${t.price} ${t.currency}`).join("\n");
+        await editMessageContent(ctx, `СЂСџвЂќРІР‚? Р”РѕСЃС‚СѓРїС‹\n\n${head}\n${lines}\n\nР’С‹Р±РµСЂРёС‚Рµ С‚Р°СЂРёС„:`, singboxTariffPayButtons(cats, config?.botBackLabel ?? null, innerStyles, innerEmojiIds));
       } else {
-        await editMessageContent(ctx, "рџ”вЂ? Доступы\n\nВыберите категорию:", singboxTariffPayButtons(cats, config?.botBackLabel ?? null, innerStyles, innerEmojiIds));
+        await editMessageContent(ctx, "СЂСџвЂќРІР‚? Р”РѕСЃС‚СѓРїС‹\n\nР’С‹Р±РµСЂРёС‚Рµ РєР°С‚РµРіРѕСЂРёСЋ:", singboxTariffPayButtons(cats, config?.botBackLabel ?? null, innerStyles, innerEmojiIds));
       }
       return;
     }
@@ -1829,12 +1829,12 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicSingboxTariffs();
       const category = items?.find((c: { id: string }) => c.id === categoryId);
       if (!category?.tariffs?.length) {
-        await editMessageContent(ctx, "Категория не найдена.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РљР°С‚РµРіРѕСЂРёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const head = category.name;
-      const lines = category.tariffs.map((t: { name: string; price: number; currency: string }) => `• ${t.name} — ${t.price} ${t.currency}`).join("\n");
-      await editMessageContent(ctx, `рџ”вЂ? ${head}\n\n${lines}\n\nВыберите тариф:`, singboxTariffsOfCategoryButtons(category, config?.botBackLabel ?? null, innerStyles, "menu:singbox", innerEmojiIds));
+      const lines = category.tariffs.map((t: { name: string; price: number; currency: string }) => `вЂў ${t.name} вЂ” ${t.price} ${t.currency}`).join("\n");
+      await editMessageContent(ctx, `СЂСџвЂќРІР‚? ${head}\n\n${lines}\n\nР’С‹Р±РµСЂРёС‚Рµ С‚Р°СЂРёС„:`, singboxTariffsOfCategoryButtons(category, config?.botBackLabel ?? null, innerStyles, "menu:singbox", innerEmojiIds));
       return;
     }
 
@@ -1842,14 +1842,14 @@ bot.on("callback_query:data", async (ctx) => {
       const slotsRes = await api.getSingboxSlots(token);
       const slots = slotsRes.slots ?? [];
       if (slots.length === 0) {
-        await editMessageContent(ctx, "У вас пока нет активных доступов. Купите тариф в разделе «Доступы».", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РЈ РІР°СЃ РїРѕРєР° РЅРµС‚ Р°РєС‚РёРІРЅС‹С… РґРѕСЃС‚СѓРїРѕРІ. РљСѓРїРёС‚Рµ С‚Р°СЂРёС„ РІ СЂР°Р·РґРµР»Рµ В«Р”РѕСЃС‚СѓРїС‹В».", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const lines = slots.map((s: { subscriptionLink: string; expiresAt: string; protocol: string }) => {
         const exp = new Date(s.expiresAt).toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
-        return `${s.protocol} — до ${exp}\n${s.subscriptionLink}`;
+        return `${s.protocol} вЂ” РґРѕ ${exp}\n${s.subscriptionLink}`;
       }).join("\n\n");
-      const msg = `📋 Мои доступы (${slots.length})\n\nСкопируйте ссылку в приложение (v2rayN, Nekoray и др.):\n\n${lines}`;
+      const msg = `рџ“‹ РњРѕРё РґРѕСЃС‚СѓРїС‹ (${slots.length})\n\nРЎРєРѕРїРёСЂСѓР№С‚Рµ СЃСЃС‹Р»РєСѓ РІ РїСЂРёР»РѕР¶РµРЅРёРµ (v2rayN, Nekoray Рё РґСЂ.):\n\n${lines}`;
       await editMessageContent(ctx, msg.slice(0, 4096), backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       return;
     }
@@ -1857,16 +1857,16 @@ bot.on("callback_query:data", async (ctx) => {
     if (data === "menu:my_proxy") {
       const { slots } = await api.getProxySlots(token);
       if (!slots?.length) {
-        await editMessageContent(ctx, "📋 Мои прокси\n\nУ вас пока нет активных прокси. Купите тариф в разделе «Прокси».", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "рџ“‹ РњРѕРё РїСЂРѕРєСЃРё\n\nРЈ РІР°СЃ РїРѕРєР° РЅРµС‚ Р°РєС‚РёРІРЅС‹С… РїСЂРѕРєСЃРё. РљСѓРїРёС‚Рµ С‚Р°СЂРёС„ РІ СЂР°Р·РґРµР»Рµ В«РџСЂРѕРєСЃРёВ».", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
-      let text = "📋 Мои прокси\n\n";
+      let text = "рџ“‹ РњРѕРё РїСЂРѕРєСЃРё\n\n";
       for (const s of slots) {
-        text += `• SOCKS5: \`socks5://${s.login}:${s.password}@${s.host}:${s.socksPort}\`\n`;
-        text += `• HTTP: \`http://${s.login}:${s.password}@${s.host}:${s.httpPort}\`\n`;
-        text += `  До: ${new Date(s.expiresAt).toLocaleString("ru-RU")}\n\n`;
+        text += `вЂў SOCKS5: \`socks5://${s.login}:${s.password}@${s.host}:${s.socksPort}\`\n`;
+        text += `вЂў HTTP: \`http://${s.login}:${s.password}@${s.host}:${s.httpPort}\`\n`;
+        text += `  Р”Рѕ: ${new Date(s.expiresAt).toLocaleString("ru-RU")}\n\n`;
       }
-      text += "Скопируйте строку в настройки прокси приложения.";
+      text += "РЎРєРѕРїРёСЂСѓР№С‚Рµ СЃС‚СЂРѕРєСѓ РІ РЅР°СЃС‚СЂРѕР№РєРё РїСЂРѕРєСЃРё РїСЂРёР»РѕР¶РµРЅРёСЏ.";
       await editMessageContent(ctx, text.slice(0, 4096), backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       return;
     }
@@ -1875,10 +1875,10 @@ bot.on("callback_query:data", async (ctx) => {
       const proxyTariffId = data.slice("pay_proxy_balance:".length);
       try {
         const result = await api.payByBalance(token, { proxyTariffId });
-        await editMessageContent(ctx, `✅ ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, `вњ… ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка оплаты";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РѕРїР»Р°С‚С‹";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -1888,7 +1888,7 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicProxyTariffs();
       const tariff = items?.flatMap((c: { tariffs: { id: string; name: string; price: number; currency: string }[] }) => c.tariffs).find((t: { id: string }) => t.id === proxyTariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "Тариф не найден.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -1898,12 +1898,12 @@ bot.on("callback_query:data", async (ctx) => {
           price: formatMoney(tariff.price, tariff.currency),
           amount: String(tariff.price),
           currency: tariff.currency,
-          action: "Нажмите для оплаты через ЮMoney:",
+          action: "РќР°Р¶РјРёС‚Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Money:",
         });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания платежа";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -1913,11 +1913,11 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicProxyTariffs();
       const tariff = items?.flatMap((c: { tariffs: { id: string; name: string; price: number; currency: string }[] }) => c.tariffs).find((t: { id: string }) => t.id === proxyTariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "Тариф не найден.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       if (tariff.currency.toUpperCase() !== "RUB") {
-        await editMessageContent(ctx, "ЮKassa принимает только рубли (RUB).", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "Р®Kassa РїСЂРёРЅРёРјР°РµС‚ С‚РѕР»СЊРєРѕ СЂСѓР±Р»Рё (RUB).", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -1927,12 +1927,12 @@ bot.on("callback_query:data", async (ctx) => {
           price: formatMoney(tariff.price, tariff.currency),
           amount: String(tariff.price),
           currency: tariff.currency,
-          action: "Нажмите для оплаты через ЮKassa:",
+          action: "РќР°Р¶РјРёС‚Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Kassa:",
         });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.confirmationUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания платежа";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -1942,16 +1942,16 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicProxyTariffs();
       const tariff = items?.flatMap((c: { tariffs: { id: string; name: string; price: number; currency: string }[] }) => c.tariffs).find((t: { id: string }) => t.id === proxyTariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "Тариф не найден.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
         const payment = await api.createCryptopayPayment(token, { amount: tariff.price, currency: tariff.currency, proxyTariffId });
-        const msg = buildPaymentMessage(config, { name: tariff.name, price: formatMoney(tariff.price, tariff.currency), amount: String(tariff.price), currency: tariff.currency, action: "Нажмите для оплаты через Crypto Bot:" });
+        const msg = buildPaymentMessage(config, { name: tariff.name, price: formatMoney(tariff.price, tariff.currency), amount: String(tariff.price), currency: tariff.currency, action: "РќР°Р¶РјРёС‚Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Crypto Bot:" });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.payUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания платежа";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -1964,12 +1964,12 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicProxyTariffs();
       const tariff = items?.flatMap((c: { tariffs: { id: string; name: string; price: number; currency: string }[] }) => c.tariffs).find((t: { id: string }) => t.id === proxyTariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "Тариф не найден.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const methods = config?.plategaMethods ?? [];
       const client = await api.getMe(token);
-      const balanceLabel = client && client.balance >= tariff.price ? `💰 Оплатить балансом (${formatMoney(client.balance, client.preferredCurrency ?? "RUB")})` : null;
+      const balanceLabel = client && client.balance >= tariff.price ? `рџ’° РћРїР»Р°С‚РёС‚СЊ Р±Р°Р»Р°РЅСЃРѕРј (${formatMoney(client.balance, client.preferredCurrency ?? "RUB")})` : null;
       const discountInfoProxy = activeDiscountCode.get(userId);
       const promoCodeProxy = discountInfoProxy?.code;
       const discountArgProxy = discountInfoProxy ? {
@@ -1982,7 +1982,7 @@ bot.on("callback_query:data", async (ctx) => {
             amount: tariff.price,
             currency: tariff.currency,
             paymentMethod: methodIdFromBtn,
-            description: `Прокси: ${tariff.name}`,
+            description: `РџСЂРѕРєСЃРё: ${tariff.name}`,
             proxyTariffId: tariff.id,
             promoCode: promoCodeProxy,
           });
@@ -1992,12 +1992,12 @@ bot.on("callback_query:data", async (ctx) => {
             price: formatMoney(tariff.price, tariff.currency),
             amount: String(tariff.price),
             currency: tariff.currency,
-            action: "Нажмите для оплаты:",
+            action: "РќР°Р¶РјРёС‚Рµ РґР»СЏ РѕРїР»Р°С‚С‹:",
           }, discountArgProxy);
           await editMessageContent(ctx, msg.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
         } catch (e: unknown) {
-          const msg = e instanceof Error ? e.message : "Ошибка";
-          await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+          const msg = e instanceof Error ? e.message : "РћС€РёР±РєР°";
+          await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         }
         return;
       }
@@ -2018,7 +2018,7 @@ bot.on("callback_query:data", async (ctx) => {
         price: formatMoney(tariff.price, tariff.currency),
         amount: String(tariff.price),
         currency: tariff.currency,
-        action: "Выберите способ оплаты:",
+        action: "Р’С‹Р±РµСЂРёС‚Рµ СЃРїРѕСЃРѕР± РѕРїР»Р°С‚С‹:",
       }, discountArgProxy);
       await editMessageContent(ctx, msg.text, markup, msg.entities);
       return;
@@ -2028,10 +2028,10 @@ bot.on("callback_query:data", async (ctx) => {
       const singboxTariffId = data.slice("pay_singbox_balance:".length);
       try {
         const result = await api.payByBalance(token, { singboxTariffId });
-        await editMessageContent(ctx, `✅ ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, `вњ… ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка оплаты";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РѕРїР»Р°С‚С‹";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2041,7 +2041,7 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicSingboxTariffs();
       const tariff = items?.flatMap((c: { tariffs: { id: string; name: string; price: number; currency: string }[] }) => c.tariffs).find((t: { id: string }) => t.id === singboxTariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "Тариф не найден.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -2051,12 +2051,12 @@ bot.on("callback_query:data", async (ctx) => {
           price: formatMoney(tariff.price, tariff.currency),
           amount: String(tariff.price),
           currency: tariff.currency,
-          action: "Нажмите для оплаты через ЮMoney:",
+          action: "РќР°Р¶РјРёС‚Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Money:",
         });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания платежа";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2066,11 +2066,11 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicSingboxTariffs();
       const tariff = items?.flatMap((c: { tariffs: { id: string; name: string; price: number; currency: string }[] }) => c.tariffs).find((t: { id: string }) => t.id === singboxTariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "Тариф не найден.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       if (tariff.currency.toUpperCase() !== "RUB") {
-        await editMessageContent(ctx, "ЮKassa принимает только рубли (RUB).", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "Р®Kassa РїСЂРёРЅРёРјР°РµС‚ С‚РѕР»СЊРєРѕ СЂСѓР±Р»Рё (RUB).", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -2080,12 +2080,12 @@ bot.on("callback_query:data", async (ctx) => {
           price: formatMoney(tariff.price, tariff.currency),
           amount: String(tariff.price),
           currency: tariff.currency,
-          action: "Нажмите для оплаты через ЮKassa:",
+          action: "РќР°Р¶РјРёС‚Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Kassa:",
         });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.confirmationUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания платежа";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2095,16 +2095,16 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicSingboxTariffs();
       const tariff = items?.flatMap((c: { tariffs: { id: string; name: string; price: number; currency: string }[] }) => c.tariffs).find((t: { id: string }) => t.id === singboxTariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "Тариф не найден.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
         const payment = await api.createCryptopayPayment(token, { amount: tariff.price, currency: tariff.currency, singboxTariffId });
-        const msg = buildPaymentMessage(config, { name: tariff.name, price: formatMoney(tariff.price, tariff.currency), amount: String(tariff.price), currency: tariff.currency, action: "Нажмите для оплаты через Crypto Bot:" });
+        const msg = buildPaymentMessage(config, { name: tariff.name, price: formatMoney(tariff.price, tariff.currency), amount: String(tariff.price), currency: tariff.currency, action: "РќР°Р¶РјРёС‚Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Crypto Bot:" });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.payUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания платежа";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2117,12 +2117,12 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicSingboxTariffs();
       const tariff = items?.flatMap((c: { tariffs: { id: string; name: string; price: number; currency: string }[] }) => c.tariffs).find((t: { id: string }) => t.id === singboxTariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "Тариф не найден.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const methods = config?.plategaMethods ?? [];
       const client = await api.getMe(token);
-      const balanceLabel = client && client.balance >= tariff.price ? `💰 Оплатить балансом (${formatMoney(client.balance, client.preferredCurrency ?? "RUB")})` : null;
+      const balanceLabel = client && client.balance >= tariff.price ? `рџ’° РћРїР»Р°С‚РёС‚СЊ Р±Р°Р»Р°РЅСЃРѕРј (${formatMoney(client.balance, client.preferredCurrency ?? "RUB")})` : null;
       const discountInfoSingbox = activeDiscountCode.get(userId);
       const promoCodeSingbox = discountInfoSingbox?.code;
       const discountArgSingbox = discountInfoSingbox ? {
@@ -2135,7 +2135,7 @@ bot.on("callback_query:data", async (ctx) => {
             amount: tariff.price,
             currency: tariff.currency,
             paymentMethod: methodIdFromBtn,
-            description: `Доступы: ${tariff.name}`,
+            description: `Р”РѕСЃС‚СѓРїС‹: ${tariff.name}`,
             singboxTariffId: tariff.id,
             promoCode: promoCodeSingbox,
           });
@@ -2145,12 +2145,12 @@ bot.on("callback_query:data", async (ctx) => {
             price: formatMoney(tariff.price, tariff.currency),
             amount: String(tariff.price),
             currency: tariff.currency,
-            action: "Нажмите для оплаты:",
+            action: "РќР°Р¶РјРёС‚Рµ РґР»СЏ РѕРїР»Р°С‚С‹:",
           }, discountArgSingbox);
           await editMessageContent(ctx, msg.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
         } catch (e: unknown) {
-          const msg = e instanceof Error ? e.message : "Ошибка";
-          await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+          const msg = e instanceof Error ? e.message : "РћС€РёР±РєР°";
+          await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         }
         return;
       }
@@ -2171,7 +2171,7 @@ bot.on("callback_query:data", async (ctx) => {
         price: formatMoney(tariff.price, tariff.currency),
         amount: String(tariff.price),
         currency: tariff.currency,
-        action: "Выберите способ оплаты:",
+        action: "Р’С‹Р±РµСЂРёС‚Рµ СЃРїРѕСЃРѕР± РѕРїР»Р°С‚С‹:",
       }, discountArgSingbox);
       await editMessageContent(ctx, msg.text, markup, msg.entities);
       return;
@@ -2184,10 +2184,10 @@ bot.on("callback_query:data", async (ctx) => {
         const promoCode = discountInfoBal?.code;
         const result = await api.payByBalance(token, { tariffId, promoCode });
         if (promoCode) activeDiscountCode.delete(userId);
-        await editMessageContent(ctx, `✅ ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, `вњ… ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка оплаты";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РѕРїР»Р°С‚С‹";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2197,7 +2197,7 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicTariffs();
       const tariff = items?.flatMap((c: TariffCategory) => c.tariffs).find((t: TariffItem) => t.id === tariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "Тариф не найден.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -2219,12 +2219,12 @@ bot.on("callback_query:data", async (ctx) => {
           price: formatMoney(tariff.price, tariff.currency),
           amount: String(tariff.price),
           currency: tariff.currency,
-          action: "Нажмите кнопку ниже для оплаты через ЮMoney:",
+          action: "РќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Money:",
         }, discountArgYm);
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания платежа ЮMoney";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р° Р®Money";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2234,11 +2234,11 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicTariffs();
       const tariff = items?.flatMap((c: TariffCategory) => c.tariffs).find((t: TariffItem) => t.id === tariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "Тариф не найден.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       if (tariff.currency.toUpperCase() !== "RUB") {
-        await editMessageContent(ctx, "ЮKassa принимает только рубли (RUB).", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "Р®Kassa РїСЂРёРЅРёРјР°РµС‚ С‚РѕР»СЊРєРѕ СЂСѓР±Р»Рё (RUB).", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -2260,12 +2260,12 @@ bot.on("callback_query:data", async (ctx) => {
           price: formatMoney(tariff.price, tariff.currency),
           amount: String(tariff.price),
           currency: tariff.currency,
-          action: "Нажмите кнопку ниже для оплаты через ЮKassa:",
+          action: "РќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Kassa:",
         }, discountArgYk);
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.confirmationUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания платежа ЮKassa";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р° Р®Kassa";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2275,7 +2275,7 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicTariffs();
       const tariff = items?.flatMap((c: TariffCategory) => c.tariffs).find((t: TariffItem) => t.id === tariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "Тариф не найден.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -2287,11 +2287,11 @@ bot.on("callback_query:data", async (ctx) => {
           originalPrice: formatMoney(tariff.price, tariff.currency),
           discountedPrice: formatMoney(getDiscountedPrice(tariff.price, discountInfoCp), tariff.currency),
         } : undefined;
-        const msg = buildPaymentMessage(config, { name: tariff.name, price: formatMoney(tariff.price, tariff.currency), amount: String(tariff.price), currency: tariff.currency, action: "Нажмите кнопку ниже для оплаты через Crypto Bot:" }, discountArgCp);
+        const msg = buildPaymentMessage(config, { name: tariff.name, price: formatMoney(tariff.price, tariff.currency), amount: String(tariff.price), currency: tariff.currency, action: "РќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Crypto Bot:" }, discountArgCp);
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.payUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания платежа";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2299,10 +2299,10 @@ bot.on("callback_query:data", async (ctx) => {
     if (data === "menu:extra_options") {
       const options = config?.sellOptions ?? [];
       if (!options.length) {
-        await editMessageContent(ctx, "Доп. опции пока не доступны. Оформите подписку в разделе «Тарифы».", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "Р”РѕРї. РѕРїС†РёРё РїРѕРєР° РЅРµ РґРѕСЃС‚СѓРїРЅС‹. РћС„РѕСЂРјРёС‚Рµ РїРѕРґРїРёСЃРєСѓ РІ СЂР°Р·РґРµР»Рµ В«РўР°СЂРёС„С‹В».", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
-      const { text, entities } = titleWithEmoji("PACKAGE", "Доп. опции\n\nТрафик, устройства или серверы — докупка к подписке. Выберите опцию:", config?.botEmojis);
+      const { text, entities } = titleWithEmoji("PACKAGE", "Р”РѕРї. РѕРїС†РёРё\n\nРўСЂР°С„РёРє, СѓСЃС‚СЂРѕР№СЃС‚РІР° РёР»Рё СЃРµСЂРІРµСЂС‹ вЂ” РґРѕРєСѓРїРєР° Рє РїРѕРґРїРёСЃРєРµ. Р’С‹Р±РµСЂРёС‚Рµ РѕРїС†РёСЋ:", config?.botEmojis);
       await editMessageContent(ctx, text, extraOptionsButtons(options, config?.botBackLabel ?? null, innerStyles, innerEmojiIds), entities);
       return;
     }
@@ -2314,15 +2314,15 @@ bot.on("callback_query:data", async (ctx) => {
       const options = config?.sellOptions ?? [];
       const option = options.find((o) => o.kind === kind && o.id === productId);
       if (!option) {
-        await editMessageContent(ctx, "Опция не найдена.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РћРїС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
         const result = await api.payOptionByBalance(token, { kind: option.kind, productId: option.id });
-        await editMessageContent(ctx, `✅ ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, `вњ… ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка оплаты";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РѕРїР»Р°С‚С‹";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2334,35 +2334,35 @@ bot.on("callback_query:data", async (ctx) => {
       const options = config?.sellOptions ?? [];
       const option = options.find((o) => o.kind === kind && o.id === productId);
       if (!option) {
-        await editMessageContent(ctx, "Опция не найдена.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РћРїС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
         const payment = await api.createYookassaPayment(token, {
           extraOption: { kind: option.kind, productId: option.id },
         });
-        const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} ГРвЂ?` : option.kind === "devices" ? `+${option.deviceCount} устр.` : "Сервер");
+        const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} Р“Р РІР‚?` : option.kind === "devices" ? `+${option.deviceCount} СѓСЃС‚СЂ.` : "РЎРµСЂРІРµСЂ");
         const msg = buildPaymentMessage(config, {
           name: optName,
           price: formatMoney(option.price, option.currency),
           amount: String(option.price),
           currency: option.currency,
-          action: "Нажмите кнопку ниже для оплаты через ЮKassa:",
+          action: "РќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Kassa:",
         });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.confirmationUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания платежа";
-        const isAuthError = /401|unauthorized|истек|авториз|токен/i.test(msg);
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
+        const isAuthError = /401|unauthorized|РёСЃС‚РµРє|Р°РІС‚РѕСЂРёР·|С‚РѕРєРµРЅ/i.test(msg);
         if (isAuthError) {
           tokenStore.delete(userId);
           const freshToken = await getOrRestoreToken(userId, ctx.from?.username);
           if (freshToken) {
-            await editMessageContent(ctx, "🔄 Повторите действие.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+            await editMessageContent(ctx, "рџ”„ РџРѕРІС‚РѕСЂРёС‚Рµ РґРµР№СЃС‚РІРёРµ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
           } else {
-            await editMessageContent(ctx, "❌ Ошибка авторизации. Отправьте /start", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+            await editMessageContent(ctx, "вќЊ РћС€РёР±РєР° Р°РІС‚РѕСЂРёР·Р°С†РёРё. РћС‚РїСЂР°РІСЊС‚Рµ /start", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
           }
         } else {
-          await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+          await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         }
       }
       return;
@@ -2375,27 +2375,27 @@ bot.on("callback_query:data", async (ctx) => {
       const options = config?.sellOptions ?? [];
       const option = options.find((o) => o.kind === kind && o.id === productId);
       if (!option) {
-        await editMessageContent(ctx, "Опция не найдена.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РћРїС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
         const payment = await api.createCryptopayPayment(token, { extraOption: { kind: option.kind, productId: option.id } });
-        const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} ГРвЂ?` : option.kind === "devices" ? `+${option.deviceCount} устр.` : "Сервер");
-        const msg = buildPaymentMessage(config, { name: optName, price: formatMoney(option.price, option.currency), amount: String(option.price), currency: option.currency, action: "Нажмите кнопку ниже для оплаты через Crypto Bot:" });
+        const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} Р“Р РІР‚?` : option.kind === "devices" ? `+${option.deviceCount} СѓСЃС‚СЂ.` : "РЎРµСЂРІРµСЂ");
+        const msg = buildPaymentMessage(config, { name: optName, price: formatMoney(option.price, option.currency), amount: String(option.price), currency: option.currency, action: "РќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Crypto Bot:" });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.payUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания платежа";
-        const isAuthError = /401|unauthorized|истек|авториз|токен/i.test(msg);
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
+        const isAuthError = /401|unauthorized|РёСЃС‚РµРє|Р°РІС‚РѕСЂРёР·|С‚РѕРєРµРЅ/i.test(msg);
         if (isAuthError) {
           tokenStore.delete(userId);
           const freshToken = await getOrRestoreToken(userId, ctx.from?.username);
           if (freshToken) {
-            await editMessageContent(ctx, "🔄 Повторите действие.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+            await editMessageContent(ctx, "рџ”„ РџРѕРІС‚РѕСЂРёС‚Рµ РґРµР№СЃС‚РІРёРµ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
           } else {
-            await editMessageContent(ctx, "❌ Ошибка авторизации. Отправьте /start", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+            await editMessageContent(ctx, "вќЊ РћС€РёР±РєР° Р°РІС‚РѕСЂРёР·Р°С†РёРё. РћС‚РїСЂР°РІСЊС‚Рµ /start", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
           }
         } else {
-          await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+          await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         }
       }
       return;
@@ -2408,7 +2408,7 @@ bot.on("callback_query:data", async (ctx) => {
       const options = config?.sellOptions ?? [];
       const option = options.find((o) => o.kind === kind && o.id === productId);
       if (!option) {
-        await editMessageContent(ctx, "Опция не найдена.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РћРїС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -2417,18 +2417,18 @@ bot.on("callback_query:data", async (ctx) => {
           paymentType: "AC",
           extraOption: { kind: option.kind, productId: option.id },
         });
-        const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} ГРвЂ?` : option.kind === "devices" ? `+${option.deviceCount} устр.` : "Сервер");
+        const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} Р“Р РІР‚?` : option.kind === "devices" ? `+${option.deviceCount} СѓСЃС‚СЂ.` : "РЎРµСЂРІРµСЂ");
         const msg = buildPaymentMessage(config, {
           name: optName,
           price: formatMoney(option.price, option.currency),
           amount: String(option.price),
           currency: option.currency,
-          action: "Нажмите кнопку ниже для оплаты через ЮMoney:",
+          action: "РќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Money:",
         });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания платежа ЮMoney";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р° Р®Money";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2441,11 +2441,11 @@ bot.on("callback_query:data", async (ctx) => {
       const options = config?.sellOptions ?? [];
       const option = options.find((o) => o.kind === kind && o.id === productId);
       if (!option) {
-        await editMessageContent(ctx, "Опция не найдена.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РћРїС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       if (!Number.isFinite(methodId)) {
-        await editMessageContent(ctx, "Неверный способ оплаты.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РќРµРІРµСЂРЅС‹Р№ СЃРїРѕСЃРѕР± РѕРїР»Р°С‚С‹.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       try {
@@ -2456,18 +2456,18 @@ bot.on("callback_query:data", async (ctx) => {
           description: option.name || `${option.kind} ${option.id}`,
           extraOption: { kind: option.kind, productId: option.id },
         });
-        const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} ГРвЂ?` : option.kind === "devices" ? `+${option.deviceCount} устр.` : "Сервер");
+        const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} Р“Р РІР‚?` : option.kind === "devices" ? `+${option.deviceCount} СѓСЃС‚СЂ.` : "РЎРµСЂРІРµСЂ");
         const msg = buildPaymentMessage(config, {
           name: optName,
           price: formatMoney(option.price, option.currency),
           amount: String(option.price),
           currency: option.currency,
-          action: "Нажмите кнопку ниже для оплаты:",
+          action: "РќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹:",
         });
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания платежа";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2479,21 +2479,21 @@ bot.on("callback_query:data", async (ctx) => {
       const options = config?.sellOptions ?? [];
       const option = options.find((o) => o.kind === kind && o.id === productId);
       if (!option) {
-        await editMessageContent(ctx, "Опция не найдена. Обновите меню (/start) и попробуйте снова.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РћРїС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°. РћР±РЅРѕРІРёС‚Рµ РјРµРЅСЋ (/start) Рё РїРѕРїСЂРѕР±СѓР№С‚Рµ СЃРЅРѕРІР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       if (option.currency.toUpperCase() !== "RUB") {
-        await editMessageContent(ctx, "Оплата в боте доступна только в рублях (RUB).", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РћРїР»Р°С‚Р° РІ Р±РѕС‚Рµ РґРѕСЃС‚СѓРїРЅР° С‚РѕР»СЊРєРѕ РІ СЂСѓР±Р»СЏС… (RUB).", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const client = await api.getMe(token);
-      const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} ГРвЂ?` : option.kind === "devices" ? `+${option.deviceCount} устр.` : "Сервер");
+      const optName = option.name || (option.kind === "traffic" ? `+${option.trafficGb} Р“Р РІР‚?` : option.kind === "devices" ? `+${option.deviceCount} СѓСЃС‚СЂ.` : "РЎРµСЂРІРµСЂ");
       const choiceText = buildPaymentMessage(config, {
         name: optName,
         price: formatMoney(option.price, option.currency),
         amount: String(option.price),
         currency: option.currency,
-        action: "Выберите способ оплаты:",
+        action: "Р’С‹Р±РµСЂРёС‚Рµ СЃРїРѕСЃРѕР± РѕРїР»Р°С‚С‹:",
       });
       const markup = optionPaymentMethodButtons(
         option,
@@ -2518,12 +2518,12 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicTariffs();
       const tariff = items?.flatMap((c: TariffCategory) => c.tariffs).find((t: TariffItem) => t.id === tariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "Тариф не найден.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const methods = config?.plategaMethods ?? [];
       const client = await api.getMe(token);
-      const balanceLabel = client && client.balance >= tariff.price ? `💰 Оплатить балансом (${formatMoney(client.balance, client.preferredCurrency ?? "RUB")})` : null;
+      const balanceLabel = client && client.balance >= tariff.price ? `рџ’° РћРїР»Р°С‚РёС‚СЊ Р±Р°Р»Р°РЅСЃРѕРј (${formatMoney(client.balance, client.preferredCurrency ?? "RUB")})` : null;
 
       const discountInfoTariff = activeDiscountCode.get(userId);
       const discountArgTariff = discountInfoTariff ? {
@@ -2537,7 +2537,7 @@ bot.on("callback_query:data", async (ctx) => {
           amount: tariff.price,
           currency: tariff.currency,
           paymentMethod: methodIdFromBtn,
-          description: `Тариф: ${tariff.name}`,
+          description: `РўР°СЂРёС„: ${tariff.name}`,
           tariffId: tariff.id,
           promoCode,
         });
@@ -2547,18 +2547,18 @@ bot.on("callback_query:data", async (ctx) => {
           price: formatMoney(tariff.price, tariff.currency),
           amount: String(tariff.price),
           currency: tariff.currency,
-          action: "Нажмите кнопку ниже для оплаты:",
+          action: "РќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹:",
         }, discountArgTariff);
         await editMessageContent(ctx, msg.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), msg.entities);
         return;
       }
-      // Показываем способы оплаты (всегда, чтобы была кнопка баланса)
+      // РџРѕРєР°Р·С‹РІР°РµРј СЃРїРѕСЃРѕР±С‹ РѕРїР»Р°С‚С‹ (РІСЃРµРіРґР°, С‡С‚РѕР±С‹ Р±С‹Р»Р° РєРЅРѕРїРєР° Р±Р°Р»Р°РЅСЃР°)
       const pay2 = buildPaymentMessage(config, {
         name: tariff.name,
         price: formatMoney(tariff.price, tariff.currency),
         amount: String(tariff.price),
         currency: tariff.currency,
-        action: "Выберите способ оплаты:",
+        action: "Р’С‹Р±РµСЂРёС‚Рµ СЃРїРѕСЃРѕР± РѕРїР»Р°С‚С‹:",
       }, discountArgTariff);
       await editMessageContent(ctx, pay2.text, tariffPaymentMethodButtons(tariffId, methods, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds, balanceLabel, !!config?.yoomoneyEnabled, !!config?.yookassaEnabled, !!config?.cryptopayEnabled, tariff.currency), pay2.entities);
       return;
@@ -2596,16 +2596,16 @@ bot.on("callback_query:data", async (ctx) => {
         const lines = [_t("devices.delete_hint", lang) + "\n"];
         const rows: InlineMarkup["inline_keyboard"] = [];
         devices.slice(0, 15).forEach((d, i) => {
-          const label = [d.platform, d.deviceModel].filter(Boolean).join(" · ") || d.hwid.slice(0, 12) + "…";
+          const label = [d.platform, d.deviceModel].filter(Boolean).join(" В· ") || d.hwid.slice(0, 12) + "вЂ¦";
           lines.push(`${i + 1}. ${label}`);
-          rows.push([{ text: `рџ—вЂ? Удалить: ${label.slice(0, 25)}`, callback_data: `devices:delete:${i}` }]);
+          rows.push([{ text: `СЂСџвЂ”РІР‚? РЈРґР°Р»РёС‚СЊ: ${label.slice(0, 25)}`, callback_data: `devices:delete:${i}` }]);
         });
-        rows.push([{ text: config?.botBackLabel ?? "◀️ В меню", callback_data: "menu:main" }]);
+        rows.push([{ text: config?.botBackLabel ?? "в—ЂпёЏ Р’ РјРµРЅСЋ", callback_data: "menu:main" }]);
         await editMessageContent(ctx, lines.join("\n"), { inline_keyboard: rows });
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка";
-        await editMessageContent(ctx, `📱 Устройства\n\n❌ ${msg}`, {
-          inline_keyboard: [[{ text: config?.botBackLabel ?? "◀️ В меню", callback_data: "menu:main" }]],
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР°";
+        await editMessageContent(ctx, `рџ“± РЈСЃС‚СЂРѕР№СЃС‚РІР°\n\nвќЊ ${msg}`, {
+          inline_keyboard: [[{ text: config?.botBackLabel ?? "в—ЂпёЏ Р’ РјРµРЅСЋ", callback_data: "menu:main" }]],
         });
       }
       return;
@@ -2637,16 +2637,16 @@ bot.on("callback_query:data", async (ctx) => {
           const lines = [_t("devices.deleted", lang) + "\n"];
           const rows: InlineMarkup["inline_keyboard"] = [];
           nextDevices.slice(0, 15).forEach((d, i) => {
-            const label = [d.platform, d.deviceModel].filter(Boolean).join(" · ") || d.hwid.slice(0, 12) + "…";
+            const label = [d.platform, d.deviceModel].filter(Boolean).join(" В· ") || d.hwid.slice(0, 12) + "вЂ¦";
             lines.push(`${i + 1}. ${label}`);
-            rows.push([{ text: `рџ—вЂ? Удалить: ${label.slice(0, 25)}`, callback_data: `devices:delete:${i}` }]);
+            rows.push([{ text: `СЂСџвЂ”РІР‚? РЈРґР°Р»РёС‚СЊ: ${label.slice(0, 25)}`, callback_data: `devices:delete:${i}` }]);
           });
-          rows.push([{ text: config?.botBackLabel ?? "◀️ В меню", callback_data: "menu:main" }]);
+          rows.push([{ text: config?.botBackLabel ?? "в—ЂпёЏ Р’ РјРµРЅСЋ", callback_data: "menu:main" }]);
           await editMessageContent(ctx, lines.join("\n"), { inline_keyboard: rows });
         }
       } catch (e: unknown) {
-        await editMessageContent(ctx, `❌ ${e instanceof Error ? e.message : "Ошибка"}`, {
-          inline_keyboard: [[{ text: config?.botBackLabel ?? "◀️ В меню", callback_data: "menu:devices" }]],
+        await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
+          inline_keyboard: [[{ text: config?.botBackLabel ?? "в—ЂпёЏ Р’ РјРµРЅСЋ", callback_data: "menu:devices" }]],
         });
       }
       return;
@@ -2697,7 +2697,7 @@ bot.on("callback_query:data", async (ctx) => {
         );
         await editMessageContent(ctx, text, profileButtons(config?.botBackLabel ?? null, innerStyles, innerEmojiIds, client?.autoRenewEnabled, lang), entities);
       } catch (err: any) {
-        await ctx.answerCallbackQuery({ text: err.message || "Ошибка", show_alert: true });
+        await ctx.answerCallbackQuery({ text: err.message || "РћС€РёР±РєР°", show_alert: true });
       }
       return;
     }
@@ -2713,7 +2713,7 @@ bot.on("callback_query:data", async (ctx) => {
         await editMessageContent(ctx, _t("topup.unavailable", lang), backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
-      const topupTitle = titleWithEmoji("CARD", "Пополнить баланс\n\nВыберите сумму или введите свою (числом):", config?.botEmojis);
+      const topupTitle = titleWithEmoji("CARD", "РџРѕРїРѕР»РЅРёС‚СЊ Р±Р°Р»Р°РЅСЃ\n\nР’С‹Р±РµСЂРёС‚Рµ СЃСѓРјРјСѓ РёР»Рё РІРІРµРґРёС‚Рµ СЃРІРѕСЋ (С‡РёСЃР»РѕРј):", config?.botEmojis);
       await editMessageContent(ctx, topupTitle.text, topUpPresets(client.preferredCurrency, config?.botBackLabel ?? null, innerStyles, innerEmojiIds), topupTitle.entities);
       return;
     }
@@ -2722,7 +2722,7 @@ bot.on("callback_query:data", async (ctx) => {
       const amountStr = data.slice("topup_yoomoney:".length);
       const amount = Number(amountStr);
       if (!Number.isFinite(amount) || amount <= 0) {
-        await editMessageContent(ctx, "Неверная сумма.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РќРµРІРµСЂРЅР°СЏ СЃСѓРјРјР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const client = await api.getMe(token);
@@ -2731,11 +2731,11 @@ bot.on("callback_query:data", async (ctx) => {
           amount,
           paymentType: "AC",
         });
-        const yooTopup = titleWithEmoji("CARD", `Пополнение на ${formatMoney(amount, client.preferredCurrency)}\n\nНажмите кнопку ниже для оплаты через ЮMoney:`, config?.botEmojis);
+        const yooTopup = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(amount, client.preferredCurrency)}\n\nРќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Money:`, config?.botEmojis);
         await editMessageContent(ctx, yooTopup.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), yooTopup.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания платежа ЮMoney";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р° Р®Money";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2744,17 +2744,17 @@ bot.on("callback_query:data", async (ctx) => {
       const amountStr = data.slice("topup_yookassa:".length);
       const amount = Number(amountStr);
       if (!Number.isFinite(amount) || amount <= 0) {
-        await editMessageContent(ctx, "Неверная сумма.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РќРµРІРµСЂРЅР°СЏ СЃСѓРјРјР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const client = await api.getMe(token);
       try {
         const payment = await api.createYookassaPayment(token, { amount, currency: "RUB" });
-        const yooTopup = titleWithEmoji("CARD", `Пополнение на ${formatMoney(amount, "RUB")}\n\nНажмите кнопку ниже для оплаты через ЮKassa:`, config?.botEmojis);
+        const yooTopup = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(amount, "RUB")}\n\nРќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Kassa:`, config?.botEmojis);
         await editMessageContent(ctx, yooTopup.text, payUrlMarkup(payment.confirmationUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), yooTopup.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания платежа ЮKassa";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р° Р®Kassa";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2763,17 +2763,17 @@ bot.on("callback_query:data", async (ctx) => {
       const amountStr = data.slice("topup_cryptopay:".length);
       const amount = Number(amountStr);
       if (!Number.isFinite(amount) || amount <= 0) {
-        await editMessageContent(ctx, "Неверная сумма.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РќРµРІРµСЂРЅР°СЏ СЃСѓРјРјР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const client = await api.getMe(token);
       try {
         const payment = await api.createCryptopayPayment(token, { amount, currency: client.preferredCurrency ?? "RUB" });
-        const cpTopup = titleWithEmoji("CARD", `Пополнение на ${formatMoney(amount, client.preferredCurrency ?? "RUB")}\n\nНажмите кнопку ниже для оплаты через Crypto Bot:`, config?.botEmojis);
+        const cpTopup = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(amount, client.preferredCurrency ?? "RUB")}\n\nРќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Crypto Bot:`, config?.botEmojis);
         await editMessageContent(ctx, cpTopup.text, payUrlMarkup(payment.payUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), cpTopup.entities);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания платежа Crypto Bot";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р° Crypto Bot";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2785,7 +2785,7 @@ bot.on("callback_query:data", async (ctx) => {
       const amount = Number(amountStr);
       const methodIdFromBtn = parts.length >= 2 ? Number(parts[1]) : null;
       if (!Number.isFinite(amount) || amount <= 0) {
-        await editMessageContent(ctx, "Неверная сумма.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РќРµРІРµСЂРЅР°СЏ СЃСѓРјРјР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const client = await api.getMe(token);
@@ -2795,9 +2795,9 @@ bot.on("callback_query:data", async (ctx) => {
           amount,
           currency: client.preferredCurrency,
           paymentMethod: methodIdFromBtn,
-          description: "Пополнение баланса",
+          description: "РџРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР°",
         });
-        const topupPay1 = titleWithEmoji("CARD", `Пополнение на ${formatMoney(amount, client.preferredCurrency)}\n\nНажмите кнопку ниже для оплаты:`, config?.botEmojis);
+        const topupPay1 = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(amount, client.preferredCurrency)}\n\nРќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹:`, config?.botEmojis);
         await editMessageContent(ctx, topupPay1.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), topupPay1.entities);
         return;
       }
@@ -2805,31 +2805,31 @@ bot.on("callback_query:data", async (ctx) => {
       const yookassaEnabled = !!config?.yookassaEnabled;
       const cryptopayEnabled = !!config?.cryptopayEnabled;
       if (methods.length > 1 || (methods.length >= 1 && (yooEnabled || yookassaEnabled || cryptopayEnabled)) || (methods.length === 0 && ((yooEnabled && yookassaEnabled) || (yooEnabled && cryptopayEnabled) || (yookassaEnabled && cryptopayEnabled)))) {
-        const topupPay2 = titleWithEmoji("CARD", `Пополнение на ${formatMoney(amount, client.preferredCurrency)}\n\nВыберите способ оплаты:`, config?.botEmojis);
+        const topupPay2 = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(amount, client.preferredCurrency)}\n\nР’С‹Р±РµСЂРёС‚Рµ СЃРїРѕСЃРѕР± РѕРїР»Р°С‚С‹:`, config?.botEmojis);
         await editMessageContent(ctx, topupPay2.text, topupPaymentMethodButtons(amountStr, methods, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds, yooEnabled, yookassaEnabled, cryptopayEnabled), topupPay2.entities);
         return;
       }
-      // Если ЮMoney единственный способ (нет platega, нет ЮKassa) — сразу создаСвЂ?м платСвЂ?ж ЮMoney
+      // Р•СЃР»Рё Р®Money РµРґРёРЅСЃС‚РІРµРЅРЅС‹Р№ СЃРїРѕСЃРѕР± (РЅРµС‚ platega, РЅРµС‚ Р®Kassa) вЂ” СЃСЂР°Р·Сѓ СЃРѕР·РґР°РЎРІР‚?Рј РїР»Р°С‚РЎРІР‚?Р¶ Р®Money
       if (methods.length === 0 && yooEnabled && !yookassaEnabled) {
         try {
           const payment = await api.createYoomoneyPayment(token, { amount, paymentType: "AC" });
-          const yooTopup = titleWithEmoji("CARD", `Пополнение на ${formatMoney(amount, client.preferredCurrency)}\n\nНажмите кнопку ниже для оплаты через ЮMoney:`, config?.botEmojis);
+          const yooTopup = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(amount, client.preferredCurrency)}\n\nРќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Money:`, config?.botEmojis);
           await editMessageContent(ctx, yooTopup.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), yooTopup.entities);
         } catch (e: unknown) {
-          const msg = e instanceof Error ? e.message : "Ошибка создания платежа ЮMoney";
-          await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+          const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р° Р®Money";
+          await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         }
         return;
       }
-      // Если только ЮKassa — сразу создаСвЂ?м платСвЂ?ж ЮKassa
+      // Р•СЃР»Рё С‚РѕР»СЊРєРѕ Р®Kassa вЂ” СЃСЂР°Р·Сѓ СЃРѕР·РґР°РЎРІР‚?Рј РїР»Р°С‚РЎРІР‚?Р¶ Р®Kassa
       if (methods.length === 0 && yookassaEnabled) {
         try {
           const payment = await api.createYookassaPayment(token, { amount, currency: "RUB" });
-          const yooTopup = titleWithEmoji("CARD", `Пополнение на ${formatMoney(amount, "RUB")}\n\nНажмите кнопку ниже для оплаты через ЮKassa:`, config?.botEmojis);
+          const yooTopup = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(amount, "RUB")}\n\nРќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Kassa:`, config?.botEmojis);
           await editMessageContent(ctx, yooTopup.text, payUrlMarkup(payment.confirmationUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), yooTopup.entities);
         } catch (e: unknown) {
-          const msg = e instanceof Error ? e.message : "Ошибка создания платежа ЮKassa";
-          await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+          const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р° Р®Kassa";
+          await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         }
         return;
       }
@@ -2838,9 +2838,9 @@ bot.on("callback_query:data", async (ctx) => {
         amount,
         currency: client.preferredCurrency,
         paymentMethod: methodId,
-        description: "Пополнение баланса",
+        description: "РџРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР°",
       });
-      const topupPay3 = titleWithEmoji("CARD", `Пополнение на ${formatMoney(amount, client.preferredCurrency)}\n\nНажмите кнопку ниже для оплаты:`, config?.botEmojis);
+      const topupPay3 = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(amount, client.preferredCurrency)}\n\nРќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹:`, config?.botEmojis);
       await editMessageContent(ctx, topupPay3.text, payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds), topupPay3.entities);
       return;
     }
@@ -2855,16 +2855,16 @@ bot.on("callback_query:data", async (ctx) => {
       }
       const linkSite = appUrl ? `${appUrl}/cabinet/register?ref=${encodeURIComponent(client.referralCode)}` : null;
       const linkBot = `https://t.me/${BOT_USERNAME || "bot"}?start=ref_${client.referralCode}`;
-      // Показываем фактический персональный процент клиента.
-      // Фолбэк на дефолт только если персональный не задан (null/undefined).
+      // РџРѕРєР°Р·С‹РІР°РµРј С„Р°РєС‚РёС‡РµСЃРєРёР№ РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹Р№ РїСЂРѕС†РµРЅС‚ РєР»РёРµРЅС‚Р°.
+      // Р¤РѕР»Р±СЌРє РЅР° РґРµС„РѕР»С‚ С‚РѕР»СЊРєРѕ РµСЃР»Рё РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹Р№ РЅРµ Р·Р°РґР°РЅ (null/undefined).
       const p1 = client.referralPercent ?? (config?.defaultReferralPercent ?? 0);
       const p2 = config?.referralPercentLevel2 ?? 0;
       const p3 = config?.referralPercentLevel3 ?? 0;
       let rest = `${_t("referral.title", lang)}\n\n${_t("referral.description", lang)}\n\n`;
       rest += `${_t("referral.how_it_works", lang)}\n`;
-      rest += `• ${_t("referral.level1", lang, { percent: String(p1) })}\n`;
-      rest += `• ${_t("referral.level2", lang, { percent: String(p2) })}\n`;
-      rest += `• ${_t("referral.level3", lang, { percent: String(p3) })}\n`;
+      rest += `вЂў ${_t("referral.level1", lang, { percent: String(p1) })}\n`;
+      rest += `вЂў ${_t("referral.level2", lang, { percent: String(p2) })}\n`;
+      rest += `вЂў ${_t("referral.level3", lang, { percent: String(p3) })}\n`;
       rest += `\n${_t("referral.earnings_info", lang)}`;
       rest += `\n\n${_t("referral.your_links", lang)}`;
       if (linkSite) rest += `\n\n${_t("referral.site", lang)}\n` + linkSite;
@@ -2888,10 +2888,10 @@ bot.on("callback_query:data", async (ctx) => {
     if (data === "menu:trial" || data === "trial:confirm") {
       try {
         const result = await api.activateTrial(token);
-        await editMessageContent(ctx, `✅ ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, `вњ… ${result.message}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка активации";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° Р°РєС‚РёРІР°С†РёРё";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2903,17 +2903,17 @@ bot.on("callback_query:data", async (ctx) => {
         await editMessageContent(ctx, _t("vpn.link_unavailable", lang), backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
-      const vpnTitle = titleWithEmoji("SERVERS", "VPN ссылка готова. Нажмите кнопку ниже, чтобы скопировать.", config?.botEmojis);
+      const vpnTitle = titleWithEmoji("SERVERS", "VPN СЃСЃС‹Р»РєР° РіРѕС‚РѕРІР°. РќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ, С‡С‚РѕР±С‹ СЃРєРѕРїРёСЂРѕРІР°С‚СЊ.", config?.botEmojis);
       await editMessageContent(ctx, vpnTitle.text, {
         inline_keyboard: [
-          [{ text: "?? Скопировать ссылку", callback_data: "vpn:copy" }],
-          [{ text: config?.botBackLabel ?? "?? В меню", callback_data: "menu:main" }],
+          [{ text: "?? РЎРєРѕРїРёСЂРѕРІР°С‚СЊ СЃСЃС‹Р»РєСѓ", callback_data: "vpn:copy" }],
+          [{ text: config?.botBackLabel ?? "?? Р’ РјРµРЅСЋ", callback_data: "menu:main" }],
         ],
       }, vpnTitle.entities);
       return;
     }
 
-    // ——— Gift / Secondary Subscriptions handlers ———
+    // вЂ”вЂ”вЂ” Gift / Secondary Subscriptions handlers вЂ”вЂ”вЂ”
 
     if (data === "vpn:copy") {
       const lang = getUserLang(userId);
@@ -2927,18 +2927,18 @@ bot.on("callback_query:data", async (ctx) => {
       setTimeout(() => {
         bot.api.deleteMessage(sent.chat.id, sent.message_id).catch(() => {});
       }, 15000);
-      await ctx.answerCallbackQuery({ text: "Ссылка скопирована", show_alert: false }).catch(() => {});
+      await ctx.answerCallbackQuery({ text: "РЎСЃС‹Р»РєР° СЃРєРѕРїРёСЂРѕРІР°РЅР°", show_alert: false }).catch(() => {});
       return;
     }
 
     if (data === "menu:gift") {
       if (!config?.giftSubscriptionsEnabled) {
-        await editMessageContent(ctx, "Функция подарков недоступна.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "Р¤СѓРЅРєС†РёСЏ РїРѕРґР°СЂРєРѕРІ РЅРµРґРѕСЃС‚СѓРїРЅР°.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       await editMessageContent(
         ctx,
-        "🎁 Подарки и подписки\n\nЗдесь вы можете купить дополнительные подписки, подарить их или активировать подарок.",
+        "рџЋЃ РџРѕРґР°СЂРєРё Рё РїРѕРґРїРёСЃРєРё\n\nР—РґРµСЃСЊ РІС‹ РјРѕР¶РµС‚Рµ РєСѓРїРёС‚СЊ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ РїРѕРґРїРёСЃРєРё, РїРѕРґР°СЂРёС‚СЊ РёС… РёР»Рё Р°РєС‚РёРІРёСЂРѕРІР°С‚СЊ РїРѕРґР°СЂРѕРє.",
         giftMenuButtons(config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
       );
       return;
@@ -2947,12 +2947,12 @@ bot.on("callback_query:data", async (ctx) => {
     if (data === "gift:buy") {
       const { items } = await api.getPublicTariffs();
       if (!items?.length) {
-        await editMessageContent(ctx, "Тарифы не настроены.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РўР°СЂРёС„С‹ РЅРµ РЅР°СЃС‚СЂРѕРµРЅС‹.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       await editMessageContent(
         ctx,
-        "🛒 Купить доп. подписку\n\nВыберите тариф:",
+        "рџ›’ РљСѓРїРёС‚СЊ РґРѕРї. РїРѕРґРїРёСЃРєСѓ\n\nР’С‹Р±РµСЂРёС‚Рµ С‚Р°СЂРёС„:",
         giftTariffButtons(items, config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
       );
       return;
@@ -2963,14 +2963,14 @@ bot.on("callback_query:data", async (ctx) => {
       const { items } = await api.getPublicTariffs();
       const tariff = items?.flatMap((c: TariffCategory) => c.tariffs).find((t: TariffItem) => t.id === tariffId);
       if (!tariff) {
-        await editMessageContent(ctx, "Тариф не найден.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        await editMessageContent(ctx, "РўР°СЂРёС„ РЅРµ РЅР°Р№РґРµРЅ.", backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
         return;
       }
       const client = await api.getMe(token);
-      const balanceLabel = `💰 Оплатить балансом (${formatMoney(client?.balance ?? 0, client?.preferredCurrency ?? "RUB")})`;
+      const balanceLabel = `рџ’° РћРїР»Р°С‚РёС‚СЊ Р±Р°Р»Р°РЅСЃРѕРј (${formatMoney(client?.balance ?? 0, client?.preferredCurrency ?? "RUB")})`;
       await editMessageContent(
         ctx,
-        `🛒 ${tariff.name}\n\nСтоимость: ${formatMoney(tariff.price, tariff.currency)}\n\nПодтвердите оплату:`,
+        `рџ›’ ${tariff.name}\n\nРЎС‚РѕРёРјРѕСЃС‚СЊ: ${formatMoney(tariff.price, tariff.currency)}\n\nРџРѕРґС‚РІРµСЂРґРёС‚Рµ РѕРїР»Р°С‚Сѓ:`,
         giftPaymentButtons(tariffId, balanceLabel, config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
       );
       return;
@@ -2982,12 +2982,12 @@ bot.on("callback_query:data", async (ctx) => {
         const result = await api.buyGiftSubscription(token, { tariffId });
         await editMessageContent(
           ctx,
-          `✅ Дополнительная подписка создана!\n\nПодписка #${result.subscriptionIndex}\n\nВы можете активировать еСвЂ? на своСвЂ?м аккаунте или подарить другу.`,
+          `вњ… Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ РїРѕРґРїРёСЃРєР° СЃРѕР·РґР°РЅР°!\n\nРџРѕРґРїРёСЃРєР° #${result.subscriptionIndex}\n\nР’С‹ РјРѕР¶РµС‚Рµ Р°РєС‚РёРІРёСЂРѕРІР°С‚СЊ РµРЎРІР‚? РЅР° СЃРІРѕРЎРІР‚?Рј Р°РєРєР°СѓРЅС‚Рµ РёР»Рё РїРѕРґР°СЂРёС‚СЊ РґСЂСѓРіСѓ.`,
           giftPostPurchaseButtons(result.secondarySubscriptionId, result.subscriptionIndex, config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
         );
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка оплаты";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РѕРїР»Р°С‚С‹";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -2999,7 +2999,7 @@ bot.on("callback_query:data", async (ctx) => {
         if (!items.length) {
           await editMessageContent(
             ctx,
-            "?? Мои подписки\n\nУ вас пока нет подписок.",
+            "?? РњРѕРё РїРѕРґРїРёСЃРєРё\n\nРЈ РІР°СЃ РїРѕРєР° РЅРµС‚ РїРѕРґРїРёСЃРѕРє.",
             giftCodeResultButtons(config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
           );
           return;
@@ -3007,17 +3007,24 @@ bot.on("callback_query:data", async (ctx) => {
         const rows: InlineMarkup["inline_keyboard"] = [];
         for (const it of items) {
           const idx = it.subscriptionIndex ?? 0;
-          const label = it.type === "root" ? `?? Основная — ${it.tariffDisplayName || "Тариф"}` : `?? #${idx} — ${it.tariffDisplayName || "Тариф"}`;
-          rows.push([{ text: label.slice(0, 64), callback_data: `sub:copy_uuid:${it.remnawaveUuid}` }]);
+          const label = it.type === "root" ? `?? РћСЃРЅРѕРІРЅР°СЏ вЂ” ${it.tariffDisplayName || "РўР°СЂРёС„"}` : `?? #${idx} вЂ” ${it.tariffDisplayName || "РўР°СЂРёС„"}`;
+          if (it.type === "root") {
+            rows.push([{ text: label.slice(0, 64), callback_data: `sub:copy_uuid:${it.remnawaveUuid}` }]);
+          } else {
+            rows.push([
+              { text: label.slice(0, 50), callback_data: `sub:copy_uuid:${it.remnawaveUuid}` },
+              { text: "РџСЂРѕРґР»РёС‚СЊ", callback_data: `gift:renew:${it.id}` },
+            ]);
+          }
         }
-        rows.push([{ text: config?.botBackLabel ?? "?? Назад", callback_data: "menu:gift" }]);
+        rows.push([{ text: config?.botBackLabel ?? "?? РќР°Р·Р°Рґ", callback_data: "menu:gift" }]);
         await editMessageContent(
           ctx,
-          `?? Мои подписки\n\nНайдено: ${items.length}\nВыберите подписку для копирования ссылки:`,
+          `?? РњРѕРё РїРѕРґРїРёСЃРєРё\n\nРќР°Р№РґРµРЅРѕ: ${items.length}\nР’С‹Р±РµСЂРёС‚Рµ РїРѕРґРїРёСЃРєСѓ РґР»СЏ РєРѕРїРёСЂРѕРІР°РЅРёСЏ СЃСЃС‹Р»РєРё:`,
           { inline_keyboard: rows },
         );
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка загрузки";
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё";
         await editMessageContent(ctx, `? ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
@@ -3029,16 +3036,16 @@ bot.on("callback_query:data", async (ctx) => {
         const byUuid = await api.getSubscriptionByUuid(token, uuid);
         const link = getSubscriptionUrl(byUuid.subscription);
         if (!link) {
-          await ctx.answerCallbackQuery({ text: "Ссылка не найдена", show_alert: true }).catch(() => {});
+          await ctx.answerCallbackQuery({ text: "РЎСЃС‹Р»РєР° РЅРµ РЅР°Р№РґРµРЅР°", show_alert: true }).catch(() => {});
           return;
         }
         const sent = await ctx.reply(`<code>${escapeHtml(link)}</code>`, { parse_mode: "HTML" });
         setTimeout(() => {
           bot.api.deleteMessage(sent.chat.id, sent.message_id).catch(() => {});
         }, 15000);
-        await ctx.answerCallbackQuery({ text: "Ссылка скопирована", show_alert: false }).catch(() => {});
+        await ctx.answerCallbackQuery({ text: "РЎСЃС‹Р»РєР° СЃРєРѕРїРёСЂРѕРІР°РЅР°", show_alert: false }).catch(() => {});
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка получения ссылки";
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РїРѕР»СѓС‡РµРЅРёСЏ СЃСЃС‹Р»РєРё";
         await ctx.answerCallbackQuery({ text: msg.slice(0, 180), show_alert: true }).catch(() => {});
       }
       return;
@@ -3046,57 +3053,57 @@ bot.on("callback_query:data", async (ctx) => {
     if (data.startsWith("gift:connect:")) {
       const subscriptionId = data.slice("gift:connect:".length);
       try {
-        // Сначала активируем подписку (снимаем GIFT_RESERVED, если есть)
+        // РЎРЅР°С‡Р°Р»Р° Р°РєС‚РёРІРёСЂСѓРµРј РїРѕРґРїРёСЃРєСѓ (СЃРЅРёРјР°РµРј GIFT_RESERVED, РµСЃР»Рё РµСЃС‚СЊ)
         await api.activateGiftForSelf(token, subscriptionId).catch(() => {});
-        // Потом получаем URL
+        // РџРѕС‚РѕРј РїРѕР»СѓС‡Р°РµРј URL
         const result = await api.getGiftSubscriptionUrl(token, subscriptionId);
         const appUrl2 = config?.publicAppUrl?.replace(/\/$/, "") ?? null;
 
-        // Если включена Remna-страница подписки — отдаСвЂ?м remna subscriptionUrl.
+        // Р•СЃР»Рё РІРєР»СЋС‡РµРЅР° Remna-СЃС‚СЂР°РЅРёС†Р° РїРѕРґРїРёСЃРєРё вЂ” РѕС‚РґР°РЎРІР‚?Рј remna subscriptionUrl.
         if (config?.useRemnaSubscriptionPage) {
           const byUuid = await api.getSubscriptionByUuid(token, result.uuid);
           const remnaUrl = getSubscriptionUrl(byUuid.subscription);
           if (!remnaUrl) {
             await editMessageContent(
               ctx,
-              "❌ Не удалось получить ссылку Remna для этой подписки.",
+              "вќЊ РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ СЃСЃС‹Р»РєСѓ Remna РґР»СЏ СЌС‚РѕР№ РїРѕРґРїРёСЃРєРё.",
               backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds),
             );
             return;
           }
           await editMessageContent(
             ctx,
-            "Подключение готово. Выберите действие:",
+            "РџРѕРґРєР»СЋС‡РµРЅРёРµ РіРѕС‚РѕРІРѕ. Р’С‹Р±РµСЂРёС‚Рµ РґРµР№СЃС‚РІРёРµ:",
             {
               inline_keyboard: [
-                [{ text: "📲 Подключиться к VPN", url: remnaUrl }],
-                [{ text: "?? Скопировать ссылку", callback_data: `gift:copy:${subscriptionId}` }],
-                [{ text: config?.botBackLabel ?? "◀️ Назад", callback_data: "menu:gift" }],
+                [{ text: "рџ“І РџРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ Рє VPN", url: remnaUrl }],
+                [{ text: "?? РЎРєРѕРїРёСЂРѕРІР°С‚СЊ СЃСЃС‹Р»РєСѓ", callback_data: `gift:copy:${subscriptionId}` }],
+                [{ text: config?.botBackLabel ?? "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: "menu:gift" }],
               ],
             },
           );
           return;
         }
 
-        // Иначе показываем ссылку + кнопку "Подключиться" в мини-апп на нашу страницу
-        // подключения для конкретной secondary-подписки.
+        // РРЅР°С‡Рµ РїРѕРєР°Р·С‹РІР°РµРј СЃСЃС‹Р»РєСѓ + РєРЅРѕРїРєСѓ "РџРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ" РІ РјРёРЅРё-Р°РїРї РЅР° РЅР°С€Сѓ СЃС‚СЂР°РЅРёС†Сѓ
+        // РїРѕРґРєР»СЋС‡РµРЅРёСЏ РґР»СЏ РєРѕРЅРєСЂРµС‚РЅРѕР№ secondary-РїРѕРґРїРёСЃРєРё.
         const webUrl = appUrl2 ? `${appUrl2}/cabinet/subscribe?uuid=${encodeURIComponent(result.uuid)}` : null;
         const buttons = webUrl
           ? {
               inline_keyboard: [
-                [{ text: "📲 Подключиться", web_app: { url: webUrl } }],
-                [{ text: config?.botBackLabel ?? "← Назад", callback_data: "menu:gift" }],
+                [{ text: "рџ“І РџРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ", web_app: { url: webUrl } }],
+                [{ text: config?.botBackLabel ?? "в†ђ РќР°Р·Р°Рґ", callback_data: "menu:gift" }],
               ],
             }
           : giftCodeResultButtons(config?.botBackLabel ?? null, innerStyles, innerEmojiIds);
         await editMessageContent(
           ctx,
-          `📲 Ссылка на подписку:\n\n${webUrl ?? `Подписка UUID: ${result.uuid}`}`,
+          `рџ“І РЎСЃС‹Р»РєР° РЅР° РїРѕРґРїРёСЃРєСѓ:\n\n${webUrl ?? `РџРѕРґРїРёСЃРєР° UUID: ${result.uuid}`}`,
           buttons,
         );
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка получения ссылки";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РїРѕР»СѓС‡РµРЅРёСЏ СЃСЃС‹Р»РєРё";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -3109,16 +3116,16 @@ bot.on("callback_query:data", async (ctx) => {
         const byUuid = await api.getSubscriptionByUuid(token, result.uuid);
         const remnaUrl = getSubscriptionUrl(byUuid.subscription);
         if (!remnaUrl) {
-          await ctx.answerCallbackQuery({ text: "Ссылка не найдена", show_alert: true }).catch(() => {});
+          await ctx.answerCallbackQuery({ text: "РЎСЃС‹Р»РєР° РЅРµ РЅР°Р№РґРµРЅР°", show_alert: true }).catch(() => {});
           return;
         }
         const sent = await ctx.reply(`<code>${escapeHtml(remnaUrl)}</code>`, { parse_mode: "HTML" });
         setTimeout(() => {
           bot.api.deleteMessage(sent.chat.id, sent.message_id).catch(() => {});
         }, 15000);
-        await ctx.answerCallbackQuery({ text: "Ссылка скопирована", show_alert: false }).catch(() => {});
+        await ctx.answerCallbackQuery({ text: "РЎСЃС‹Р»РєР° СЃРєРѕРїРёСЂРѕРІР°РЅР°", show_alert: false }).catch(() => {});
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка получения ссылки";
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РїРѕР»СѓС‡РµРЅРёСЏ СЃСЃС‹Р»РєРё";
         await ctx.answerCallbackQuery({ text: msg.slice(0, 180), show_alert: true }).catch(() => {});
       }
       return;
@@ -3129,33 +3136,33 @@ bot.on("callback_query:data", async (ctx) => {
       try {
         const result = await api.createGiftCode(token, { secondarySubscriptionId: subscriptionId });
         const expiresAt = new Date(result.expiresAt).toLocaleDateString("ru-RU");
-        const tariffLabel = result.tariffName ? `\nТариф: ${result.tariffName}` : "";
+        const tariffLabel = result.tariffName ? `\nРўР°СЂРёС„: ${result.tariffName}` : "";
 
-        // Формируем ссылку на подарок и кнопку "Поделиться"
+        // Р¤РѕСЂРјРёСЂСѓРµРј СЃСЃС‹Р»РєСѓ РЅР° РїРѕРґР°СЂРѕРє Рё РєРЅРѕРїРєСѓ "РџРѕРґРµР»РёС‚СЊСЃСЏ"
         const appUrl = config?.publicAppUrl?.replace(/\/$/, "") ?? "";
         const giftUrl = appUrl ? `${appUrl}/gift/${result.code}` : "";
-        const shareText = `🎁 Я дарю тебе VPN-подписку STEALTHNET${result.tariffName ? ` (${result.tariffName})` : ""}! Активируй по ссылке:`;
+        const shareText = `рџЋЃ РЇ РґР°СЂСЋ С‚РµР±Рµ VPN-РїРѕРґРїРёСЃРєСѓ STEALTHNET${result.tariffName ? ` (${result.tariffName})` : ""}! РђРєС‚РёРІРёСЂСѓР№ РїРѕ СЃСЃС‹Р»РєРµ:`;
         const shareUrl = giftUrl
           ? `https://t.me/share/url?url=${encodeURIComponent(giftUrl)}&text=${encodeURIComponent(shareText)}`
           : "";
 
         const buttons: (({ text: string; callback_data: string } | { text: string; url: string })[])[] = [];
         if (shareUrl) {
-          buttons.push([{ text: "📤 Поделиться в Telegram", url: shareUrl }]);
+          buttons.push([{ text: "рџ“¤ РџРѕРґРµР»РёС‚СЊСЃСЏ РІ Telegram", url: shareUrl }]);
         }
         if (giftUrl) {
-          buttons.push([{ text: "🔗 Ссылка на подарок", url: giftUrl }]);
+          buttons.push([{ text: "рџ”— РЎСЃС‹Р»РєР° РЅР° РїРѕРґР°СЂРѕРє", url: giftUrl }]);
         }
-        buttons.push([{ text: config?.botBackLabel ?? "← Назад", callback_data: "menu:gift" }]);
+        buttons.push([{ text: config?.botBackLabel ?? "в†ђ РќР°Р·Р°Рґ", callback_data: "menu:gift" }]);
 
         await editMessageContent(
           ctx,
-          `🎁 Подарочный код создан!\n\nКод: \`${result.code}\`${tariffLabel}\n\nОтправьте этот код получателю или поделитесь ссылкой. Код действителен до ${expiresAt}.`,
+          `рџЋЃ РџРѕРґР°СЂРѕС‡РЅС‹Р№ РєРѕРґ СЃРѕР·РґР°РЅ!\n\nРљРѕРґ: \`${result.code}\`${tariffLabel}\n\nРћС‚РїСЂР°РІСЊС‚Рµ СЌС‚РѕС‚ РєРѕРґ РїРѕР»СѓС‡Р°С‚РµР»СЋ РёР»Рё РїРѕРґРµР»РёС‚РµСЃСЊ СЃСЃС‹Р»РєРѕР№. РљРѕРґ РґРµР№СЃС‚РІРёС‚РµР»РµРЅ РґРѕ ${expiresAt}.`,
           { inline_keyboard: buttons },
         );
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка создания кода";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ РєРѕРґР°";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -3166,12 +3173,28 @@ bot.on("callback_query:data", async (ctx) => {
         const result = await api.deleteGiftSubscription(token, subscriptionId);
         await editMessageContent(
           ctx,
-          `✅ ${result.message || "Подписка удалена"}`,
+          `вњ… ${result.message || "РџРѕРґРїРёСЃРєР° СѓРґР°Р»РµРЅР°"}`,
           giftCodeResultButtons(config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
         );
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка удаления";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° СѓРґР°Р»РµРЅРёСЏ";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+      }
+      return;
+    }
+
+    if (data.startsWith("gift:renew:")) {
+      const subscriptionId = data.slice("gift:renew:".length);
+      try {
+        const result = await api.renewGiftSubscription(token, subscriptionId);
+        await editMessageContent(
+          ctx,
+          `вњ… ${result.message}`,
+          { inline_keyboard: [[{ text: "рџ“‹ Рљ РјРѕРёРј РїРѕРґРїРёСЃРєР°Рј", callback_data: "gift:subscriptions" }], [{ text: config?.botBackLabel ?? "в—ЂпёЏ Р’ РјРµРЅСЋ", callback_data: "menu:gift" }]] },
+        );
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РїСЂРѕРґР»РµРЅРёСЏ";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -3180,7 +3203,7 @@ bot.on("callback_query:data", async (ctx) => {
       awaitingGiftCode.add(userId);
       await editMessageContent(
         ctx,
-        "🎁 Введите подарочный код:",
+        "рџЋЃ Р’РІРµРґРёС‚Рµ РїРѕРґР°СЂРѕС‡РЅС‹Р№ РєРѕРґ:",
         backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds),
       );
       return;
@@ -3192,23 +3215,23 @@ bot.on("callback_query:data", async (ctx) => {
         if (!result.codes?.length) {
           await editMessageContent(
             ctx,
-            "🎟️ Мои подарки\n\nУ вас пока нет подарочных кодов.",
+            "рџЋџпёЏ РњРѕРё РїРѕРґР°СЂРєРё\n\nРЈ РІР°СЃ РїРѕРєР° РЅРµС‚ РїРѕРґР°СЂРѕС‡РЅС‹С… РєРѕРґРѕРІ.",
             giftCodeResultButtons(config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
           );
           return;
         }
         const lines = result.codes.map((c) => {
-          const statusLabel = c.status === "ACTIVE" ? "✅ Активен" : c.status === "REDEEMED" ? "🎁 Использован" : "❌ ОтменСвЂ?н";
-          return `${c.code} — ${statusLabel}`;
+          const statusLabel = c.status === "ACTIVE" ? "вњ… РђРєС‚РёРІРµРЅ" : c.status === "REDEEMED" ? "рџЋЃ РСЃРїРѕР»СЊР·РѕРІР°РЅ" : "вќЊ РћС‚РјРµРЅРЎРІР‚?РЅ";
+          return `${c.code} вЂ” ${statusLabel}`;
         }).join("\n");
         await editMessageContent(
           ctx,
-          `🎟️ Мои подарки\n\n${lines}`,
+          `рџЋџпёЏ РњРѕРё РїРѕРґР°СЂРєРё\n\n${lines}`,
           giftCodesListButtons(result.codes, config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
         );
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка загрузки";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
@@ -3219,24 +3242,24 @@ bot.on("callback_query:data", async (ctx) => {
         const result = await api.cancelGiftCode(token, codeOrId);
         await editMessageContent(
           ctx,
-          `✅ ${result.message}`,
+          `вњ… ${result.message}`,
           giftCodeResultButtons(config?.botBackLabel ?? null, innerStyles, innerEmojiIds),
         );
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Ошибка отмены";
-        await editMessageContent(ctx, `❌ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
+        const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° РѕС‚РјРµРЅС‹";
+        await editMessageContent(ctx, `вќЊ ${msg}`, backToMenu(config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds));
       }
       return;
     }
 
-    await ctx.answerCallbackQuery({ text: "Неизвестное действие" });
+    await ctx.answerCallbackQuery({ text: "РќРµРёР·РІРµСЃС‚РЅРѕРµ РґРµР№СЃС‚РІРёРµ" });
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : "Ошибка";
-    await ctx.reply(`❌ ${msg}`).catch(() => {});
+    const msg = e instanceof Error ? e.message : "РћС€РёР±РєР°";
+    await ctx.reply(`вќЊ ${msg}`).catch(() => {});
   }
 });
 
-// Видео от админа → возвращаем file_id для видео-инструкций
+// Р’РёРґРµРѕ РѕС‚ Р°РґРјРёРЅР° в†’ РІРѕР·РІСЂР°С‰Р°РµРј file_id РґР»СЏ РІРёРґРµРѕ-РёРЅСЃС‚СЂСѓРєС†РёР№
 bot.on("message:video", async (ctx) => {
   const userId = ctx.from?.id;
   if (!userId) return;
@@ -3245,12 +3268,12 @@ bot.on("message:video", async (ctx) => {
   if (!isAdmin) return;
   const fileId = ctx.message.video.file_id;
   await ctx.reply(
-    `📹 <b>file_id видео:</b>\n<code>${fileId}</code>\n\nСкопируйте и вставьте в админку при добавлении видео-инструкции.`,
+    `рџ“№ <b>file_id РІРёРґРµРѕ:</b>\n<code>${fileId}</code>\n\nРЎРєРѕРїРёСЂСѓР№С‚Рµ Рё РІСЃС‚Р°РІСЊС‚Рµ РІ Р°РґРјРёРЅРєСѓ РїСЂРё РґРѕР±Р°РІР»РµРЅРёРё РІРёРґРµРѕ-РёРЅСЃС‚СЂСѓРєС†РёРё.`,
     { parse_mode: "HTML" }
   );
 });
 
-// Сообщения с фото — админ может отправить фото с подписью для рассылки
+// РЎРѕРѕР±С‰РµРЅРёСЏ СЃ С„РѕС‚Рѕ вЂ” Р°РґРјРёРЅ РјРѕР¶РµС‚ РѕС‚РїСЂР°РІРёС‚СЊ С„РѕС‚Рѕ СЃ РїРѕРґРїРёСЃСЊСЋ РґР»СЏ СЂР°СЃСЃС‹Р»РєРё
 bot.on("message:photo", async (ctx) => {
   const userId = ctx.from?.id;
   if (!userId) return;
@@ -3258,105 +3281,105 @@ bot.on("message:photo", async (ctx) => {
   awaitingBroadcastMessage.delete(userId);
   const config = await api.getPublicConfig();
   if (!config?.botAdminTelegramIds?.includes(String(userId))) {
-    await ctx.reply("Доступ запрещСвЂ?н.");
+    await ctx.reply("Р”РѕСЃС‚СѓРї Р·Р°РїСЂРµС‰РЎРІР‚?РЅ.");
     return;
   }
   const photos = ctx.message.photo;
   if (!photos?.length) {
-    await ctx.reply("Фото не получено. Отправьте фото с подписью или текст.");
+    await ctx.reply("Р¤РѕС‚Рѕ РЅРµ РїРѕР»СѓС‡РµРЅРѕ. РћС‚РїСЂР°РІСЊС‚Рµ С„РѕС‚Рѕ СЃ РїРѕРґРїРёСЃСЊСЋ РёР»Рё С‚РµРєСЃС‚.");
     return;
   }
   const largest = photos[photos.length - 1];
   const caption = ctx.message.caption?.trim() ?? "";
-  // Парсим кнопку вида [Текст кнопки](URL) из подписи
+  // РџР°СЂСЃРёРј РєРЅРѕРїРєСѓ РІРёРґР° [РўРµРєСЃС‚ РєРЅРѕРїРєРё](URL) РёР· РїРѕРґРїРёСЃРё
   const btnMatch = caption.match(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/);
   const buttonText = btnMatch?.[1];
   const buttonUrl = btnMatch?.[2];
   const cleanCaption = btnMatch ? caption.replace(btnMatch[0], "").trim() : caption;
   lastBroadcastMessage.set(userId, { text: cleanCaption || caption, photoFileId: largest.file_id, buttonText, buttonUrl });
-  await ctx.reply("Кому отправить?", {
+  await ctx.reply("РљРѕРјСѓ РѕС‚РїСЂР°РІРёС‚СЊ?", {
     reply_markup: {
       inline_keyboard: [
         [
-          { text: "📱 Только Telegram", callback_data: "admin:bc:tg" },
-          { text: "📧 Только Email", callback_data: "admin:bc:email" },
+          { text: "рџ“± РўРѕР»СЊРєРѕ Telegram", callback_data: "admin:bc:tg" },
+          { text: "рџ“§ РўРѕР»СЊРєРѕ Email", callback_data: "admin:bc:email" },
         ],
-        [{ text: "📱+📧 Telegram и Email", callback_data: "admin:bc:both" }],
-        [{ text: "◀️ Отмена", callback_data: "admin:menu" }],
+        [{ text: "рџ“±+рџ“§ Telegram Рё Email", callback_data: "admin:bc:both" }],
+        [{ text: "в—ЂпёЏ РћС‚РјРµРЅР°", callback_data: "admin:menu" }],
       ],
     },
   });
 });
 
-// Сообщения с текстом — промокод или число для пополнения
+// РЎРѕРѕР±С‰РµРЅРёСЏ СЃ С‚РµРєСЃС‚РѕРј вЂ” РїСЂРѕРјРѕРєРѕРґ РёР»Рё С‡РёСЃР»Рѕ РґР»СЏ РїРѕРїРѕР»РЅРµРЅРёСЏ
 bot.on("message:text", async (ctx) => {
   if (ctx.message.text?.startsWith("/")) return;
   const userId = ctx.from?.id;
   if (!userId) return;
 
-  // Админ: ввод текста рассылки
+  // РђРґРјРёРЅ: РІРІРѕРґ С‚РµРєСЃС‚Р° СЂР°СЃСЃС‹Р»РєРё
   if (awaitingBroadcastMessage.has(userId)) {
     awaitingBroadcastMessage.delete(userId);
     const config = await api.getPublicConfig();
     if (!config?.botAdminTelegramIds?.includes(String(userId))) {
-      await ctx.reply("Доступ запрещСвЂ?н.");
+      await ctx.reply("Р”РѕСЃС‚СѓРї Р·Р°РїСЂРµС‰РЎРІР‚?РЅ.");
       return;
     }
     const text = ctx.message.text?.trim() ?? "";
     if (!text) {
-      await ctx.reply("Введите непустой текст сообщения.");
+      await ctx.reply("Р’РІРµРґРёС‚Рµ РЅРµРїСѓСЃС‚РѕР№ С‚РµРєСЃС‚ СЃРѕРѕР±С‰РµРЅРёСЏ.");
       return;
     }
-    // Парсим кнопку вида [Текст кнопки](URL) из текста
+    // РџР°СЂСЃРёРј РєРЅРѕРїРєСѓ РІРёРґР° [РўРµРєСЃС‚ РєРЅРѕРїРєРё](URL) РёР· С‚РµРєСЃС‚Р°
     const btnMatch = text.match(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/);
     const buttonText = btnMatch?.[1];
     const buttonUrl = btnMatch?.[2];
     const cleanText = btnMatch ? text.replace(btnMatch[0], "").trim() : text;
     lastBroadcastMessage.set(userId, { text: cleanText || text, buttonText, buttonUrl });
-    await ctx.reply("Кому отправить?", {
+    await ctx.reply("РљРѕРјСѓ РѕС‚РїСЂР°РІРёС‚СЊ?", {
       reply_markup: {
         inline_keyboard: [
           [
-            { text: "📱 Только Telegram", callback_data: "admin:bc:tg" },
-            { text: "📧 Только Email", callback_data: "admin:bc:email" },
+            { text: "рџ“± РўРѕР»СЊРєРѕ Telegram", callback_data: "admin:bc:tg" },
+            { text: "рџ“§ РўРѕР»СЊРєРѕ Email", callback_data: "admin:bc:email" },
           ],
-          [{ text: "📱+📧 Telegram и Email", callback_data: "admin:bc:both" }],
-          [{ text: "◀️ Отмена", callback_data: "admin:menu" }],
+          [{ text: "рџ“±+рџ“§ Telegram Рё Email", callback_data: "admin:bc:both" }],
+          [{ text: "в—ЂпёЏ РћС‚РјРµРЅР°", callback_data: "admin:menu" }],
         ],
       },
     });
     return;
   }
 
-  // Админ: ввод суммы пополнения баланса
+  // РђРґРјРёРЅ: РІРІРѕРґ СЃСѓРјРјС‹ РїРѕРїРѕР»РЅРµРЅРёСЏ Р±Р°Р»Р°РЅСЃР°
   if (awaitingAdminBalance.has(userId)) {
     const clientId = awaitingAdminBalance.get(userId);
     awaitingAdminBalance.delete(userId);
     const config = await api.getPublicConfig();
     if (!config?.botAdminTelegramIds?.includes(String(userId)) || !clientId) {
-      await ctx.reply("Доступ запрещСвЂ?н или сессия истекла.");
+      await ctx.reply("Р”РѕСЃС‚СѓРї Р·Р°РїСЂРµС‰РЎРІР‚?РЅ РёР»Рё СЃРµСЃСЃРёСЏ РёСЃС‚РµРєР»Р°.");
       return;
     }
     const num = Number(ctx.message.text?.replace(/,/, "."));
     if (!Number.isFinite(num) || num <= 0 || num > 1000000) {
-      await ctx.reply("Введите положительное число (до 1 000 000).");
+      await ctx.reply("Р’РІРµРґРёС‚Рµ РїРѕР»РѕР¶РёС‚РµР»СЊРЅРѕРµ С‡РёСЃР»Рѕ (РґРѕ 1 000 000).");
       return;
     }
     try {
       const result = await api.patchBotAdminClientBalance(userId, clientId, num);
-      await ctx.reply(`✅ РвЂ?аланс пополнен. Новый баланс: ${result.newBalance}`);
+      await ctx.reply(`вњ… Р РІР‚?Р°Р»Р°РЅСЃ РїРѕРїРѕР»РЅРµРЅ. РќРѕРІС‹Р№ Р±Р°Р»Р°РЅСЃ: ${result.newBalance}`);
     } catch (e: unknown) {
-      await ctx.reply(`❌ ${e instanceof Error ? e.message : "Ошибка"}`);
+      await ctx.reply(`вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`);
     }
     return;
   }
 
-  // Админ: ввод поиска (Telegram ID, @username, email)
+  // РђРґРјРёРЅ: РІРІРѕРґ РїРѕРёСЃРєР° (Telegram ID, @username, email)
   if (awaitingAdminSearch.has(userId)) {
     awaitingAdminSearch.delete(userId);
     const config = await api.getPublicConfig();
     if (!config?.botAdminTelegramIds?.includes(String(userId))) {
-      await ctx.reply("Доступ запрещСвЂ?н.");
+      await ctx.reply("Р”РѕСЃС‚СѓРї Р·Р°РїСЂРµС‰РЎРІР‚?РЅ.");
       return;
     }
     const searchQuery = ctx.message.text?.trim() ?? "";
@@ -3365,31 +3388,31 @@ bot.on("message:text", async (ctx) => {
       const { items, total, limit } = await api.getBotAdminClients(userId, 1, searchQuery || undefined);
       const totalPages = Math.max(1, Math.ceil(total / limit));
       const msg =
-        (searchQuery ? `рџвЂ?Ґ Поиск «${searchQuery}» (${total})\n\n` : `рџвЂ?Ґ Клиенты (${total})\n\n`) +
+        (searchQuery ? `СЂСџРІР‚?Тђ РџРѕРёСЃРє В«${searchQuery}В» (${total})\n\n` : `СЂСџРІР‚?Тђ РљР»РёРµРЅС‚С‹ (${total})\n\n`) +
         items
           .map(
             (c, i) =>
-              `${i + 1}. ${c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8)} ${c.isBlocked ? "🚫" : ""}`
+              `${i + 1}. ${c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8)} ${c.isBlocked ? "рџљ«" : ""}`
           )
           .join("\n") +
-        `\n\nСтр. 1/${totalPages}`;
+        `\n\nРЎС‚СЂ. 1/${totalPages}`;
       const rows: InlineMarkup["inline_keyboard"] = items.map((c) => [
         {
-          text: `${c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8)} ${c.isBlocked ? "🚫" : ""}`,
+          text: `${c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8)} ${c.isBlocked ? "рџљ«" : ""}`,
           callback_data: `admin:client:${c.id}`,
         },
       ]);
       const nav: InlineMarkup["inline_keyboard"][0] = [
-        { text: "◀️ В админку", callback_data: "admin:menu" },
+        { text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" },
       ];
-      if (searchQuery) nav.push({ text: "✖ Сбросить поиск", callback_data: "admin:clients:clear" });
-      if (totalPages > 1) nav.push({ text: "ВперСвЂ?д ▶", callback_data: "admin:clients:2" });
+      if (searchQuery) nav.push({ text: "вњ– РЎР±СЂРѕСЃРёС‚СЊ РїРѕРёСЃРє", callback_data: "admin:clients:clear" });
+      if (totalPages > 1) nav.push({ text: "Р’РїРµСЂРЎРІР‚?Рґ в–¶", callback_data: "admin:clients:2" });
       rows.push(nav);
       await ctx.reply(msg, { reply_markup: { inline_keyboard: rows } });
     } catch (e: unknown) {
       lastAdminSearch.delete(userId);
-      const errMsg = e instanceof Error ? e.message : "Ошибка поиска";
-      await ctx.reply(`❌ ${errMsg}`);
+      const errMsg = e instanceof Error ? e.message : "РћС€РёР±РєР° РїРѕРёСЃРєР°";
+      await ctx.reply(`вќЊ ${errMsg}`);
     }
     return;
   }
@@ -3399,40 +3422,40 @@ bot.on("message:text", async (ctx) => {
   const publicConfig = await api.getPublicConfig().catch(() => null);
   if (await enforceSubscription(ctx, publicConfig)) return;
 
-  // Если пользователь ожидает ввод подарочного кода
+  // Р•СЃР»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РѕР¶РёРґР°РµС‚ РІРІРѕРґ РїРѕРґР°СЂРѕС‡РЅРѕРіРѕ РєРѕРґР°
   if (awaitingGiftCode.has(userId)) {
     awaitingGiftCode.delete(userId);
     const code = ctx.message.text.trim().toUpperCase();
-    const menuKb = { reply_markup: { inline_keyboard: [[{ text: publicConfig?.botBackLabel ?? "← Назад", callback_data: "menu:gift" }]] } };
+    const menuKb = { reply_markup: { inline_keyboard: [[{ text: publicConfig?.botBackLabel ?? "в†ђ РќР°Р·Р°Рґ", callback_data: "menu:gift" }]] } };
     if (!code) {
-      await ctx.reply("Код не может быть пустым.", menuKb);
+      await ctx.reply("РљРѕРґ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј.", menuKb);
       return;
     }
     try {
       const result = await api.redeemGiftCode(token, code);
-      let text = `✅ Подарок активирован!\n\nПодписка #${result.subscriptionIndex} добавлена в ваш аккаунт!`;
+      let text = `вњ… РџРѕРґР°СЂРѕРє Р°РєС‚РёРІРёСЂРѕРІР°РЅ!\n\nРџРѕРґРїРёСЃРєР° #${result.subscriptionIndex} РґРѕР±Р°РІР»РµРЅР° РІ РІР°С€ Р°РєРєР°СѓРЅС‚!`;
       if (result.tariffName) {
-        text += `\nТариф: ${result.tariffName}`;
+        text += `\nРўР°СЂРёС„: ${result.tariffName}`;
       }
       if (result.giftMessage) {
-        text += `\n\n💌 Сообщение от дарителя:\n«${result.giftMessage}»`;
+        text += `\n\nрџ’Њ РЎРѕРѕР±С‰РµРЅРёРµ РѕС‚ РґР°СЂРёС‚РµР»СЏ:\nВ«${result.giftMessage}В»`;
       }
       await ctx.reply(text, menuKb);
 
-      // Уведомляем дарителя о том, что подарок активирован
+      // РЈРІРµРґРѕРјР»СЏРµРј РґР°СЂРёС‚РµР»СЏ Рѕ С‚РѕРј, С‡С‚Рѕ РїРѕРґР°СЂРѕРє Р°РєС‚РёРІРёСЂРѕРІР°РЅ
       if (result.creatorTelegramId) {
-        const recipientName = ctx.from?.username ? `@${ctx.from.username}` : ctx.from?.first_name ?? "Пользователь";
-        const notifyText = `🎁 Ваш подарок активирован!\n\n${recipientName} принял(а) ваш подарок${result.tariffName ? ` (${result.tariffName})` : ""}.`;
+        const recipientName = ctx.from?.username ? `@${ctx.from.username}` : ctx.from?.first_name ?? "РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ";
+        const notifyText = `рџЋЃ Р’Р°С€ РїРѕРґР°СЂРѕРє Р°РєС‚РёРІРёСЂРѕРІР°РЅ!\n\n${recipientName} РїСЂРёРЅСЏР»(Р°) РІР°С€ РїРѕРґР°СЂРѕРє${result.tariffName ? ` (${result.tariffName})` : ""}.`;
         bot.api.sendMessage(result.creatorTelegramId, notifyText).catch(() => {});
       }
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Ошибка активации подарка";
-      await ctx.reply(`❌ ${msg}`, menuKb);
+      const msg = e instanceof Error ? e.message : "РћС€РёР±РєР° Р°РєС‚РёРІР°С†РёРё РїРѕРґР°СЂРєР°";
+      await ctx.reply(`вќЊ ${msg}`, menuKb);
     }
     return;
   }
 
-  // Если пользователь ожидает ввод промокода
+  // Р•СЃР»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РѕР¶РёРґР°РµС‚ РІРІРѕРґ РїСЂРѕРјРѕРєРѕРґР°
   if (awaitingPromoCode.has(userId)) {
     awaitingPromoCode.delete(userId);
     const lang = getUserLang(userId);
@@ -3446,19 +3469,19 @@ bot.on("message:text", async (ctx) => {
       const checkResult = await api.checkPromoCode(token, code);
       if (checkResult.type === "FREE_DAYS") {
         const activateResult = await api.activatePromoCode(token, code);
-        await ctx.reply(`✅ ${activateResult.message}`, menuKb);
+        await ctx.reply(`вњ… ${activateResult.message}`, menuKb);
       } else if (checkResult.type === "DISCOUNT") {
         const desc = checkResult.discountPercent
-          ? `скидка ${checkResult.discountPercent}%`
+          ? `СЃРєРёРґРєР° ${checkResult.discountPercent}%`
           : checkResult.discountFixed
-            ? `скидка ${checkResult.discountFixed}`
-            : "скидка";
+            ? `СЃРєРёРґРєР° ${checkResult.discountFixed}`
+            : "СЃРєРёРґРєР°";
         activeDiscountCode.set(userId, { code, discountPercent: checkResult.discountPercent, discountFixed: checkResult.discountFixed });
-        await ctx.reply(`✅ Промокод «${checkResult.name}» принят! ${desc}.\n\n${_t("promo.discount_applied", lang)}`, menuKb);
+        await ctx.reply(`вњ… РџСЂРѕРјРѕРєРѕРґ В«${checkResult.name}В» РїСЂРёРЅСЏС‚! ${desc}.\n\n${_t("promo.discount_applied", lang)}`, menuKb);
       }
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : _t("error_generic", lang);
-      await ctx.reply(`❌ ${msg}`, menuKb);
+      await ctx.reply(`вќЊ ${msg}`, menuKb);
     }
     return;
   }
@@ -3473,7 +3496,7 @@ bot.on("message:text", async (ctx) => {
     const yookassaEnabledMsg = !!config?.yookassaEnabled;
     const cryptopayEnabledMsg = !!config?.cryptopayEnabled;
     if (!methods.length && !yooEnabled && !yookassaEnabledMsg && !cryptopayEnabledMsg) {
-      await ctx.reply("Пополнение временно недоступно.");
+      await ctx.reply("РџРѕРїРѕР»РЅРµРЅРёРµ РІСЂРµРјРµРЅРЅРѕ РЅРµРґРѕСЃС‚СѓРїРЅРѕ.");
       return;
     }
     const client = await api.getMe(token);
@@ -3491,37 +3514,37 @@ bot.on("message:text", async (ctx) => {
         }
       : undefined;
     if (methods.length > 1 || (methods.length >= 1 && (yooEnabled || yookassaEnabledMsg || cryptopayEnabledMsg)) || (methods.length === 0 && ((yooEnabled && yookassaEnabledMsg) || (yooEnabled && cryptopayEnabledMsg) || (yookassaEnabledMsg && cryptopayEnabledMsg)))) {
-      const topupMsg1 = titleWithEmoji("CARD", `Пополнение на ${formatMoney(num, client.preferredCurrency)}\n\nВыберите способ оплаты:`, config?.botEmojis);
+      const topupMsg1 = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(num, client.preferredCurrency)}\n\nР’С‹Р±РµСЂРёС‚Рµ СЃРїРѕСЃРѕР± РѕРїР»Р°С‚С‹:`, config?.botEmojis);
       await ctx.reply(topupMsg1.text, {
         entities: topupMsg1.entities.length ? topupMsg1.entities : undefined,
         reply_markup: topupPaymentMethodButtons(String(num), methods, config?.botBackLabel ?? null, backStyle, msgEmojiIds, yooEnabled, yookassaEnabledMsg, cryptopayEnabledMsg),
       });
       return;
     }
-    // Если только ЮMoney (нет platega, нет ЮKassa) — сразу создаём
+    // Р•СЃР»Рё С‚РѕР»СЊРєРѕ Р®Money (РЅРµС‚ platega, РЅРµС‚ Р®Kassa) вЂ” СЃСЂР°Р·Сѓ СЃРѕР·РґР°С‘Рј
     if (methods.length === 0 && yooEnabled) {
       const payment = await api.createYoomoneyPayment(token, { amount: num, paymentType: "AC" });
-      const topupMsgYoo = titleWithEmoji("CARD", `Пополнение на ${formatMoney(num, client.preferredCurrency)}\n\nНажмите кнопку ниже для оплаты через ЮMoney:`, config?.botEmojis);
+      const topupMsgYoo = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(num, client.preferredCurrency)}\n\nРќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Money:`, config?.botEmojis);
       await ctx.reply(topupMsgYoo.text, {
         entities: topupMsgYoo.entities.length ? topupMsgYoo.entities : undefined,
         reply_markup: payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, backStyle, msgEmojiIds),
       });
       return;
     }
-    // Если только ЮKassa
+    // Р•СЃР»Рё С‚РѕР»СЊРєРѕ Р®Kassa
     if (methods.length === 0 && yookassaEnabledMsg) {
       const payment = await api.createYookassaPayment(token, { amount: num, currency: "RUB" });
-      const topupMsgYoo = titleWithEmoji("CARD", `Пополнение на ${formatMoney(num, "RUB")}\n\nНажмите кнопку ниже для оплаты через ЮKassa:`, config?.botEmojis);
+      const topupMsgYoo = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(num, "RUB")}\n\nРќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Р®Kassa:`, config?.botEmojis);
       await ctx.reply(topupMsgYoo.text, {
         entities: topupMsgYoo.entities.length ? topupMsgYoo.entities : undefined,
         reply_markup: payUrlMarkup(payment.confirmationUrl, config?.botBackLabel ?? null, backStyle, msgEmojiIds),
       });
       return;
     }
-    // Если только Crypto Pay
+    // Р•СЃР»Рё С‚РѕР»СЊРєРѕ Crypto Pay
     if (methods.length === 0 && cryptopayEnabledMsg) {
       const payment = await api.createCryptopayPayment(token, { amount: num, currency: client.preferredCurrency });
-      const topupMsgCp = titleWithEmoji("CARD", `Пополнение на ${formatMoney(num, client.preferredCurrency)}\n\nНажмите кнопку ниже для оплаты через Crypto Bot:`, config?.botEmojis);
+      const topupMsgCp = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(num, client.preferredCurrency)}\n\nРќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹ С‡РµСЂРµР· Crypto Bot:`, config?.botEmojis);
       await ctx.reply(topupMsgCp.text, {
         entities: topupMsgCp.entities.length ? topupMsgCp.entities : undefined,
         reply_markup: payUrlMarkup(payment.payUrl, config?.botBackLabel ?? null, backStyle, msgEmojiIds),
@@ -3532,15 +3555,15 @@ bot.on("message:text", async (ctx) => {
       amount: num,
       currency: client.preferredCurrency,
       paymentMethod: methods[0].id,
-      description: "Пополнение баланса",
+      description: "РџРѕРїРѕР»РЅРµРЅРёРµ Р±Р°Р»Р°РЅСЃР°",
     });
-    const topupMsg2 = titleWithEmoji("CARD", `Пополнение на ${formatMoney(num, client.preferredCurrency)}\n\nНажмите кнопку ниже для оплаты:`, config?.botEmojis);
+    const topupMsg2 = titleWithEmoji("CARD", `РџРѕРїРѕР»РЅРµРЅРёРµ РЅР° ${formatMoney(num, client.preferredCurrency)}\n\nРќР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ РЅРёР¶Рµ РґР»СЏ РѕРїР»Р°С‚С‹:`, config?.botEmojis);
     await ctx.reply(topupMsg2.text, {
       entities: topupMsg2.entities.length ? topupMsg2.entities : undefined,
       reply_markup: payUrlMarkup(payment.paymentUrl, config?.botBackLabel ?? null, backStyle, msgEmojiIds),
     });
   } catch {
-    // не число или ошибка — игнорируем
+    // РЅРµ С‡РёСЃР»Рѕ РёР»Рё РѕС€РёР±РєР° вЂ” РёРіРЅРѕСЂРёСЂСѓРµРј
   }
 });
 
@@ -3558,4 +3581,5 @@ bot.start({
     } catch { /* ignore */ }
   },
 });
+
 

@@ -794,3 +794,15 @@ export async function getGiftSubscriptionUrl(
 ): Promise<{ uuid: string }> {
   return fetchJson("/api/client/gift/subscription-url/" + encodeURIComponent(subscriptionId), { token });
 }
+
+/** Продлить дополнительную подписку по её текущему тарифу */
+export async function renewGiftSubscription(
+  token: string,
+  subscriptionId: string
+): Promise<{ message: string; subscriptionId: string }> {
+  return fetchJson("/api/client/gift/renew", {
+    method: "POST",
+    body: { subscriptionId },
+    token,
+  });
+}
