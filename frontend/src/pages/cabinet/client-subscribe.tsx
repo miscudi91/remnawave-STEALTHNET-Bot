@@ -46,7 +46,7 @@ const DEFAULT_SUBSCRIPTION_PAGE_CONFIG: SubscriptionPageConfig = {
               description: { ru: "Откройте App Store и установите приложение. Запустите его и разрешите конфигурацию VPN.", en: "Open App Store, install the app, then allow VPN configuration." },
               buttons: [
                 { link: "https://apps.apple.com/us/app/happ-proxy-utility/id6504287215", text: { ru: "App Store", en: "App Store" }, type: "external" },
-                { link: "happ://add/{{SUBSCRIPTION_LINK}}", text: { ru: "Добавить подписку", en: "Add Subscription" }, type: "subscriptionLink" },
+                { link: "{{SUBSCRIPTION_LINK}}", text: { ru: "Добавить подписку", en: "Add Subscription" }, type: "subscriptionLink" },
               ],
             },
           ],
@@ -384,11 +384,12 @@ export function ClientSubscribePage() {
                     <div className="flex flex-wrap gap-2.5 pl-7 pt-1">
                       {block.buttons?.map((btn, btnIndex) => {
                         const isSubscription = btn.type === "subscriptionLink";
-                        const href = isSubscription
+                        const rawHref = isSubscription
                           ? btn.link
                               .replace(/\{\{SUBSCRIPTION_LINK\}\}/g, subscriptionUrl || "")
                               .replace(/\{\{USERNAME\}\}/g, "")
                           : btn.link;
+                        const href = rawHref.replace(/^happ:\/\/add\/(happ:\/\/)/i, "$1");
                         const label = getText(btn.text, locale);
                         
                         if (isSubscription) {

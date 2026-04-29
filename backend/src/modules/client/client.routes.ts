@@ -3777,7 +3777,8 @@ publicConfigRouter.get("/config", async (_req, res) => {
  * В Telegram Mini App WebView кастомные схемы заблокированы — это единственный рабочий обходной путь.
  */
 publicConfigRouter.get("/deeplink", (req, res) => {
-  const url = typeof req.query.url === "string" ? req.query.url : "";
+  let url = typeof req.query.url === "string" ? req.query.url : "";
+  url = url.replace(/^happ:\/\/add\/(happ:\/\/)/i, "$1");
   if (!url) return res.status(400).send("Missing url parameter");
   const skipAuto = req.query.skip_auto === "1" || req.query.skip_auto === "true";
   const safeUrl = url.replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
