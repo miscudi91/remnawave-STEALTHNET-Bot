@@ -323,7 +323,7 @@ export function tariffsOfCategoryButtons(
   const prefix = (category.emoji && category.emoji.trim()) ? `${category.emoji} ` : "";
   const tariffId = emojiIds?.tariff;
   for (const t of category.tariffs) {
-    const label = `${prefix}${t.name} вЂ” ${t.price} ${t.currency}`.slice(0, 64);
+    const label = `${prefix}${t.name} — ${t.price} ${t.currency}`.slice(0, 64);
     rows.push([btn(label, `pay_tariff:${t.id}`, tariffPay, tariffId)]);
   }
   rows.push([btn(back, backData, backSty, emojiIds?.back)]);
@@ -426,7 +426,7 @@ export function proxyTariffsOfCategoryButtons(
   const backSty = resolveStyle(toStyle(innerStyles?.back), "danger");
   const tariffId = emojiIds?.tariff;
   for (const t of category.tariffs) {
-    rows.push([btn(`${t.name} вЂ” ${t.price} ${t.currency}`.slice(0, 64), `pay_proxy:${t.id}`, tariffPay, tariffId)]);
+    rows.push([btn(`${t.name} — ${t.price} ${t.currency}`.slice(0, 64), `pay_proxy:${t.id}`, tariffPay, tariffId)]);
   }
   rows.push([btn(back, backData, backSty, emojiIds?.back)]);
   return { inline_keyboard: rows };
@@ -467,7 +467,7 @@ export function proxyPaymentMethodButtons(
   const rows: InlineButton[][] = [];
   if (balanceLabel) rows.push([btn(balanceLabel, `pay_proxy_balance:${proxyTariffId}`, undefined, cardId)]);
   if (yoomoneyEnabled && (!currency || currency.toUpperCase() === "RUB")) {
-    rows.push([btn("рџ’і Р®Money вЂ” РєР°СЂС‚Р°", `pay_proxy_yoomoney:${proxyTariffId}`, undefined, cardId)]);
+    rows.push([btn("💳 ЮMoney — карта", `pay_proxy_yoomoney:${proxyTariffId}`, undefined, cardId)]);
   }
   if (yookassaEnabled && (!currency || currency.toUpperCase() === "RUB")) {
     rows.push([btn("💳 ЮKassa — карта / СБП", `pay_proxy_yookassa:${proxyTariffId}`, undefined, cardId)]);
@@ -513,7 +513,7 @@ export function singboxTariffsOfCategoryButtons(
   const backSty = resolveStyle(toStyle(innerStyles?.back), "danger");
   const tariffId = emojiIds?.tariff;
   for (const t of category.tariffs) {
-    rows.push([btn(`${t.name} вЂ” ${t.price} ${t.currency}`.slice(0, 64), `pay_singbox:${t.id}`, tariffPay, tariffId)]);
+    rows.push([btn(`${t.name} — ${t.price} ${t.currency}`.slice(0, 64), `pay_singbox:${t.id}`, tariffPay, tariffId)]);
   }
   rows.push([btn(back, backData, backSty, emojiIds?.back)]);
   return { inline_keyboard: rows };
@@ -554,7 +554,7 @@ export function singboxPaymentMethodButtons(
   const rows: InlineButton[][] = [];
   if (balanceLabel) rows.push([btn(balanceLabel, `pay_singbox_balance:${singboxTariffId}`, undefined, cardId)]);
   if (yoomoneyEnabled && (!currency || currency.toUpperCase() === "RUB")) {
-    rows.push([btn("рџ’і Р®Money вЂ” РєР°СЂС‚Р°", `pay_singbox_yoomoney:${singboxTariffId}`, undefined, cardId)]);
+    rows.push([btn("💳 ЮMoney — карта", `pay_singbox_yoomoney:${singboxTariffId}`, undefined, cardId)]);
   }
   if (yookassaEnabled && (!currency || currency.toUpperCase() === "RUB")) {
     rows.push([btn("💳 ЮKassa — карта / СБП", `pay_singbox_yookassa:${singboxTariffId}`, undefined, cardId)]);
@@ -615,7 +615,7 @@ export function extraOptionsButtons(
   const cardId = emojiIds?.card;
   const rows: InlineButton[][] = options.map((o) => {
     const extra = o.kind === "servers" && (o.trafficGb ?? 0) > 0 ? ` + ${o.trafficGb} ГБ` : "";
-    const label = `${o.name || o.kind}${extra} вЂ” ${o.price} ${o.currency}`.slice(0, 64);
+    const label = `${o.name || o.kind}${extra} — ${o.price} ${o.currency}`.slice(0, 64);
     return [btn(label, `pay_option:${o.kind}:${o.id}`, "success", cardId)];
   });
   rows.push([btn(back, "menu:main", backSty, emojiIds?.back)]);
@@ -642,7 +642,7 @@ export function optionPaymentMethodButtons(
     rows.push([btn(`💰 Оплатить балансом (${option.price} ₽)`, `pay_option_balance:${option.kind}:${option.id}`, undefined, cardId)]);
   }
   if (yoomoneyEnabled) {
-    rows.push([btn("рџ’і Р®Money вЂ” РєР°СЂС‚Р°", `pay_option_yoomoney:${option.kind}:${option.id}`, undefined, cardId)]);
+    rows.push([btn("💳 ЮMoney — карта", `pay_option_yoomoney:${option.kind}:${option.id}`, undefined, cardId)]);
   }
   if (yookassaEnabled !== false) {
     rows.push([btn("💳 ЮKassa — карта / СБП", `pay_option_yookassa:${option.kind}:${option.id}`, undefined, cardId)]);
@@ -821,7 +821,7 @@ export function giftTariffButtons(
   for (const cat of categories) {
     const prefix = (cat.emoji && cat.emoji.trim()) ? `${cat.emoji} ` : "";
     for (const t of cat.tariffs) {
-      const label = `${prefix}${t.name} вЂ” ${t.price} ${t.currency}`.slice(0, 64);
+      const label = `${prefix}${t.name} — ${t.price} ${t.currency}`.slice(0, 64);
       rows.push([btn(label, `gift_tariff:${t.id}`, tariffPay, tariffId)]);
     }
   }

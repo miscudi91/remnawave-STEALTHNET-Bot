@@ -2906,14 +2906,14 @@ bot.on("callback_query:data", async (ctx) => {
       const vpnTitle = titleWithEmoji("SERVERS", "VPN ссылка готова. Нажмите кнопку ниже, чтобы скопировать.", config?.botEmojis);
       await editMessageContent(ctx, vpnTitle.text, {
         inline_keyboard: [
-          [{ text: "?? Скопировать ссылку", callback_data: "vpn:copy" }],
-          [{ text: config?.botBackLabel ?? "?? В меню", callback_data: "menu:main" }],
+          [{ text: "📋 Скопировать ссылку", callback_data: "vpn:copy" }],
+          [{ text: config?.botBackLabel ?? "◀️ В меню", callback_data: "menu:main" }],
         ],
       }, vpnTitle.entities);
       return;
     }
 
-    // вЂ”вЂ”вЂ” Gift / Secondary Subscriptions handlers вЂ”вЂ”вЂ”
+    // --- Gift / Secondary Subscriptions handlers ---
 
     if (data === "vpn:copy") {
       const lang = getUserLang(userId);
@@ -3581,5 +3581,6 @@ bot.start({
     } catch { /* ignore */ }
   },
 });
+
 
 
