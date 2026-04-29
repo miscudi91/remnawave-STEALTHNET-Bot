@@ -297,7 +297,7 @@ const lastSquadsForRemove = new Map<number, { clientId: string; items: { uuid: s
 // Устройства (HWID): список для экрана «Удалить устройство» (индекс в callback)
 const lastDevicesList = new Map<number, { devices: { hwid: string; platform?: string; deviceModel?: string }[] }>();
 
-/** ДостаСвЂ?м subscriptionUrl из ответа Remna */
+/** Достаем subscriptionUrl из ответа Remna */
 function getSubscriptionUrl(sub: unknown): string | null {
   if (!sub || typeof sub !== "object") return null;
   const o = sub as Record<string, unknown>;
@@ -311,7 +311,7 @@ function getSubscriptionUrl(sub: unknown): string | null {
   return null;
 }
 
-/** ДостаСвЂ?м объект пользователя из ответа Remna (response или data или сам объект) */
+/** Достаем объект пользователя из ответа Remna (response или data или сам объект) */
 function getSubUser(sub: unknown): Record<string, unknown> | null {
   if (!sub || typeof sub !== "object") return null;
   const o = sub as Record<string, unknown>;
@@ -335,21 +335,21 @@ function progressBar(pct: number, barLen: number): string {
 }
 
 const DEFAULT_MENU_TEXTS: Record<string, string> = {
-  welcomeTitlePrefix: "рџ›Ў ",
-  welcomeGreeting: "рџвЂ?‹ Добро пожаловать в ",
-  balancePrefix: "рџ’° Р РІР‚?Р°Р»Р°РЅСЃ: ",
-  tariffPrefix: "💎 Ваш тариф : ",
+ welcomeTitlePrefix: "🛡️ ",
+  welcomeGreeting: "👋 Добро пожаловать в ",
+  balancePrefix: "💰 Баланс: ",
+  tariffPrefix: "💎 Ваш тариф: ",
   subscriptionPrefix: "{{CHART}} Статус подписки — ",
   statusInactive: "{{STATUS_INACTIVE}} Истекла",
   statusActive: "{{STATUS_ACTIVE}} Активна",
   statusExpired: "{{STATUS_EXPIRED}} Истекла",
   statusLimited: "{{STATUS_LIMITED}} Ограничена",
   statusDisabled: "{{STATUS_DISABLED}} Отключена",
-  expirePrefix: "рџ“… РґРѕ ",
-  daysLeftPrefix: "⏰ осталось ",
+  expirePrefix: "📅 до ",
+  daysLeftPrefix: "⏳ осталось ",
   devicesLabel: "📱 Устройств: ",
   devicesAvailable: " доступно",
-  trafficPrefix: "рџ“€ РўСЂР°С„РёРє вЂ” ",
+  trafficPrefix: "📈 Трафик — ",
   linkLabel: "🔗 Ссылка подключения:",
   chooseAction: "Выберите действие:",
 };
@@ -473,13 +473,24 @@ function firstCharLengthUtf16(s: string): number {
 }
 
 const DEFAULT_EMOJI_UNICODE: Record<string, string> = {
-  PACKAGE: "рџ“¦", TARIFFS: "рџ“¦", CARD: "рџ’і", LINK: "рџ”—", PUZZLE: "СЂСџРІР‚?В¤", PROFILE: "СЂСџРІР‚?В¤",
-  TRIAL: "рџЋЃ", SERVERS: "рџЊђ", CONNECT: "рџЊђ",
-  CHART: "рџ“Љ",
-  STATUS_ACTIVE: "рџџЎ", STATUS_EXPIRED: "рџ”ґ", STATUS_INACTIVE: "рџ”ґ",
-  STATUS_LIMITED: "рџџЎ", STATUS_DISABLED: "рџ”ґ",
+  PACKAGE: "📦", 
+  TARIFFS: "📦", 
+  CARD: "💳", 
+  LINK: "🔗", 
+  PUZZLE: "🧩", 
+  PROFILE: "👤",
+  TRIAL: "🎁", 
+  SERVERS: "🌐", 
+  CONNECT: "📡",
+  CHART: "📊",
+  STATUS_ACTIVE: "🟢", 
+  STATUS_EXPIRED: "🔴", 
+  STATUS_INACTIVE: "⚪",
+  STATUS_LIMITED: "🟡", 
+  STATUS_DISABLED: "🔘",
 };
-const DEFAULT_CUSTOM_EMOJI_CHAR = "рџ™‚";
+
+const DEFAULT_CUSTOM_EMOJI_CHAR = "🙂";
 
 const DEFAULT_MENU_EMOJI_KEY_BY_ID: Record<string, string> = {
   tariffs: "PACKAGE",
@@ -974,7 +985,7 @@ bot.command("start", async (ctx) => {
     }
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : "Ошибка входа";
-    await ctx.reply(`вќЊ ${msg}`);
+    await ctx.reply(`❌ ${msg}`);
   }
 });
 
@@ -993,7 +1004,7 @@ bot.command("link", async (ctx) => {
     await ctx.reply(_t("link.success", lang));
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : _t("error_generic", lang);
-    await ctx.reply(`вќЊ ${msg}`);
+    await ctx.reply(`❌ ${msg}`);
   }
 });
 
@@ -1008,7 +1019,7 @@ bot.on("callback_query:data", async (ctx) => {
   if (data.startsWith("admin:")) {
     const config = await api.getPublicConfig();
     if (!config?.botAdminTelegramIds?.includes(String(userId))) {
-      await ctx.answerCallbackQuery({ text: "Доступ запрещСвЂ?н", show_alert: true }).catch(() => {});
+      await ctx.answerCallbackQuery({ text: "Доступ запрещен", show_alert: true }).catch(() => {});
       return;
     }
     if (data === "admin:menu") {
@@ -1023,14 +1034,14 @@ bot.on("callback_query:data", async (ctx) => {
         inline_keyboard: [
           [{ text: "📊 Статистика", callback_data: "admin:stats" }],
           [{ text: "🔔 Уведомления", callback_data: "admin:notifications" }],
-          [{ text: "рџвЂ?Ґ Клиенты", callback_data: "admin:clients:1" }],
+          [{ text: "🔥 Клиенты", callback_data: "admin:clients:1" }],
           [{ text: "🔍 Поиск пользователя", callback_data: "admin:search" }],
           [
             { text: "💳 Ожидают оплаты", callback_data: "admin:payments:pending:1" },
             { text: "💰 Последние платежи", callback_data: "admin:payments:paid:1" },
           ],
           [{ text: "📢 Рассылка", callback_data: "admin:broadcast" }],
-          [{ text: "в—ЂпёЏ Р’ РјРµРЅСЋ", callback_data: "menu:main" }],
+          [{ text: "◀️ В меню", callback_data: "menu:main" }],
         ],
       };
       await editMessageContent(ctx, "⚙️ Панель админа\n\nВыберите раздел:", markup);
@@ -1051,9 +1062,9 @@ bot.on("callback_query:data", async (ctx) => {
         inline_keyboard: [
           [{ text: `💰 Пополнение баланса: ${yesNo(s.notifyBalanceTopup)}`, callback_data: "admin:notif:balance" }],
           [{ text: `📦 Оплата тарифов: ${yesNo(s.notifyTariffPayment)}`, callback_data: "admin:notif:tariff" }],
-          [{ text: `рџвЂ?¤ Новые клиенты: ${yesNo(s.notifyNewClient)}`, callback_data: "admin:notif:newclient" }],
+          [{ text: `👤 Новые клиенты: ${yesNo(s.notifyNewClient)}`, callback_data: "admin:notif:newclient" }],
           [{ text: `🎫 Новые тикеты: ${yesNo(s.notifyNewTicket)}`, callback_data: "admin:notif:newticket" }],
-          [{ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" }],
+          [{ text: "◀️ В админку", callback_data: "admin:menu" }],
         ],
       };
       await editMessageContent(ctx, text, markup);
@@ -1086,9 +1097,9 @@ bot.on("callback_query:data", async (ctx) => {
         inline_keyboard: [
           [{ text: `💰 Пополнение баланса: ${yesNo(s.notifyBalanceTopup)}`, callback_data: "admin:notif:balance" }],
           [{ text: `📦 Оплата тарифов: ${yesNo(s.notifyTariffPayment)}`, callback_data: "admin:notif:tariff" }],
-          [{ text: `рџвЂ?¤ Новые клиенты: ${yesNo(s.notifyNewClient)}`, callback_data: "admin:notif:newclient" }],
+          [{ text: `👤 Новые клиенты: ${yesNo(s.notifyNewClient)}`, callback_data: "admin:notif:newclient" }],
           [{ text: `🎫 Новые тикеты: ${yesNo(s.notifyNewTicket)}`, callback_data: "admin:notif:newticket" }],
-          [{ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" }],
+          [{ text: "◀️ В админку", callback_data: "admin:menu" }],
         ],
       };
       await editMessageContent(ctx, text, markup);
@@ -1099,7 +1110,7 @@ bot.on("callback_query:data", async (ctx) => {
       await editMessageContent(
         ctx,
         "🔍 Поиск пользователя\n\nВведите Telegram ID, @username или email:",
-        { inline_keyboard: [[{ text: "в—ЂпёЏ РћС‚РјРµРЅР°", callback_data: "admin:menu" }]] }
+        { inline_keyboard: [[{ text: "◀️ Отмена", callback_data: "admin:menu" }]] }
       );
       return;
     }
@@ -1108,9 +1119,9 @@ bot.on("callback_query:data", async (ctx) => {
       const u = stats.users;
       const s = stats.sales;
       const text =
-        `📊 Статистика\n\nрџвЂ?Ґ Пользователи: ${u.total}\nС Remna: ${u.withRemna}\nНовых за 7 дн.: ${u.newLast7Days}\nНовых за 30 дн.: ${u.newLast30Days}\n\n` +
+        `📊 Статистика\n\n🔥 Пользователи: ${u.total}\nС Remna: ${u.withRemna}\nНовых за 7 дн.: ${u.newLast7Days}\nНовых за 30 дн.: ${u.newLast30Days}\n\n` +
         `💰 Продажи (всего): ${s.totalAmount} ₽ (${s.totalCount})\nЗа 7 дн.: ${s.last7DaysAmount} ₽ (${s.last7DaysCount})\nЗа 30 дн.: ${s.last30DaysAmount} ₽ (${s.last30DaysCount})`;
-      const back: InlineMarkup = { inline_keyboard: [[{ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" }]] };
+      const back: InlineMarkup = { inline_keyboard: [[{ text: "◀️ В админку", callback_data: "admin:menu" }]] };
       await editMessageContent(ctx, text, back);
       return;
     }
@@ -1121,7 +1132,7 @@ bot.on("callback_query:data", async (ctx) => {
         // Показать первую страницу без поиска
         const { items, total, limit } = await api.getBotAdminClients(userId, 1);
         const totalPages = Math.max(1, Math.ceil(total / limit));
-        let msg = `рџвЂ?Ґ Клиенты (${total})\n\n`;
+        let msg = `🔥 Клиенты (${total})\n\n`;
         items.forEach((c, i) => {
           const label = c.email || c.telegramUsername || c.telegramId || c.id.slice(0, 8);
           msg += `${i + 1}. ${label} ${c.isBlocked ? "рџљ«" : ""}\n`;
@@ -1137,8 +1148,8 @@ bot.on("callback_query:data", async (ctx) => {
           ]);
         });
         const nav: InlineMarkup["inline_keyboard"][0] = [];
-        nav.push({ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" });
-        if (totalPages > 1) nav.push({ text: "ВперСвЂ?д ▶", callback_data: "admin:clients:2" });
+        nav.push({ text: "◀️ В админку", callback_data: "admin:menu" });
+        if (totalPages > 1) nav.push({ text: "Вперед ▶", callback_data: "admin:clients:2" });
         rows.push(nav);
         await editMessageContent(ctx, msg, { inline_keyboard: rows });
         return;
@@ -1164,9 +1175,9 @@ bot.on("callback_query:data", async (ctx) => {
       });
       const nav: InlineMarkup["inline_keyboard"][0] = [];
       if (page > 1) nav.push({ text: "◀ Назад", callback_data: `admin:clients:${page - 1}` });
-      nav.push({ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" });
+      nav.push({ text: "◀️ В админку", callback_data: "admin:menu" });
       if (search) nav.push({ text: "✖ Сбросить поиск", callback_data: "admin:clients:clear" });
-      if (page < totalPages) nav.push({ text: "ВперСвЂ?д ▶", callback_data: `admin:clients:${page + 1}` });
+      if (page < totalPages) nav.push({ text: "Вперед ▶", callback_data: `admin:clients:${page + 1}` });
       rows.push(nav);
       await editMessageContent(ctx, msg, { inline_keyboard: rows });
       return;
@@ -1213,7 +1224,7 @@ bot.on("callback_query:data", async (ctx) => {
       await editMessageContent(
         ctx,
         "💵 Пополнение баланса\n\nВведите сумму (число):",
-        { inline_keyboard: [[{ text: "в—ЂпёЏ РћС‚РјРµРЅР°", callback_data: "admin:menu" }]] }
+        { inline_keyboard: [[{ text: "◀️ Отмена", callback_data: "admin:menu" }]] }
       );
       return;
     }
@@ -1223,11 +1234,11 @@ bot.on("callback_query:data", async (ctx) => {
       try {
         await api.postBotAdminClientRemnaRevoke(userId, clientId);
         await editMessageContent(ctx, `✅ Подписка Remna отозвана для клиента.`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+          inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
         });
       } catch (e: unknown) {
         await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:client:${clientId}` }]],
+          inline_keyboard: [[{ text: "◀️ Назад", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1237,12 +1248,12 @@ bot.on("callback_query:data", async (ctx) => {
       if (!clientId) return;
       try {
         await api.postBotAdminClientRemnaDisable(userId, clientId);
-        await editMessageContent(ctx, "✅ Пользователь отключСвЂ?н в Remna.", {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, "✅ Пользователь отключен в Remna.", {
+          inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
         });
       } catch (e: unknown) {
         await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:client:${clientId}` }]],
+          inline_keyboard: [[{ text: "◀️ Назад", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1252,12 +1263,12 @@ bot.on("callback_query:data", async (ctx) => {
       if (!clientId) return;
       try {
         await api.postBotAdminClientRemnaEnable(userId, clientId);
-        await editMessageContent(ctx, "✅ Пользователь включСвЂ?н в Remna.", {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+        await editMessageContent(ctx, "✅ Пользователь включен в Remna.", {
+          inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
         });
       } catch (e: unknown) {
         await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:client:${clientId}` }]],
+          inline_keyboard: [[{ text: "◀️ Назад", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1268,11 +1279,11 @@ bot.on("callback_query:data", async (ctx) => {
       try {
         await api.postBotAdminClientRemnaResetTraffic(userId, clientId);
         await editMessageContent(ctx, "✅ Трафик сброшен.", {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+          inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
         });
       } catch (e: unknown) {
         await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:client:${clientId}` }]],
+          inline_keyboard: [[{ text: "◀️ Назад", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1288,7 +1299,7 @@ bot.on("callback_query:data", async (ctx) => {
         const stored = lastSquadsForAdd.get(userId);
         if (!stored || index < 0 || index >= stored.items.length) {
           await editMessageContent(ctx, "Сессия истекла или сквад не найден. Вернитесь к клиенту.", {
-            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+            inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
           });
           return;
         }
@@ -1297,11 +1308,11 @@ bot.on("callback_query:data", async (ctx) => {
           await api.postBotAdminClientRemnaSquadAdd(userId, clientId, squadUuid);
           lastSquadsForAdd.delete(userId);
           await editMessageContent(ctx, `✅ Сквад «${stored.items[index]!.name}» добавлен.`, {
-            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+            inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
           });
         } catch (e: unknown) {
           await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-            inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:squad:add:${clientId}` }]],
+            inline_keyboard: [[{ text: "◀️ Назад", callback_data: `admin:squad:add:${clientId}` }]],
           });
         }
         return;
@@ -1310,7 +1321,7 @@ bot.on("callback_query:data", async (ctx) => {
         const { items } = await api.getBotAdminRemnaSquadsInternal(userId);
         if (!items.length) {
           await editMessageContent(ctx, "Нет доступных сквадов в Remna.", {
-            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+            inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
           });
           return;
         }
@@ -1318,11 +1329,11 @@ bot.on("callback_query:data", async (ctx) => {
         const rows: InlineMarkup["inline_keyboard"] = items.slice(0, 15).map((s, i) => [
           { text: `вћ• ${s.name || s.uuid.slice(0, 8)}`, callback_data: `admin:squad:add:${clientId}:${i}` },
         ]);
-        rows.push([{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]);
+        rows.push([{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]);
         await editMessageContent(ctx, "Выберите сквад для добавления:", { inline_keyboard: rows });
       } catch (e: unknown) {
         await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+          inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1338,7 +1349,7 @@ bot.on("callback_query:data", async (ctx) => {
         const stored = lastSquadsForRemove.get(userId);
         if (!stored || index < 0 || index >= stored.items.length) {
           await editMessageContent(ctx, "Сессия истекла или сквад не найден. Вернитесь к клиенту.", {
-            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+            inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
           });
           return;
         }
@@ -1346,12 +1357,12 @@ bot.on("callback_query:data", async (ctx) => {
         try {
           await api.postBotAdminClientRemnaSquadRemove(userId, clientId, squadUuid);
           lastSquadsForRemove.delete(userId);
-          await editMessageContent(ctx, `вњ… РЎРєРІР°Рґ В«${stored.items[index]!.name}В» СѓР±СЂР°РЅ.`, {
-            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+          await editMessageContent(ctx, `✅ Сквад «${stored.items[index]!.name}В» СѓР±СЂР°РЅ.`, {
+            inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
           });
         } catch (e: unknown) {
           await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-            inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: `admin:squad:remove:${clientId}` }]],
+            inline_keyboard: [[{ text: "◀️ Назад", callback_data: `admin:squad:remove:${clientId}` }]],
           });
         }
         return;
@@ -1363,7 +1374,7 @@ bot.on("callback_query:data", async (ctx) => {
         const current = remna.activeInternalSquads.map((uuid) => ({ uuid, name: uuidToName.get(uuid) ?? uuid.slice(0, 8) }));
         if (!current.length) {
           await editMessageContent(ctx, "У пользователя нет сквадов.", {
-            inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+            inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
           });
           return;
         }
@@ -1371,11 +1382,11 @@ bot.on("callback_query:data", async (ctx) => {
         const rows: InlineMarkup["inline_keyboard"] = current.slice(0, 15).map((s, i) => [
           { text: `вћ– ${s.name}`, callback_data: `admin:squad:remove:${clientId}:${i}` },
         ]);
-        rows.push([{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]);
+        rows.push([{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]);
         await editMessageContent(ctx, "Выберите сквад для удаления у пользователя:", { inline_keyboard: rows });
       } catch (e: unknown) {
         await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РєР»РёРµРЅС‚Сѓ", callback_data: `admin:client:${clientId}` }]],
+          inline_keyboard: [[{ text: "◀️ К клиенту", callback_data: `admin:client:${clientId}` }]],
         });
       }
       return;
@@ -1400,8 +1411,8 @@ bot.on("callback_query:data", async (ctx) => {
       msg += `\nСтр. ${page}/${totalPages}`;
       const nav: InlineMarkup["inline_keyboard"][0] = [];
       if (page > 1) nav.push({ text: "◀ Назад", callback_data: `admin:payments:${status}:${page - 1}` });
-      nav.push({ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" });
-      if (page < totalPages) nav.push({ text: "ВперСвЂ?д ▶", callback_data: `admin:payments:${status}:${page + 1}` });
+      nav.push({ text: "◀️ В админку", callback_data: "admin:menu" });
+      if (page < totalPages) nav.push({ text: "Вперед ▶", callback_data: `admin:payments:${status}:${page + 1}` });
       rows.push(nav);
       await editMessageContent(ctx, msg, { inline_keyboard: rows });
       return;
@@ -1412,11 +1423,11 @@ bot.on("callback_query:data", async (ctx) => {
       try {
         await api.patchBotAdminPaymentMarkPaid(userId, paymentId);
         await editMessageContent(ctx, "✅ Платёж отмечен как оплаченный.", {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Рљ РїР»Р°С‚РµР¶Р°Рј", callback_data: "admin:payments:pending:1" }]],
+          inline_keyboard: [[{ text: "◀️ К платежам", callback_data: "admin:payments:pending:1" }]],
         });
       } catch (e: unknown) {
         await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ РќР°Р·Р°Рґ", callback_data: "admin:payments:pending:1" }]],
+          inline_keyboard: [[{ text: "◀️ Назад", callback_data: "admin:payments:pending:1" }]],
         });
       }
       return;
@@ -1427,7 +1438,7 @@ bot.on("callback_query:data", async (ctx) => {
       await editMessageContent(
         ctx,
         `📢 Рассылка\n\nСейчас: Telegram ${counts.withTelegram}, Email ${counts.withEmail}\n\nОтправьте текст сообщения или фото с подписью (caption):`,
-        { inline_keyboard: [[{ text: "в—ЂпёЏ РћС‚РјРµРЅР°", callback_data: "admin:menu" }]] }
+        { inline_keyboard: [[{ text: "◀️ Отмена", callback_data: "admin:menu" }]] }
       );
       return;
     }
@@ -1436,7 +1447,7 @@ bot.on("callback_query:data", async (ctx) => {
       const raw = lastBroadcastMessage.get(userId);
       if (raw == null) {
         await editMessageContent(ctx, "Текст рассылки не найден. Начните заново.", {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" }]],
+          inline_keyboard: [[{ text: "◀️ В админку", callback_data: "admin:menu" }]],
         });
         return;
       }
@@ -1445,18 +1456,18 @@ bot.on("callback_query:data", async (ctx) => {
       const channelLabel = ch === "telegram" ? "Telegram" : ch === "email" ? "Email" : "Telegram Рё Email";
       // Сразу показываем, что рассылка запущена, чтобы было понятно и не нажимали повторно
       await editMessageContent(ctx, `📢 Рассылка по каналу «${channelLabel}» запущена, подождите…`, {
-        inline_keyboard: [[{ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" }]],
+        inline_keyboard: [[{ text: "◀️ В админку", callback_data: "admin:menu" }]],
       });
       lastBroadcastMessage.delete(userId);
       try {
         const result = await api.postBotAdminBroadcast(userId, msg.text, ch, msg.photoFileId, msg.buttonText, msg.buttonUrl);
         const text = `✅ Рассылка завершена.\n\nTelegram: отправлено ${result.sentTelegram}, ошибок ${result.failedTelegram}\nEmail: отправлено ${result.sentEmail}, ошибок ${result.failedEmail}${result.errors?.length ? "\n\nОшибки: " + result.errors.slice(0, 3).join("; ") : ""}`;
         await editMessageContent(ctx, text, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" }]],
+          inline_keyboard: [[{ text: "◀️ В админку", callback_data: "admin:menu" }]],
         });
       } catch (e: unknown) {
         await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" }]],
+          inline_keyboard: [[{ text: "◀️ В админку", callback_data: "admin:menu" }]],
         });
       }
       return;
@@ -1467,7 +1478,7 @@ bot.on("callback_query:data", async (ctx) => {
       await api.patchBotAdminClientBlock(userId, clientId, true);
       const client = await api.getBotAdminClient(userId, clientId);
       const created = client.createdAt ? new Date(client.createdAt).toLocaleString("ru-RU") : "вЂ”";
-      let text = `рџвЂ?¤ ${client.email || client.telegramUsername || client.telegramId || client.id}\n\nID: ${client.id}\nРвЂ?аланс: ${client.balance}\nРефералов: ${client._count?.referrals ?? 0}\nСоздан: ${created}\n\n🚫 Заблокирован`;
+      let text = `👤 ${client.email || client.telegramUsername || client.telegramId || client.id}\n\nID: ${client.id}\nРвЂ?аланс: ${client.balance}\nРефералов: ${client._count?.referrals ?? 0}\nСоздан: ${created}\n\n🚫 Заблокирован`;
       const kb: InlineMarkup["inline_keyboard"] = [
         [{ text: "✅ Разблокировать", callback_data: `admin:unblock:${client.id}` }],
         [{ text: "в—ЂпёЏ Рљ СЃРїРёСЃРєСѓ", callback_data: "admin:clients:1" }],
@@ -1481,7 +1492,7 @@ bot.on("callback_query:data", async (ctx) => {
       await api.patchBotAdminClientBlock(userId, clientId, false);
       const client = await api.getBotAdminClient(userId, clientId);
       const created = client.createdAt ? new Date(client.createdAt).toLocaleString("ru-RU") : "вЂ”";
-      let text = `рџвЂ?¤ ${client.email || client.telegramUsername || client.telegramId || client.id}\n\nID: ${client.id}\nРвЂ?аланс: ${client.balance}\nРефералов: ${client._count?.referrals ?? 0}\nСоздан: ${created}`;
+      let text = `👤 ${client.email || client.telegramUsername || client.telegramId || client.id}\n\nID: ${client.id}\nРвЂ?аланс: ${client.balance}\nРефералов: ${client._count?.referrals ?? 0}\nСоздан: ${created}`;
       const kb: InlineMarkup["inline_keyboard"] = [
         [{ text: "🚫 Заблокировать", callback_data: `admin:block:${client.id}` }],
         [{ text: "в—ЂпёЏ Рљ СЃРїРёСЃРєСѓ", callback_data: "admin:clients:1" }],
@@ -2600,12 +2611,12 @@ bot.on("callback_query:data", async (ctx) => {
           lines.push(`${i + 1}. ${label}`);
           rows.push([{ text: `рџ—вЂ? Удалить: ${label.slice(0, 25)}`, callback_data: `devices:delete:${i}` }]);
         });
-        rows.push([{ text: config?.botBackLabel ?? "в—ЂпёЏ Р’ РјРµРЅСЋ", callback_data: "menu:main" }]);
+        rows.push([{ text: config?.botBackLabel ?? "◀️ В меню", callback_data: "menu:main" }]);
         await editMessageContent(ctx, lines.join("\n"), { inline_keyboard: rows });
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : "Ошибка";
         await editMessageContent(ctx, `📱 Устройства\n\n❌ ${msg}`, {
-          inline_keyboard: [[{ text: config?.botBackLabel ?? "в—ЂпёЏ Р’ РјРµРЅСЋ", callback_data: "menu:main" }]],
+          inline_keyboard: [[{ text: config?.botBackLabel ?? "◀️ В меню", callback_data: "menu:main" }]],
         });
       }
       return;
@@ -2641,12 +2652,12 @@ bot.on("callback_query:data", async (ctx) => {
             lines.push(`${i + 1}. ${label}`);
             rows.push([{ text: `рџ—вЂ? Удалить: ${label.slice(0, 25)}`, callback_data: `devices:delete:${i}` }]);
           });
-          rows.push([{ text: config?.botBackLabel ?? "в—ЂпёЏ Р’ РјРµРЅСЋ", callback_data: "menu:main" }]);
+          rows.push([{ text: config?.botBackLabel ?? "◀️ В меню", callback_data: "menu:main" }]);
           await editMessageContent(ctx, lines.join("\n"), { inline_keyboard: rows });
         }
       } catch (e: unknown) {
         await editMessageContent(ctx, `вќЊ ${e instanceof Error ? e.message : "РћС€РёР±РєР°"}`, {
-          inline_keyboard: [[{ text: config?.botBackLabel ?? "в—ЂпёЏ Р’ РјРµРЅСЋ", callback_data: "menu:devices" }]],
+          inline_keyboard: [[{ text: config?.botBackLabel ?? "◀️ В меню", callback_data: "menu:devices" }]],
         });
       }
       return;
@@ -2809,7 +2820,7 @@ bot.on("callback_query:data", async (ctx) => {
         await editMessageContent(ctx, topupPay2.text, topupPaymentMethodButtons(amountStr, methods, config?.botBackLabel ?? null, innerStyles?.back, innerEmojiIds, yooEnabled, yookassaEnabled, cryptopayEnabled), topupPay2.entities);
         return;
       }
-      // Если ЮMoney единственный способ (нет platega, нет ЮKassa) — сразу создаСвЂ?м платСвЂ?ж ЮMoney
+      // Если ЮMoney единственный способ (нет platega, нет ЮKassa) — сразу создаем платеж ЮMoney
       if (methods.length === 0 && yooEnabled && !yookassaEnabled) {
         try {
           const payment = await api.createYoomoneyPayment(token, { amount, paymentType: "AC" });
@@ -2821,7 +2832,7 @@ bot.on("callback_query:data", async (ctx) => {
         }
         return;
       }
-      // Если только ЮKassa — сразу создаСвЂ?м платСвЂ?ж ЮKassa
+      // Если только ЮKassa — сразу создаем платеж ЮKassa
       if (methods.length === 0 && yookassaEnabled) {
         try {
           const payment = await api.createYookassaPayment(token, { amount, currency: "RUB" });
@@ -3059,7 +3070,7 @@ bot.on("callback_query:data", async (ctx) => {
         const result = await api.getGiftSubscriptionUrl(token, subscriptionId);
         const appUrl2 = config?.publicAppUrl?.replace(/\/$/, "") ?? null;
 
-        // Если включена Remna-страница подписки — отдаСвЂ?м remna subscriptionUrl.
+        // Если включена Remna-страница подписки — отдаем remna subscriptionUrl.
         if (config?.useRemnaSubscriptionPage) {
           const byUuid = await api.getSubscriptionByUuid(token, result.uuid);
           const remnaUrl = getSubscriptionUrl(byUuid.subscription);
@@ -3221,7 +3232,7 @@ bot.on("callback_query:data", async (ctx) => {
           return;
         }
         const lines = result.codes.map((c) => {
-          const statusLabel = c.status === "ACTIVE" ? "✅ Активен" : c.status === "REDEEMED" ? "🎁 Использован" : "❌ ОтменСвЂ?н";
+          const statusLabel = c.status === "ACTIVE" ? "✅ Активен" : c.status === "REDEEMED" ? "🎁 Использован" : "❌ Отменен";
           return `${c.code} вЂ” ${statusLabel}`;
         }).join("\n");
         await editMessageContent(
@@ -3281,7 +3292,7 @@ bot.on("message:photo", async (ctx) => {
   awaitingBroadcastMessage.delete(userId);
   const config = await api.getPublicConfig();
   if (!config?.botAdminTelegramIds?.includes(String(userId))) {
-    await ctx.reply("Доступ запрещСвЂ?н.");
+    await ctx.reply("Доступ запрещен.");
     return;
   }
   const photos = ctx.message.photo;
@@ -3305,7 +3316,7 @@ bot.on("message:photo", async (ctx) => {
           { text: "📧 Только Email", callback_data: "admin:bc:email" },
         ],
         [{ text: "рџ“±+рџ“§ Telegram Рё Email", callback_data: "admin:bc:both" }],
-        [{ text: "в—ЂпёЏ РћС‚РјРµРЅР°", callback_data: "admin:menu" }],
+        [{ text: "◀️ Отмена", callback_data: "admin:menu" }],
       ],
     },
   });
@@ -3322,7 +3333,7 @@ bot.on("message:text", async (ctx) => {
     awaitingBroadcastMessage.delete(userId);
     const config = await api.getPublicConfig();
     if (!config?.botAdminTelegramIds?.includes(String(userId))) {
-      await ctx.reply("Доступ запрещСвЂ?н.");
+      await ctx.reply("Доступ запрещен.");
       return;
     }
     const text = ctx.message.text?.trim() ?? "";
@@ -3344,7 +3355,7 @@ bot.on("message:text", async (ctx) => {
             { text: "📧 Только Email", callback_data: "admin:bc:email" },
           ],
           [{ text: "рџ“±+рџ“§ Telegram Рё Email", callback_data: "admin:bc:both" }],
-          [{ text: "в—ЂпёЏ РћС‚РјРµРЅР°", callback_data: "admin:menu" }],
+          [{ text: "◀️ Отмена", callback_data: "admin:menu" }],
         ],
       },
     });
@@ -3357,7 +3368,7 @@ bot.on("message:text", async (ctx) => {
     awaitingAdminBalance.delete(userId);
     const config = await api.getPublicConfig();
     if (!config?.botAdminTelegramIds?.includes(String(userId)) || !clientId) {
-      await ctx.reply("Доступ запрещСвЂ?н или сессия истекла.");
+      await ctx.reply("Доступ запрещен или сессия истекла.");
       return;
     }
     const num = Number(ctx.message.text?.replace(/,/, "."));
@@ -3379,7 +3390,7 @@ bot.on("message:text", async (ctx) => {
     awaitingAdminSearch.delete(userId);
     const config = await api.getPublicConfig();
     if (!config?.botAdminTelegramIds?.includes(String(userId))) {
-      await ctx.reply("Доступ запрещСвЂ?н.");
+      await ctx.reply("Доступ запрещен.");
       return;
     }
     const searchQuery = ctx.message.text?.trim() ?? "";
@@ -3403,10 +3414,10 @@ bot.on("message:text", async (ctx) => {
         },
       ]);
       const nav: InlineMarkup["inline_keyboard"][0] = [
-        { text: "в—ЂпёЏ Р’ Р°РґРјРёРЅРєСѓ", callback_data: "admin:menu" },
+        { text: "◀️ В админку", callback_data: "admin:menu" },
       ];
       if (searchQuery) nav.push({ text: "✖ Сбросить поиск", callback_data: "admin:clients:clear" });
-      if (totalPages > 1) nav.push({ text: "ВперСвЂ?д ▶", callback_data: "admin:clients:2" });
+      if (totalPages > 1) nav.push({ text: "Вперед ▶", callback_data: "admin:clients:2" });
       rows.push(nav);
       await ctx.reply(msg, { reply_markup: { inline_keyboard: rows } });
     } catch (e: unknown) {
